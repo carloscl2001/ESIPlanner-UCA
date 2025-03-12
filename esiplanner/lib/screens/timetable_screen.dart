@@ -281,7 +281,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             fontSize: 16.0,
                           ),
                         ),
-                        const SizedBox(width: 12.0),
+                        Text("|"),
                         Text(
                           _formatDateShort(weekRange.end),
                           style: TextStyle(

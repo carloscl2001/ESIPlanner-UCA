@@ -35,7 +35,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
   Future<void> _loadSubjects() async {
     final String? username =
-    Provider.of<AuthProvider>(context, listen: false).username;
+        Provider.of<AuthProvider>(context, listen: false).username;
 
     if (username != null) {
       try {
@@ -112,17 +112,37 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
       await subjectService.updateSubjects(username: username, subjects: selectedSubjects);
 
-      // Verifica si el widget está montado antes de llamar a setState
+      // Muestra una notificación de éxito con un SnackBar
       if (mounted) {
-        setState(() {
-          // Actualiza el estado si es necesario
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Align(
+              alignment: Alignment.center, // Centra el texto dentro del SnackBar
+              child: const Text(
+                'Selecciones guardadas exitosamente',
+                textAlign: TextAlign.center, // Asegura que el texto esté centrado
+              ),
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
       }
+
     } catch (e) {
+      // Muestra una notificación de error con un SnackBar
       if (mounted) {
-        setState(() {
-          errorMessage = 'Error al guardar las selecciones: $e';
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+             content: Align(
+              alignment: Alignment.center, // Centra el texto dentro del SnackBar
+              child: const Text(
+                'Error al guardar las selecciones',
+                textAlign: TextAlign.center, // Asegura que el texto esté centrado
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -280,7 +300,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
                                     activeColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo // Color del interruptor cuando está activado
                                   ),
                                   // Grupos seleccionables
-                                  if (selectedGroupTypes.containsKey(subject['code'])) ...[
+                                  if (selectedGroupTypes.containsKey(subject['code'])) ...[ 
                                     const SizedBox(height: 10),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,

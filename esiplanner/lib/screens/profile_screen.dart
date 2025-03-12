@@ -25,16 +25,18 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          // GridView con las tarjetas reutilizando CustomCard
-          Expanded(
-            child: GridView.count(
+      body: Center( // Envolvemos el contenido con un Center
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido verticalmente
+          children: [
+            // GridView con las tarjetas reutilizando CustomCard
+            GridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Desactiva el desplazamiento
               children: const [
                 ProfileCard(
                   text: 'Mi perfil',
@@ -58,8 +60,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
