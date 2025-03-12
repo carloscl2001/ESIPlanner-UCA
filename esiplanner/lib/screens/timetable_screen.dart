@@ -216,6 +216,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     ),
                     const SizedBox(height: 10),
                   ],
+                  const SizedBox(height: 10),
                   const Divider(),
                   const SizedBox(height: 10),
                   Expanded(

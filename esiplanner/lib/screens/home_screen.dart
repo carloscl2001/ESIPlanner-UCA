@@ -249,8 +249,28 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: _selectedDay == day
               ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
-              : (isDarkMode ? Colors.grey.shade900 : Colors.indigo.shade50),
+              : null, // Deja el color como nulo para usar el gradiente cuando no está seleccionado
+          gradient: _selectedDay != day
+              ? (isDarkMode
+                  ? LinearGradient(
+                      colors: [Colors.grey.shade900, Colors.grey.shade900], // Degradado oscuro
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : LinearGradient(
+                      colors: [Colors.indigo.shade50, Colors.white], // Degradado claro
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ))
+              : null, // No hay gradiente cuando el día está seleccionado
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3), // Color de la sombra
+              offset: Offset(0, 4), // Desplazamiento de la sombra
+              blurRadius: 8, // Difusión de la sombra
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -340,9 +360,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'D':
         return 'Clase de laboratorio';
       case 'X':
-        return 'Clase de teórico-práctica';
+        return 'Clase de teória-práctica';
       default:
-        return 'Clase de teórico-práctica';
+        return 'Clase de teória-práctica';
     }
   }
 
