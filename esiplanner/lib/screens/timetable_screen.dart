@@ -190,9 +190,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Elige una semana para ver tus clases',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        'Elige una semana para ver tus clases',
+        style: TextStyle(
+          color: Colors.white, 
+          fontWeight: FontWeight.bold, 
+          fontSize: 18.0, // Cambia este valor según el tamaño que necesites
         ),
+      ),
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
         shape: const RoundedRectangleBorder(
@@ -252,10 +256,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6.0,
-                  offset: const Offset(0, 2),
-                ),
+                  color: !isDarkMode ? Colors.black.withOpacity(0.45) : Colors.white.withOpacity(0.45), // La opacidad típica de una sombra de elevación 4
+                  blurRadius: 4.0, // Simula el blur de una elevación 4
+                  offset: const Offset(0, 0), // Un pequeño desplazamiento vertical, como el de una Card
+                ),        
               ],
             ),
             child: DropdownButton<int>(
