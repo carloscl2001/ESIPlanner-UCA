@@ -24,6 +24,7 @@ class ProfileScreen extends StatelessWidget {
             bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
           ),
         ),
+        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
       body: Center( // Envolvemos el contenido con un Center
         child: Column(

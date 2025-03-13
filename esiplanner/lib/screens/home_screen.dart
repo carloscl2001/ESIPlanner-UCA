@@ -47,13 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     try {
-      final profileData = await _profileService.getProfileData(username: username);
+      final profileData = await _profileService.getProfileData(
+        username: username,
+      );
       final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
 
       if (degree == null || userSubjects.isEmpty) {
         setState(() {
-          _errorMessage = degree == null ? 'No se encontró el grado en los datos del perfil' : 'El usuario no tiene asignaturas';
+          _errorMessage =
+              degree == null
+                  ? 'No se encontró el grado en los datos del perfil'
+                  : 'El usuario no tiene asignaturas';
           _isLoading = false;
         });
         return;
@@ -77,18 +82,32 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchAndFilterSubjects(List<dynamic> userSubjects) async {
+  Future<List<Map<String, dynamic>>> _fetchAndFilterSubjects(
+    List<dynamic> userSubjects,
+  ) async {
     List<Map<String, dynamic>> updatedSubjects = [];
 
     for (var subject in userSubjects) {
-      final subjectData = await _subjectService.getSubjectData(codeSubject: subject['code']);
-      final filteredClasses = _filterClasses(subjectData['classes'], subject['types']);
+      final subjectData = await _subjectService.getSubjectData(
+        codeSubject: subject['code'],
+      );
+      final filteredClasses = _filterClasses(
+        subjectData['classes'],
+        subject['types'],
+      );
 
       for (var classData in filteredClasses) {
-        classData['events'].sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
+        classData['events'].sort(
+          (a, b) =>
+              DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])),
+        );
       }
 
-      filteredClasses.sort((a, b) => DateTime.parse(a['events'][0]['date']).compareTo(DateTime.parse(b['events'][0]['date'])));
+      filteredClasses.sort(
+        (a, b) => DateTime.parse(
+          a['events'][0]['date'],
+        ).compareTo(DateTime.parse(b['events'][0]['date'])),
+      );
 
       updatedSubjects.add({
         'name': subjectData['name'] ?? subject['name'],
@@ -100,7 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return updatedSubjects;
   }
 
-  List<dynamic> _filterClasses(List<dynamic>? classes, List<dynamic>? userTypes) {
+  List<dynamic> _filterClasses(
+    List<dynamic>? classes,
+    List<dynamic>? userTypes,
+  ) {
     if (classes == null) return [];
     return classes.where((classData) {
       final classType = classData['type']?.toString();
@@ -112,7 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getCurrentWeekday() {
     final now = DateTime.now();
     final weekdayIndex = now.weekday - 1;
-    return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length) ? _weekDays[weekdayIndex] : 'L';
+    return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length)
+        ? _weekDays[weekdayIndex]
+        : 'L';
   }
 
   String _getMonthYearRange(DateTime startOfWeek, DateTime endOfWeek) {
@@ -128,13 +152,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _getMonthName(int month) {
     const monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
     return monthNames[month - 1];
   }
 
-  List<Map<String, dynamic>> _getFilteredEvents(List<Map<String, dynamic>> subjects, String? selectedDay) {
+  List<Map<String, dynamic>> _getFilteredEvents(
+    List<Map<String, dynamic>> subjects,
+    String? selectedDay,
+  ) {
     final now = DateTime.now();
     final startOfWeek = _startOfWeek(now);
     final endOfWeek = _endOfWeek(now);
@@ -145,7 +182,9 @@ class _HomeScreenState extends State<HomeScreen> {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          if (eventDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+          if (eventDate.isAfter(
+                startOfWeek.subtract(const Duration(days: 1)),
+              ) &&
               eventDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',
@@ -159,21 +198,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (selectedDay != null) {
       final selectedDayIndex = _weekDays.indexOf(selectedDay);
-      final selectedDate = _startOfWeek(now).add(Duration(days: selectedDayIndex));
+      final selectedDate = _startOfWeek(
+        now,
+      ).add(Duration(days: selectedDayIndex));
 
-      allEvents = allEvents.where((eventData) {
-        final eventDate = DateTime.parse(eventData['event']['date']);
-        return eventDate.year == selectedDate.year &&
-            eventDate.month == selectedDate.month &&
-            eventDate.day == selectedDate.day;
-      }).toList();
+      allEvents =
+          allEvents.where((eventData) {
+            final eventDate = DateTime.parse(eventData['event']['date']);
+            return eventDate.year == selectedDate.year &&
+                eventDate.month == selectedDate.month &&
+                eventDate.day == selectedDate.day;
+          }).toList();
     }
 
     return allEvents;
   }
 
-  DateTime _startOfWeek(DateTime date) => date.subtract(Duration(days: date.weekday - 1));
-  DateTime _endOfWeek(DateTime date) => date.add(Duration(days: 5 - date.weekday)); // Solo lunes a viernes
+  DateTime _startOfWeek(DateTime date) =>
+      date.subtract(Duration(days: date.weekday - 1));
+  DateTime _endOfWeek(DateTime date) =>
+      date.add(Duration(days: 5 - date.weekday)); // Solo lunes a viernes
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +230,8 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text(
           'Tus clases esta semana',
           style: TextStyle(
-            color: Colors.white, 
-            fontWeight: FontWeight.bold, 
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
             fontSize: 18.0, // Cambia este valor según el tamaño que necesites
           ),
         ),
@@ -195,53 +239,63 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
+            bottom: Radius.circular(
+              25,
+            ), // Ajusta el radio para cambiar la curvatura
           ),
         ),
+        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  if (_errorMessage.isNotEmpty) ...[
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    if (_errorMessage.isNotEmpty) ...[
+                      Text(
+                        _errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                     Text(
-                      _errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
+                      _getMonthYearRange(
+                        _startOfWeek(DateTime.now()),
+                        _endOfWeek(DateTime.now()),
+                      ),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children:
+                          _weekDays.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final day = entry.value;
+                            final date = weekDates[index];
+                            return _buildDayButton(day, date, isDarkMode);
+                          }).toList(),
+                    ),
+                    const SizedBox(height: 10),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: _buildEventList(
+                        _getFilteredEvents(_subjects, _selectedDay),
+                      ),
+                    ),
                   ],
-                  Text(
-                    _getMonthYearRange(_startOfWeek(DateTime.now()), _endOfWeek(DateTime.now())),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: _weekDays.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final day = entry.value;
-                      final date = weekDates[index];
-                      return _buildDayButton(day, date, isDarkMode);
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: _buildEventList(_getFilteredEvents(_subjects, _selectedDay)),
-                  ),
-                ],
+                ),
               ),
-            ),
     );
   }
 
@@ -251,39 +305,56 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
         decoration: BoxDecoration(
-          color: _selectedDay == day
-              ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
-              : null, // Deja el color como nulo para usar el gradiente cuando no está seleccionado
-          gradient: _selectedDay != day
-              ? (isDarkMode
-                  ? LinearGradient(
-                      colors: [Colors.grey.shade900, Colors.grey.shade900], // Degradado oscuro
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : LinearGradient(
-                      colors: [Colors.indigo.shade50, Colors.white], // Degradado claro
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ))
-              : null, // No hay gradiente cuando el día está seleccionado
+          color:
+              _selectedDay == day
+                  ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
+                  : null, // Deja el color como nulo para usar el gradiente cuando no está seleccionado
+          gradient:
+              _selectedDay != day
+                  ? (isDarkMode
+                      ? LinearGradient(
+                        colors: [
+                          Colors.grey.shade900,
+                          Colors.grey.shade900,
+                        ], // Degradado oscuro
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                      : LinearGradient(
+                        colors: [
+                          Colors.indigo.shade50,
+                          Colors.white,
+                        ], // Degradado claro
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ))
+                  : null, // No hay gradiente cuando el día está seleccionado
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-               color: !isDarkMode 
-                ? Colors.black.withValues(alpha: (0.45)) 
-                : Colors.white.withValues(alpha: (0.45)),  // La opacidad típica de una sombra de elevación 4
+              color:
+                  !isDarkMode
+                      ? Colors.black.withValues(alpha: (0.45))
+                      : Colors.white.withValues(
+                        alpha: (0.45),
+                      ), // La opacidad típica de una sombra de elevación 4
               blurRadius: 8.0, // Simula el blur de una elevación 4
-              offset: const Offset(0, 0), // Un pequeño desplazamiento vertical, como el de una Card
-            ),  
-          ], 
+              offset: const Offset(
+                0,
+                0,
+              ), // Un pequeño desplazamiento vertical, como el de una Card
+            ),
+          ],
         ),
         child: Column(
           children: [
             Text(
               day,
               style: TextStyle(
-                color: _selectedDay == day ? (isDarkMode ? Colors.black : Colors.white) : (isDarkMode ? Colors.white : Colors.black),
+                color:
+                    _selectedDay == day
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : (isDarkMode ? Colors.white : Colors.black),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -292,7 +363,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               date,
               style: TextStyle(
-                color: _selectedDay == day ? (isDarkMode ? Colors.black : Colors.white) : (isDarkMode ? Colors.white : Colors.black),
+                color:
+                    _selectedDay == day
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : (isDarkMode ? Colors.white : Colors.black),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -316,17 +390,26 @@ class _HomeScreenState extends State<HomeScreen> {
       itemCount: sortedDates.length,
       itemBuilder: (context, index) {
         final date = sortedDates[index];
-        final events = groupedByDate[date]!..sort((a, b) {
-          final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-          final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-          return timeA.compareTo(timeB);
-        });
+        final events =
+            groupedByDate[date]!..sort((a, b) {
+              final timeA = DateTime.parse(
+                '${a['event']['date']} ${a['event']['start_hour']}',
+              );
+              final timeB = DateTime.parse(
+                '${b['event']['date']} ${b['event']['start_hour']}',
+              );
+              return timeA.compareTo(timeB);
+            });
 
         // Detectar solapamientos
         final isOverlapping = List<bool>.filled(events.length, false);
         for (int i = 0; i < events.length - 1; i++) {
-          final endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-          final startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+          final endTimeCurrent = DateTime.parse(
+            '${events[i]['event']['date']} ${events[i]['event']['end_hour']}',
+          );
+          final startTimeNext = DateTime.parse(
+            '${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}',
+          );
 
           if (endTimeCurrent.isAfter(startTimeNext)) {
             isOverlapping[i] = true;
@@ -336,20 +419,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: events.asMap().entries.map((entry) {
-            final index = entry.key;
-            final eventData = entry.value;
-            final event = eventData['event'];
-            final classType = eventData['classType'];
-            final subjectName = eventData['subjectName'];
+          children:
+              events.asMap().entries.map((entry) {
+                final index = entry.key;
+                final eventData = entry.value;
+                final event = eventData['event'];
+                final classType = eventData['classType'];
+                final subjectName = eventData['subjectName'];
 
-            return ClassCards(
-              subjectName: subjectName,
-              classType: '$classType - ${_getGroupLabel(classType[0])}',
-              event: event,
-              isOverlap: isOverlapping[index],
-            );
-          }).toList(),
+                return ClassCards(
+                  subjectName: subjectName,
+                  classType: '$classType - ${_getGroupLabel(classType[0])}',
+                  event: event,
+                  isOverlap: isOverlapping[index],
+                );
+              }).toList(),
         );
       },
     );
@@ -375,6 +459,9 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> _getWeekDates() {
     final now = DateTime.now();
     final startOfWeek = _startOfWeek(now);
-    return List.generate(5, (index) => startOfWeek.add(Duration(days: index)).day.toString()); // Solo lunes a viernes
+    return List.generate(
+      5,
+      (index) => startOfWeek.add(Duration(days: index)).day.toString(),
+    ); // Solo lunes a viernes
   }
 }

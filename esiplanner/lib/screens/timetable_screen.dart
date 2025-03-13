@@ -190,7 +190,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-        'Elige una semana para ver tus clases',
+        'Selecciona una semana',
         style: TextStyle(
           color: Colors.white, 
           fontWeight: FontWeight.bold, 
@@ -204,6 +204,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
             bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
           ),
         ),
+        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -222,7 +223,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   ],
                   const SizedBox(height: 10),
                   const Divider(),
-                  const SizedBox(height: 10),
                   Expanded(
                     child: _buildEventList(isDarkMode),
                   ),
