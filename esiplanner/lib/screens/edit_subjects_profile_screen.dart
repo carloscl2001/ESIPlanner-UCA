@@ -171,7 +171,7 @@ class _EditSubjectsProfileScreenState extends State<EditSubjectsProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Seleccionar mis asignaturas y grupos', style: TextStyle(color: Colors.white)),
+        title: const Text('Elige asignaturas y grupos', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
         actions: [

@@ -1,0 +1,445 @@
+{
+    "code": "21720025",
+    "name": "Ingeniería Gráfica",
+    "classes": [
+        {
+            "type": "A1",
+            "events": [
+                {
+                    "date": "2025-02-25",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-03-04",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-03-18",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-04-01",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-04-22",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-05-06",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-05-20",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-05-27",
+                    "start_hour": "11:30",
+                    "end_hour": "12:30",
+                    "location": "Aula B05"
+                },
+                {
+                    "date": "2025-02-13",
+                    "start_hour": "09:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D05"
+                },
+                {
+                    "date": "2025-02-20",
+                    "start_hour": "09:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D05"
+                }
+            ]
+        },
+        {
+            "type": "C1",
+            "events": [
+                {
+                    "date": "2025-02-18",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-02-25",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-04",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-18",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-01",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-22",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-06",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-20",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-27",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-23",
+                    "start_hour": "10:30",
+                    "end_hour": "12:00",
+                    "location": "Aula D16"
+                }
+            ]
+        },
+        {
+            "type": "C2",
+            "events": [
+                {
+                    "date": "2025-02-18",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-02-25",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-04",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-18",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-01",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-22",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-06",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-20",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-05-27",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D17"
+                },
+                {
+                    "date": "2025-04-21",
+                    "start_hour": "11:30",
+                    "end_hour": "13:00",
+                    "location": "Aula D17"
+                }
+            ]
+        },
+        {
+            "type": "D1",
+            "events": [
+                {
+                    "date": "2025-02-21",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-07",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-14",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-24",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-28",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-04",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-11",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-25",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-02",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-09",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-16",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-28",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula D16"
+                }
+            ]
+        },
+        {
+            "type": "D2",
+            "events": [
+                {
+                    "date": "2025-02-21",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-07",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-14",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-24",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-03-28",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-04",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-11",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-04-25",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-02",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-09",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-16",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                },
+                {
+                    "date": "2025-05-28",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula D16"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,183 @@
+{
+    "code": "21714047",
+    "name": "Implementación e Implantación de Sistemas Software",
+    "classes": [
+        {
+            "type": "A1",
+            "events": [
+                {
+                    "date": "2025-02-10",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-02-17",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-02-24",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-03",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-10",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-17",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-31",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-04-07",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-04-21",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-02-10",
+                    "start_hour": "18:30",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                }
+            ]
+        },
+        {
+            "type": "B1",
+            "events": [
+                {
+                    "date": "2025-04-28",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-05",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-12",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-19",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-26",
+                    "start_hour": "16:00",
+                    "end_hour": "18:00",
+                    "location": "Aula D06"
+                }
+            ]
+        },
+        {
+            "type": "C1",
+            "events": [
+                {
+                    "date": "2025-02-24",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-03",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-10",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-17",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-03-31",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-04-07",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-04-21",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-04-28",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-05",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-12",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-19",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                },
+                {
+                    "date": "2025-05-26",
+                    "start_hour": "18:00",
+                    "end_hour": "20:30",
+                    "location": "Aula D06"
+                }
+            ]
+        }
+    ]
+}

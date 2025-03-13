@@ -81,7 +81,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tus asignaturas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+        title: const Text('Mis asignaturas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
         ),
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación

@@ -257,7 +257,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
               boxShadow: [
                 BoxShadow(
                   color: !isDarkMode ? Colors.black.withOpacity(0.45) : Colors.white.withOpacity(0.45), // La opacidad típica de una sombra de elevación 4
-                  blurRadius: 4.0, // Simula el blur de una elevación 4
+                  blurRadius: 8.0, // Simula el blur de una elevación 4
                   offset: const Offset(0, 0), // Un pequeño desplazamiento vertical, como el de una Card
                 ),        
               ],
