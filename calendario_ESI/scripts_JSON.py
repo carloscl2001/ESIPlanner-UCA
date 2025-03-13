@@ -277,13 +277,6 @@ def save_json_for_each_subject(courses):
     # Crear la carpeta 'archivos_grados' si no existe
     os.makedirs('archivos_grados', exist_ok=True)
 
-    # El archivo GII.json con las asignaturas se guarda solo en 'archivos_grados'
-    gii_data = {
-        "code": "GII",
-        "name": "Ingeniería Informática",
-        "subjects": subject_codes
-    }
-
 
 # ================================
 # Función principal
