@@ -28,17 +28,28 @@ class ProfileCard extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, route);
         },
-        borderRadius: BorderRadius.circular(20.0), // Bordes redondeados para el InkWell
+        borderRadius: BorderRadius.circular(
+          20.0,
+        ), // Bordes redondeados para el InkWell
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isDarkMode
-                  ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
-                  : [Colors.indigo.shade50, Colors.white], // Degradado claro
+              colors:
+                  isDarkMode
+                      ? [
+                        Colors.grey.shade900,
+                        Colors.grey.shade900,
+                      ] // Degradado oscuro
+                      : [
+                        Colors.indigo.shade50,
+                        Colors.white,
+                      ], // Degradado claro
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+            borderRadius: BorderRadius.circular(
+              20.0,
+            ), // Coincide con el radio de la tarjeta
           ),
           alignment: Alignment.center,
           child: Padding(
@@ -49,16 +60,24 @@ class ProfileCard extends StatelessWidget {
                 Icon(
                   icon,
                   size: 40,
-                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, // Color del icono
+                  color:
+                      isDarkMode
+                          ? Colors.yellow.shade700
+                          : Colors.indigo.shade700, // Color del icono
                 ),
-                const SizedBox(height: 12), // Espaciado entre el icono y el texto
+                const SizedBox(
+                  height: 12,
+                ), // Espaciado entre el icono y el texto
                 Text(
                   text,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: isDarkMode ? Colors.white : Colors.black, // Color del texto
+                    color:
+                        isDarkMode
+                            ? Colors.white
+                            : Colors.black, // Color del texto
                   ),
                 ),
               ],

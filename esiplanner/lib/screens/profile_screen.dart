@@ -21,14 +21,19 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
+            bottom: Radius.circular(
+              25,
+            ), // Ajusta el radio para cambiar la curvatura
           ),
         ),
-        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
+        toolbarHeight:
+            45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
-      body: Center( // Envolvemos el contenido con un Center
+      body: Center(
+        // Envolvemos el contenido con un Center
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido verticalmente
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Centra el contenido verticalmente
           children: [
             // GridView con las tarjetas reutilizando CustomCard
             GridView.count(
@@ -37,7 +42,8 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSpacing: 16,
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Desactiva el desplazamiento
+              physics:
+                  const NeverScrollableScrollPhysics(), // Desactiva el desplazamiento
               children: const [
                 ProfileCard(
                   text: 'Mi perfil',

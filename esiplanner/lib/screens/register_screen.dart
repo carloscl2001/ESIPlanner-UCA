@@ -37,7 +37,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final degreeList = await authService.getDegrees();
       setState(() {
         degrees = degreeList;
-        selectedDegree = degrees.isNotEmpty ? degrees[0] : null; // Establece el primer grado como seleccionado si hay alguno
+        selectedDegree =
+            degrees.isNotEmpty
+                ? degrees[0]
+                : null; // Establece el primer grado como seleccionado si hay alguno
       });
     } catch (e) {
       setState(() {
@@ -72,7 +75,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   bool isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$',
+    );
     return emailRegex.hasMatch(email);
   }
 
@@ -83,7 +88,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // Obtén el ThemeProvider
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
@@ -98,18 +105,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
+                  borderRadius: BorderRadius.circular(
+                    20.0,
+                  ), // Bordes más redondeados
                 ),
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: isDarkMode
-                        ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
-                        : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro // Degradado suave
+                      colors:
+                          isDarkMode
+                              ? [
+                                Colors.grey.shade800,
+                                Colors.grey.shade800,
+                              ] // Degradado oscuro
+                              : [
+                                Colors.indigo.shade50,
+                                Colors.white,
+                              ], // Degradado clarodado claro // Degradado suave
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
+                    borderRadius: BorderRadius.circular(
+                      20.0,
+                    ), // Coincide con el radio de la tarjeta
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
@@ -123,7 +141,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : Colors.indigo.shade900,
+                              color:
+                                  isDarkMode
+                                      ? Colors.white
+                                      : Colors.indigo.shade900,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -134,7 +155,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               labelText: 'Email',
                               prefixIcon: Icon(
                                 Icons.email, // Icono para el campo de email
-                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                color:
+                                    isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -153,8 +177,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             decoration: InputDecoration(
                               labelText: 'Nombre de usuario',
                               prefixIcon: Icon(
-                                Icons.person, // Icono para el campo de nombre de usuario
-                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                Icons
+                                    .person, // Icono para el campo de nombre de usuario
+                                color:
+                                    isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -175,7 +203,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               labelText: 'Contraseña',
                               prefixIcon: Icon(
                                 Icons.lock, // Icono para el campo de contraseña
-                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                color:
+                                    isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -197,7 +228,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               labelText: 'Nombre',
                               prefixIcon: Icon(
                                 Icons.badge, // Icono para el campo de nombre
-                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                color:
+                                    isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -216,8 +250,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             decoration: InputDecoration(
                               labelText: 'Apellido',
                               prefixIcon: Icon(
-                                Icons.family_restroom, // Icono para el campo de apellido
-                                color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                Icons
+                                    .family_restroom, // Icono para el campo de apellido
+                                color:
+                                    isDarkMode
+                                        ? Colors.white
+                                        : Colors.indigo.shade700,
                               ),
                             ),
                             validator: (value) {
@@ -243,21 +281,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 labelText: 'Grado',
                                 prefixIcon: Icon(
                                   Icons.school, // Icono para el campo de grado
-                                  color: isDarkMode ? Colors.white : Colors.indigo.shade700,
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white
+                                          : Colors.indigo.shade700,
                                 ),
                               ),
-                              items: degrees
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      color: isDarkMode ? Colors.white : Colors.indigo.shade900,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                              items:
+                                  degrees.map<DropdownMenuItem<String>>((
+                                    String value,
+                                  ) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color:
+                                              isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.indigo.shade900,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                             ),
                           ] else ...[
                             const CircularProgressIndicator(), // Cargando si los grados están siendo obtenidos
@@ -278,7 +324,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(height: 16),
                             Text(
                               errorMessage,
-                              style: const TextStyle(color: Colors.red, fontSize: 14),
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
                               textAlign: TextAlign.center,
                               softWrap: true,
                             ),
@@ -295,14 +344,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: isDarkMode ? Colors.white : Colors.indigo.shade700, // Color del texto
+                  foregroundColor:
+                      isDarkMode
+                          ? Colors.white
+                          : Colors.indigo.shade700, // Color del texto
                 ),
                 child: const Text(
                   "¿Ya tienes una cuenta? Inicia sesión aquí",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

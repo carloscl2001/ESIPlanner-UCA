@@ -24,18 +24,29 @@ class ClassCards extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
-        side: isOverlap
-            ? const BorderSide(color: Colors.red, width: 1.0) // Borde rojo para solapamientos
-            : BorderSide.none,
+        side:
+            isOverlap
+                ? const BorderSide(
+                  color: Colors.red,
+                  width: 1.0,
+                ) // Borde rojo para solapamientos
+                : BorderSide.none,
       ),
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: isDarkMode
-                  ? [Colors.grey.shade900, Colors.grey.shade900] // Degradado oscuro
-                  : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
+            colors:
+                isDarkMode
+                    ? [
+                      Colors.grey.shade900,
+                      Colors.grey.shade900,
+                    ] // Degradado oscuro
+                    : [
+                      Colors.indigo.shade50,
+                      Colors.white,
+                    ], // Degradado clarodado claro
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -55,15 +66,35 @@ class ClassCards extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              _buildRow(Icons.school, classType, isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(
+                Icons.school,
+                classType,
+                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.white : Colors.black,
+              ),
               const SizedBox(height: 8),
-              _buildRow(Icons.access_time, '${event['start_hour']} - ${event['end_hour']}', isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(
+                Icons.access_time,
+                '${event['start_hour']} - ${event['end_hour']}',
+                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.white : Colors.black,
+              ),
               const SizedBox(height: 8),
-              _buildRow(Icons.location_on, event['location'].toString(), isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700, isDarkMode ? Colors.white : Colors.black,),
+              _buildRow(
+                Icons.location_on,
+                event['location'].toString(),
+                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.white : Colors.black,
+              ),
               if (isOverlap)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: _buildRow(Icons.warning, 'Este evento se solapa con otro', Colors.red, Colors.red),
+                  child: _buildRow(
+                    Icons.warning,
+                    'Este evento se solapa con otro',
+                    Colors.red,
+                    Colors.red,
+                  ),
                 ),
             ],
           ),
@@ -72,21 +103,19 @@ class ClassCards extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(IconData icon, String text, Color colorIcon, Color colorTexto) {
+  Widget _buildRow(
+    IconData icon,
+    String text,
+    Color colorIcon,
+    Color colorTexto,
+  ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: colorIcon,
-        ),
+        Icon(icon, size: 16, color: colorIcon),
         const SizedBox(width: 8),
         Text(
           text,
-          style: TextStyle(
-            color: colorTexto,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: colorTexto, fontWeight: FontWeight.bold),
         ),
       ],
     );

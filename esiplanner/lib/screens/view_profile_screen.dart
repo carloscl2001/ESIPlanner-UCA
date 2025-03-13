@@ -25,13 +25,13 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   }
 
   Future<void> _loadUserProfile() async {
-    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
-
+    final String? username =
+        Provider.of<AuthProvider>(context, listen: false).username;
 
     if (username != null) {
-
-      final profileData = await profileService.getProfileData(username: username);
-
+      final profileData = await profileService.getProfileData(
+        username: username,
+      );
 
       setState(() {
         if (profileData.isEmpty) {
@@ -49,7 +49,9 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // Obtén el ThemeProvider
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
@@ -59,75 +61,92 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+        backgroundColor:
+            isDarkMode
+                ? Colors.grey.shade800
+                : Colors.indigo, // Color de la barra de navegación
       ),
       body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDarkMode
-                              ? [Colors.grey.shade800, Colors.grey.shade800] // Degradado oscuro
-                              : [Colors.indigo.shade50, Colors.white], // Degradado clarodado claro
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20.0), // Coincide con el radio de la tarjeta
-                      ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  20.0,
+                ), // Bordes más redondeados
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors:
+                        isDarkMode
+                            ? [
+                              Colors.grey.shade800,
+                              Colors.grey.shade800,
+                            ] // Degradado oscuro
+                            : [
+                              Colors.indigo.shade50,
+                              Colors.white,
+                            ], // Degradado clarodado claro
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    20.0,
+                  ), // Coincide con el radio de la tarjeta
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                if (errorMessage.isNotEmpty) ...[
-                                  Text(
-                                    errorMessage,
-                                    style: const TextStyle(color: Colors.red, fontSize: 14),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
-                                // Campos de perfil con iconos
-                                ProfileField(
-                                  icon: Icons.person,
-                                  label: userProfile['username'] ?? 'Cargando...',
-                                ),
-                                ProfileField(
-                                  icon: Icons.email,
-                                  label: userProfile['email'] ?? 'Cargando...',
-                                ),
-                                ProfileField(
-                                  icon: Icons.badge,
-                                  label: userProfile['name'] ?? 'Cargando...',
-                                ),
-                                ProfileField(
-                                  icon: Icons.family_restroom,
-                                  label: userProfile['surname'] ?? 'Cargando...',
-                                ),
-                                ProfileField(
-                                  icon: Icons.school,
-                                  label: userProfile['degree'] ?? 'Cargando...',
-                                ),
-                              ],
+                          if (errorMessage.isNotEmpty) ...[
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
+                            const SizedBox(height: 20),
+                          ],
+                          // Campos de perfil con iconos
+                          ProfileField(
+                            icon: Icons.person,
+                            label: userProfile['username'] ?? 'Cargando...',
+                          ),
+                          ProfileField(
+                            icon: Icons.email,
+                            label: userProfile['email'] ?? 'Cargando...',
+                          ),
+                          ProfileField(
+                            icon: Icons.badge,
+                            label: userProfile['name'] ?? 'Cargando...',
+                          ),
+                          ProfileField(
+                            icon: Icons.family_restroom,
+                            label: userProfile['surname'] ?? 'Cargando...',
+                          ),
+                          ProfileField(
+                            icon: Icons.school,
+                            label: userProfile['degree'] ?? 'Cargando...',
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -140,7 +159,9 @@ class ProfileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // Obtén el ThemeProvider
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Container(

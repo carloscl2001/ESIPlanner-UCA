@@ -48,13 +48,18 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
 
     try {
-      final profileData = await _profileService.getProfileData(username: username);
+      final profileData = await _profileService.getProfileData(
+        username: username,
+      );
       final degree = profileData["degree"];
       final userSubjects = profileData["subjects"] ?? [];
 
       if (degree == null || userSubjects.isEmpty) {
         setState(() {
-          _errorMessage = degree == null ? 'No se encontró el grado en los datos del perfil' : 'El usuario no tiene asignaturas';
+          _errorMessage =
+              degree == null
+                  ? 'No se encontró el grado en los datos del perfil'
+                  : 'El usuario no tiene asignaturas';
           _isLoading = false;
         });
         return;
@@ -79,18 +84,32 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchAndFilterSubjects(List<dynamic> userSubjects) async {
+  Future<List<Map<String, dynamic>>> _fetchAndFilterSubjects(
+    List<dynamic> userSubjects,
+  ) async {
     List<Map<String, dynamic>> updatedSubjects = [];
 
     for (var subject in userSubjects) {
-      final subjectData = await _subjectService.getSubjectData(codeSubject: subject['code']);
-      final filteredClasses = _filterClasses(subjectData['classes'], subject['types']);
+      final subjectData = await _subjectService.getSubjectData(
+        codeSubject: subject['code'],
+      );
+      final filteredClasses = _filterClasses(
+        subjectData['classes'],
+        subject['types'],
+      );
 
       for (var classData in filteredClasses) {
-        classData['events'].sort((a, b) => DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])));
+        classData['events'].sort(
+          (a, b) =>
+              DateTime.parse(a['date']).compareTo(DateTime.parse(b['date'])),
+        );
       }
 
-      filteredClasses.sort((a, b) => DateTime.parse(a['events'][0]['date']).compareTo(DateTime.parse(b['events'][0]['date'])));
+      filteredClasses.sort(
+        (a, b) => DateTime.parse(
+          a['events'][0]['date'],
+        ).compareTo(DateTime.parse(b['events'][0]['date'])),
+      );
 
       updatedSubjects.add({
         'name': subjectData['name'] ?? subject['name'],
@@ -102,7 +121,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return updatedSubjects;
   }
 
-  List<dynamic> _filterClasses(List<dynamic>? classes, List<dynamic>? userTypes) {
+  List<dynamic> _filterClasses(
+    List<dynamic>? classes,
+    List<dynamic>? userTypes,
+  ) {
     if (classes == null) return [];
     return classes.where((classData) {
       final classType = classData['type']?.toString();
@@ -137,7 +159,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
     _weekLabels = [];
 
     DateTime currentStart = _getStartOfWeek(firstDate);
-    while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
+    while (currentStart.isBefore(lastDate) ||
+        currentStart.isAtSameMomentAs(lastDate)) {
       DateTime currentEnd = currentStart.add(const Duration(days: 6));
 
       bool hasEvents = false;
@@ -145,7 +168,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
         for (var classData in subject['classes']) {
           for (var event in classData['events']) {
             final eventDate = DateTime.parse(event['date']);
-            if (eventDate.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+            if (eventDate.isAfter(
+                  currentStart.subtract(const Duration(days: 1)),
+                ) &&
                 eventDate.isBefore(currentEnd.add(const Duration(days: 1)))) {
               hasEvents = true;
               break;
@@ -168,7 +193,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
   }
 
-  DateTime _getStartOfWeek(DateTime date) => date.subtract(Duration(days: date.weekday - 1));
+  DateTime _getStartOfWeek(DateTime date) =>
+      date.subtract(Duration(days: date.weekday - 1));
 
   String _formatDateWithWeekNumber(DateTime startDate, DateTime endDate) {
     return '${_formatDateShort(startDate)} - ${_formatDateShort(endDate)}';
@@ -190,45 +216,47 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-        'Selecciona una semana',
-        style: TextStyle(
-          color: Colors.white, 
-          fontWeight: FontWeight.bold, 
-          fontSize: 18.0, // Cambia este valor según el tamaño que necesites
+          'Selecciona una semana',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18.0, // Cambia este valor según el tamaño que necesites
+          ),
         ),
-      ),
         centerTitle: true,
         backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(25), // Ajusta el radio para cambiar la curvatura
+            bottom: Radius.circular(
+              25,
+            ), // Ajusta el radio para cambiar la curvatura
           ),
         ),
-        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
+        toolbarHeight:
+            45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildWeekSelector(isDarkMode),
-                  if (_errorMessage.isNotEmpty) ...[
-                    Text(
-                      _errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    _buildWeekSelector(isDarkMode),
+                    if (_errorMessage.isNotEmpty) ...[
+                      Text(
+                        _errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     const SizedBox(height: 10),
+                    const Divider(),
+                    Expanded(child: _buildEventList(isDarkMode)),
                   ],
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  Expanded(
-                    child: _buildEventList(isDarkMode),
-                  ),
-                ],
+                ),
               ),
-            ),
     );
   }
 
@@ -243,23 +271,35 @@ class _TimetableScreenState extends State<TimetableScreen> {
         const SizedBox(width: 16.0),
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.grey.shade900 : null,
-              gradient: isDarkMode
-                  ? null
-                  : LinearGradient(
-                      colors: [Colors.indigo.shade50, Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+              gradient:
+                  isDarkMode
+                      ? null
+                      : LinearGradient(
+                        colors: [Colors.indigo.shade50, Colors.white],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
                 BoxShadow(
-                  color: !isDarkMode ? Colors.black.withValues(alpha: 0.45) : Colors.white.withValues(alpha:0.45), // La opacidad típica de una sombra de elevación 4
+                  color:
+                      !isDarkMode
+                          ? Colors.black.withValues(alpha: 0.45)
+                          : Colors.white.withValues(
+                            alpha: 0.45,
+                          ), // La opacidad típica de una sombra de elevación 4
                   blurRadius: 8.0, // Simula el blur de una elevación 4
-                  offset: const Offset(0, 0), // Un pequeño desplazamiento vertical, como el de una Card
-                ),        
+                  offset: const Offset(
+                    0,
+                    0,
+                  ), // Un pequeño desplazamiento vertical, como el de una Card
+                ),
               ],
             ),
             child: DropdownButton<int>(
@@ -269,35 +309,41 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   _selectedWeekIndex = newValue!;
                 });
               },
-              items: _weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
-                final weekRange = _weekRanges[entry.key];
-                return DropdownMenuItem<int>(
-                  value: entry.key,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _formatDateShort(weekRange.start),
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            fontSize: 16.0,
-                          ),
+              items:
+                  _weekLabels.asMap().entries.map<DropdownMenuItem<int>>((
+                    entry,
+                  ) {
+                    final weekRange = _weekRanges[entry.key];
+                    return DropdownMenuItem<int>(
+                      value: entry.key,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 6,
                         ),
-                        Text("|"),
-                        Text(
-                          _formatDateShort(weekRange.end),
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            fontSize: 16.0,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _formatDateShort(weekRange.start),
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            Text("|"),
+                            Text(
+                              _formatDateShort(weekRange.end),
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
+                      ),
+                    );
+                  }).toList(),
               underline: const SizedBox(),
               icon: Padding(
                 padding: const EdgeInsets.only(left: 12.0),
@@ -335,16 +381,25 @@ class _TimetableScreenState extends State<TimetableScreen> {
       itemCount: sortedDates.length,
       itemBuilder: (context, index) {
         final date = sortedDates[index];
-        final events = groupedByDate[date]!..sort((a, b) {
-          final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-          final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-          return timeA.compareTo(timeB);
-        });
+        final events =
+            groupedByDate[date]!..sort((a, b) {
+              final timeA = DateTime.parse(
+                '${a['event']['date']} ${a['event']['start_hour']}',
+              );
+              final timeB = DateTime.parse(
+                '${b['event']['date']} ${b['event']['start_hour']}',
+              );
+              return timeA.compareTo(timeB);
+            });
 
         final isOverlapping = List<bool>.filled(events.length, false);
         for (int i = 0; i < events.length - 1; i++) {
-          final endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-          final startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+          final endTimeCurrent = DateTime.parse(
+            '${events[i]['event']['date']} ${events[i]['event']['end_hour']}',
+          );
+          final startTimeNext = DateTime.parse(
+            '${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}',
+          );
 
           if (endTimeCurrent.isAfter(startTimeNext)) {
             isOverlapping[i] = true;
@@ -393,7 +448,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          if (eventDate.isAfter(weekRange.start.subtract(const Duration(days: 1))) &&
+          if (eventDate.isAfter(
+                weekRange.start.subtract(const Duration(days: 1)),
+              ) &&
               eventDate.isBefore(weekRange.end.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',

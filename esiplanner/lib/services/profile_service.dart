@@ -2,13 +2,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart'; 
+import '../providers/auth_provider.dart';
 import '../services/api_services.dart'; // Importa ApiServices para usar la URL base
 
 class ProfileService {
   // Obtener datos del perfil
   Future<Map<String, dynamic>> getProfileData({
-    required String username}) async {
+    required String username,
+  }) async {
     try {
       final response = await http.get(
         Uri.parse('${ApiServices.baseUrl}/users/$username'),
@@ -20,13 +21,13 @@ class ProfileService {
       } else {
         return {
           'success': false,
-          'message': 'Error al obtener los datos del perfil'
+          'message': 'Error al obtener los datos del perfil',
         };
       }
     } catch (e) {
       return {
         'success': false,
-        'message': 'Error al realizar la solicitud: $e'
+        'message': 'Error al realizar la solicitud: $e',
       };
     }
   }
@@ -38,13 +39,11 @@ class ProfileService {
     required BuildContext context,
   }) async {
     try {
-      final String? token = Provider.of<AuthProvider>(context, listen: false).token;
+      final String? token =
+          Provider.of<AuthProvider>(context, listen: false).token;
 
       if (token == null) {
-        return {
-          'success': false,
-          'message': 'No estás autenticado'
-        };
+        return {'success': false, 'message': 'No estás autenticado'};
       }
 
       final response = await http.put(
@@ -53,31 +52,29 @@ class ProfileService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: json.encode({
-          'new_password': newPassword,
-        }),
+        body: json.encode({'new_password': newPassword}),
       );
 
       if (response.statusCode == 200) {
         return {
           'success': true,
-          'message': 'Contraseña actualizada correctamente'
+          'message': 'Contraseña actualizada correctamente',
         };
       } else if (response.statusCode == 400) {
         return {
           'success': false,
-          'message': 'La nueva contraseña tiene que ser distinta a la actual'
+          'message': 'La nueva contraseña tiene que ser distinta a la actual',
         };
       } else {
         return {
           'success': false,
-          'message': 'Error al actualizar la contraseña: ${response.body}'
+          'message': 'Error al actualizar la contraseña: ${response.body}',
         };
       }
     } catch (e) {
       return {
         'success': false,
-        'message': 'Error al realizar la solicitud: $e'
+        'message': 'Error al realizar la solicitud: $e',
       };
     }
   }
@@ -93,15 +90,9 @@ class ProfileService {
 
       if (response.statusCode == 200) {
         String responseBody = utf8.decode(response.bodyBytes);
-        return {
-          'success': true,
-          'data': json.decode(responseBody),
-        };
+        return {'success': true, 'data': json.decode(responseBody)};
       } else if (response.statusCode == 404) {
-        return {
-          'success': false,
-          'message': 'Usuario no encontrado',
-        };
+        return {'success': false, 'message': 'Usuario no encontrado'};
       } else {
         return {
           'success': false,

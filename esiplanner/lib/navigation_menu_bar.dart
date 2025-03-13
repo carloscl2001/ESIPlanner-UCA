@@ -74,7 +74,9 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                  Navigator.pop(context); // Cerrar el menú antes de cerrar sesión
+                  Navigator.pop(
+                    context,
+                  ); // Cerrar el menú antes de cerrar sesión
                   logout();
                 },
               ),
@@ -136,22 +138,40 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: <Widget>[
             NavigationDestination(
-              selectedIcon: Icon(Icons.home_filled, color: isDarkMode ? Colors.black : Colors.indigo),
+              selectedIcon: Icon(
+                Icons.home_filled,
+                color: isDarkMode ? Colors.black : Colors.indigo,
+              ),
               icon: const Icon(Icons.home_filled, color: Colors.grey),
               label: 'Inicio',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_view_week, color: isDarkMode ? Colors.black : Colors.indigo),
-              icon: const Icon(Icons.calendar_view_week_outlined, color: Colors.grey),
+              selectedIcon: Icon(
+                Icons.calendar_view_week,
+                color: isDarkMode ? Colors.black : Colors.indigo,
+              ),
+              icon: const Icon(
+                Icons.calendar_view_week_outlined,
+                color: Colors.grey,
+              ),
               label: 'Horario',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.calendar_month_rounded, color: isDarkMode ? Colors.black : Colors.indigo),
-              icon: const Icon(Icons.calendar_month_rounded, color: Colors.grey),
+              selectedIcon: Icon(
+                Icons.calendar_month_rounded,
+                color: isDarkMode ? Colors.black : Colors.indigo,
+              ),
+              icon: const Icon(
+                Icons.calendar_month_rounded,
+                color: Colors.grey,
+              ),
               label: 'Agenda',
             ),
             NavigationDestination(
-              selectedIcon: Icon(Icons.person, color: isDarkMode ? Colors.black : Colors.indigo),
+              selectedIcon: Icon(
+                Icons.person,
+                color: isDarkMode ? Colors.black : Colors.indigo,
+              ),
               icon: const Icon(Icons.person_outline, color: Colors.grey),
               label: 'Perfil',
             ),
@@ -160,12 +180,13 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: <Widget>[
-          const HomeScreen(),
-          const TimetableScreen(),
-          const AgendaScreen(),
-          const ProfileScreen(),
-        ][currentPageIndex],
+        child:
+            <Widget>[
+              const HomeScreen(),
+              const TimetableScreen(),
+              const AgendaScreen(),
+              const ProfileScreen(),
+            ][currentPageIndex],
       ),
     );
   }

@@ -7,7 +7,6 @@ import '../widgets/class_cards.dart';
 import '../providers/theme_provider.dart';
 import 'package:intl/intl.dart';
 
-
 class AgendaScreen extends StatefulWidget {
   const AgendaScreen({super.key});
 
@@ -37,7 +36,8 @@ class AgendaScreenState extends State<AgendaScreen> {
   }
 
   Future<void> _loadSubjects() async {
-    final String? username = Provider.of<AuthProvider>(context, listen: false).username;
+    final String? username =
+        Provider.of<AuthProvider>(context, listen: false).username;
 
     if (username == null) {
       if (mounted) {
@@ -50,7 +50,9 @@ class AgendaScreenState extends State<AgendaScreen> {
     }
 
     try {
-      final profileData = await profileService.getProfileData(username: username);
+      final profileData = await profileService.getProfileData(
+        username: username,
+      );
 
       final degree = profileData["degree"];
       final List<dynamic> userSubjects = profileData["subjects"] ?? [];
@@ -59,25 +61,27 @@ class AgendaScreenState extends State<AgendaScreen> {
         List<Map<String, dynamic>> updatedSubjects = [];
 
         for (var subject in userSubjects) {
-          final subjectData = await subjectService.getSubjectData(codeSubject: subject['code']);
+          final subjectData = await subjectService.getSubjectData(
+            codeSubject: subject['code'],
+          );
 
           // Filtrar las clases según los tipos del usuario
-          final List<dynamic> filteredClasses = subjectData['classes']
-              .where((classData) {
+          final List<dynamic> filteredClasses =
+              subjectData['classes'].where((classData) {
                 // Verificar si 'type' está presente en classData
                 if (classData.containsKey('type')) {
                   // Convertir classData['type'] a String
                   final classType = classData['type'].toString();
 
                   // Convertir subject['types'] a List<String>
-                  final List<String> userTypes = (subject['types'] as List<dynamic>).cast<String>();
+                  final List<String> userTypes =
+                      (subject['types'] as List<dynamic>).cast<String>();
 
                   // Verificar si el tipo de clase está en la lista de tipos del usuario
                   return userTypes.contains(classType);
                 }
                 return false; // Si no tiene 'type', no se incluye en los resultados
-              })
-              .toList();
+              }).toList();
 
           // Ordenar los eventos de cada clase por fecha
           for (var classData in filteredClasses) {
@@ -112,9 +116,10 @@ class AgendaScreenState extends State<AgendaScreen> {
       } else {
         if (mounted) {
           setState(() {
-            errorMessage = degree == null
-                ? 'No se encontró el grado en los datos del perfil'
-                : 'El usuario no tiene asignaturas';
+            errorMessage =
+                degree == null
+                    ? 'No se encontró el grado en los datos del perfil'
+                    : 'El usuario no tiene asignaturas';
             isLoading = false;
           });
         }
@@ -162,7 +167,8 @@ class AgendaScreenState extends State<AgendaScreen> {
     weekLabels = [];
 
     DateTime currentStart = _getStartOfWeek(firstDate);
-    while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
+    while (currentStart.isBefore(lastDate) ||
+        currentStart.isAtSameMomentAs(lastDate)) {
       DateTime currentEnd = currentStart.add(const Duration(days: 6));
 
       // Verificar si hay algún evento en esta semana
@@ -171,7 +177,9 @@ class AgendaScreenState extends State<AgendaScreen> {
         for (var classData in subject['classes']) {
           for (var event in classData['events']) {
             final eventDate = DateTime.parse(event['date']);
-            if (eventDate.isAfter(currentStart.subtract(const Duration(days: 1))) &&
+            if (eventDate.isAfter(
+                  currentStart.subtract(const Duration(days: 1)),
+                ) &&
                 eventDate.isBefore(currentEnd.add(const Duration(days: 1)))) {
               hasEvents = true;
               break;
@@ -183,7 +191,9 @@ class AgendaScreenState extends State<AgendaScreen> {
 
       if (hasEvents) {
         weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
-        weekLabels.add('${_formatDate(currentStart)} - ${_formatDate(currentEnd)}');
+        weekLabels.add(
+          '${_formatDate(currentStart)} - ${_formatDate(currentEnd)}',
+        );
       }
 
       currentStart = currentStart.add(const Duration(days: 7));
@@ -223,7 +233,9 @@ class AgendaScreenState extends State<AgendaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context); // Obtén el ThemeProvider
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // Obtén el ThemeProvider
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
@@ -233,81 +245,99 @@ class AgendaScreenState extends State<AgendaScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo, // Color de la barra de navegación
+        backgroundColor:
+            isDarkMode
+                ? Colors.grey.shade800
+                : Colors.indigo, // Color de la barra de navegación
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  // Selector de semanas mejorado
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey.shade900 : Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha:0.1),
-                          blurRadius: 6.0,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: DropdownButton<int>(
-                      value: selectedWeekIndex,
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          selectedWeekIndex = newValue!;
-                        });
-                      },
-                      items: weekLabels.asMap().entries.map<DropdownMenuItem<int>>((entry) {
-                        return DropdownMenuItem<int>(
-                          value: entry.key,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: isDarkMode ? Colors.white : Colors.indigo,
-                                size: 18.0,
-                              ),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                entry.value,
-                                style: TextStyle(
-                                  color: isDarkMode ? Colors.white : Colors.black,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      underline: const SizedBox(), // Elimina la línea inferior por defecto
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: isDarkMode ? Colors.white : Colors.indigo,
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: <Widget>[
+                    // Selector de semanas mejorado
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
                       ),
-                      isExpanded: true,
-                      dropdownColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (errorMessage.isNotEmpty) ...[
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 6.0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: DropdownButton<int>(
+                        value: selectedWeekIndex,
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            selectedWeekIndex = newValue!;
+                          });
+                        },
+                        items:
+                            weekLabels
+                                .asMap()
+                                .entries
+                                .map<DropdownMenuItem<int>>((entry) {
+                                  return DropdownMenuItem<int>(
+                                    value: entry.key,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          color:
+                                              isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.indigo,
+                                          size: 18.0,
+                                        ),
+                                        const SizedBox(width: 8.0),
+                                        Text(
+                                          entry.value,
+                                          style: TextStyle(
+                                            color:
+                                                isDarkMode
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                                .toList(),
+                        underline:
+                            const SizedBox(), // Elimina la línea inferior por defecto
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: isDarkMode ? Colors.white : Colors.indigo,
+                        ),
+                        isExpanded: true,
+                        dropdownColor:
+                            isDarkMode ? Colors.grey.shade800 : Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 20),
+                    if (errorMessage.isNotEmpty) ...[
+                      Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                    Expanded(child: _buildEventList()),
                   ],
-                  Expanded(
-                    child: _buildEventList(),
-                  ),
-                ],
+                ),
               ),
-            ),
     );
   }
 
@@ -325,7 +355,9 @@ class AgendaScreenState extends State<AgendaScreen> {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          if (eventDate.isAfter(weekRange.start.subtract(const Duration(days: 1))) &&
+          if (eventDate.isAfter(
+                weekRange.start.subtract(const Duration(days: 1)),
+              ) &&
               eventDate.isBefore(weekRange.end.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',
@@ -352,8 +384,12 @@ class AgendaScreenState extends State<AgendaScreen> {
     // Ordenar los eventos por hora dentro de cada fecha
     groupedByDate.forEach((date, events) {
       events.sort((a, b) {
-        DateTime timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-        DateTime timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+        DateTime timeA = DateTime.parse(
+          '${a['event']['date']} ${a['event']['start_hour']}',
+        );
+        DateTime timeB = DateTime.parse(
+          '${b['event']['date']} ${b['event']['start_hour']}',
+        );
         return timeA.compareTo(timeB);
       });
     });
@@ -370,8 +406,12 @@ class AgendaScreenState extends State<AgendaScreen> {
         // Verificar solapamientos
         List<bool> isOverlapping = List.filled(events.length, false);
         for (int i = 0; i < events.length - 1; i++) {
-          DateTime endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-          DateTime startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+          DateTime endTimeCurrent = DateTime.parse(
+            '${events[i]['event']['date']} ${events[i]['event']['end_hour']}',
+          );
+          DateTime startTimeNext = DateTime.parse(
+            '${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}',
+          );
 
           if (endTimeCurrent.isAfter(startTimeNext)) {
             isOverlapping[i] = true;
@@ -387,7 +427,10 @@ class AgendaScreenState extends State<AgendaScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 // Formatea la fecha usando DateFormat
-              DateFormat('EEEE d MMMM y', 'es_ES').format(DateTime.parse(date)),
+                DateFormat(
+                  'EEEE d MMMM y',
+                  'es_ES',
+                ).format(DateTime.parse(date)),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

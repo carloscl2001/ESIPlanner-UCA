@@ -244,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ), // Ajusta el radio para cambiar la curvatura
           ),
         ),
-        toolbarHeight: 45.0, // Cambia este valor para ajustar la altura del AppBar
+        toolbarHeight:
+            45.0, // Cambia este valor para ajustar la altura del AppBar
       ),
       body:
           _isLoading

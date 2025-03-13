@@ -18,10 +18,9 @@ import 'screens/view_subjects_profile_screen.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializa los datos de localización para español (ajusta a tu idioma y región)
   await initializeDateFormatting('es_ES', null); // O el locale que desees
 
@@ -29,7 +28,9 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
-        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Añade el ThemeProvider
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ), // Añade el ThemeProvider
         ChangeNotifierProvider(create: (_) => OverlapClassProvider()),
       ],
       child: const MyApp(),
@@ -59,8 +60,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-       title: 'ESIP', // Título de la aplicación
-
+      title: 'ESIP', // Título de la aplicación
       //TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Tema claro
@@ -71,9 +71,7 @@ class _MyAppState extends State<MyApp> {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
           labelStyle: const TextStyle(color: Colors.indigo),
           hintStyle: TextStyle(color: Colors.grey[400]),
           enabledBorder: OutlineInputBorder(
@@ -86,19 +84,15 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         navigationBarTheme: NavigationBarThemeData(
-          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return const TextStyle(
-                  color: Colors.indigo,
-                  fontWeight: FontWeight.bold,
-                );
-              }
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+            if (states.contains(WidgetState.selected)) {
               return const TextStyle(
-                color: Colors.grey,
+                color: Colors.indigo,
+                fontWeight: FontWeight.bold,
               );
-            },
-          ),
+            }
+            return const TextStyle(color: Colors.grey);
+          }),
           indicatorColor: Colors.indigo.shade100,
           backgroundColor: Colors.white,
         ),
@@ -133,9 +127,7 @@ class _MyAppState extends State<MyApp> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-          ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
 
@@ -148,9 +140,7 @@ class _MyAppState extends State<MyApp> {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.grey.shade900,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
           labelStyle: const TextStyle(color: Colors.white),
           hintStyle: const TextStyle(color: Colors.white),
           enabledBorder: OutlineInputBorder(
@@ -163,20 +153,16 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         navigationBarTheme: NavigationBarThemeData(
-          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-            (states) {
-              if (states.contains(WidgetState.selected)) {
-                return TextStyle(
-                  color: Colors.yellow.shade700,
-                  fontWeight: FontWeight.bold,
-                );
-              }
-              return const TextStyle(
-                color: Colors.grey,
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
+            if (states.contains(WidgetState.selected)) {
+              return TextStyle(
+                color: Colors.yellow.shade700,
+                fontWeight: FontWeight.bold,
               );
-            },
-          ),
-          indicatorColor: Colors.yellow.shade700 ,
+            }
+            return const TextStyle(color: Colors.grey);
+          }),
+          indicatorColor: Colors.yellow.shade700,
           backgroundColor: Colors.black,
         ),
         cardTheme: CardTheme(
@@ -210,15 +196,15 @@ class _MyAppState extends State<MyApp> {
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-          ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
-      themeMode: themeProvider.themeMode, // Usa el tema actual del ThemeProvider
+      themeMode:
+          themeProvider.themeMode, // Usa el tema actual del ThemeProvider
       initialRoute: '/',
       routes: {
-        '/': (context) => Consumer<AuthProvider>(
+        '/':
+            (context) => Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 return authProvider.isAuthenticated
                     ? const NavigationMenuBar()
