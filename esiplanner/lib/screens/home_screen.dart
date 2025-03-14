@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _selectedDay;
 
   final List<String> _weekDays = ['L', 'M', 'X', 'J', 'V'];
+  final List<String> _weekDaysFullName = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   @override
   void initState() {
@@ -139,17 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
         : 'L';
   }
 
-  String _getMonthYearRange(DateTime startOfWeek, DateTime endOfWeek) {
-    final startMonth = _getMonthName(startOfWeek.month);
-    final startYear = startOfWeek.year;
-    final endMonth = _getMonthName(endOfWeek.month);
-    final endYear = endOfWeek.year;
-
-    return startMonth == endMonth && startYear == endYear
-        ? '$startMonth $startYear'
-        : '$startMonth $startYear - $endMonth $endYear';
-  }
-
   String _getMonthName(int month) {
     const monthNames = [
       'Enero',
@@ -226,32 +216,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final weekDates = _getWeekDates();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Tus clases esta semana',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0, // Cambia este valor según el tamaño que necesites
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(
-              25,
-            ), // Ajusta el radio para cambiar la curvatura
-          ),
-        ),
-        toolbarHeight:
-            45.0, // Cambia este valor para ajustar la altura del AppBar
-      ),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Column(
                   children: [
                     if (_errorMessage.isNotEmpty) ...[
@@ -262,33 +231,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 20),
                     ],
+                    principalRow(isDarkMode, DateTime.now().day.toString(),),
+                    const SizedBox(height: 10),
+                    dayButtonRow(weekDates, isDarkMode),
+                    const SizedBox(height: 10),
+                    const Divider(),
                     Text(
-                      _getMonthYearRange(
-                        _startOfWeek(DateTime.now()),
-                        _endOfWeek(DateTime.now()),
-                      ),
+                      'Mis clases del día',
                       style: TextStyle(
-                        fontSize: 20,
+                        color: isDarkMode ? Colors.grey : Colors.grey,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontSize: 20,
                       ),
+                      textAlign: TextAlign.left,
                     ),
-                    const SizedBox(height: 10),
-                    const Divider(),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children:
-                          _weekDays.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final day = entry.value;
-                            final date = weekDates[index];
-                            return _buildDayButton(day, date, isDarkMode);
-                          }).toList(),
-                    ),
-                    const SizedBox(height: 10),
-                    const Divider(),
-                    const SizedBox(height: 10),
                     Expanded(
                       child: _buildEventList(
                         _getFilteredEvents(_subjects, _selectedDay),
@@ -300,11 +256,83 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Row dayButtonRow(List<String> weekDates, bool isDarkMode) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children:
+          _weekDays.asMap().entries.map((entry) {
+            final index = entry.key;
+            final day = entry.value;
+            final date = weekDates[index];
+            return _buildDayButton(day, date, isDarkMode);
+          }).toList(),
+    );
+  }
+
+  Row principalRow(bool isDarkMode, day) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribuye el espacio entre los hijos
+      children: [
+        Row(
+          children: [
+            Text(
+              DateTime.now().day.toString(),
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 55,
+              ),
+            ),
+            SizedBox(width: 16), // Espacio entre el día y la columna (opcional)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // Alinea el texto del Column a la izquierda
+              children: [
+                Text(
+                  _weekDaysFullName[DateTime.now().weekday - 1],
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                Text(
+                  '${_getMonthName(DateTime.now().month)} ${DateTime.now().year}',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Container(
+          margin: const EdgeInsets.only(right: 8), // Margen derecho
+          alignment: Alignment.center, // Centra el texto dentro del Container
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Espacio interno
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo, // Color de fondo
+            borderRadius: BorderRadius.circular(16), // Bordes redondeados
+          ),
+          child: Text(
+            day == _selectedDay ? 'Hoy si' : 'Hoy', // Condición para mostrar "Hoy" o "No hoy"
+            style: TextStyle(
+              color: isDarkMode ? Colors.black : Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDayButton(String day, String date, bool isDarkMode) {
     return GestureDetector(
       onTap: () => setState(() => _selectedDay = day),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
         decoration: BoxDecoration(
           color:
               _selectedDay == day
@@ -315,15 +343,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? (isDarkMode
                       ? LinearGradient(
                         colors: [
-                          Colors.grey.shade900,
-                          Colors.grey.shade900,
+                          Colors.black,
+                          Colors.black,
                         ], // Degradado oscuro
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       )
                       : LinearGradient(
                         colors: [
-                          Colors.indigo.shade50,
+                          Colors.white,
                           Colors.white,
                         ], // Degradado claro
                         begin: Alignment.topLeft,
@@ -355,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color:
                     _selectedDay == day
                         ? (isDarkMode ? Colors.black : Colors.white)
-                        : (isDarkMode ? Colors.white : Colors.black),
+                        : ( Colors.grey),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -369,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? (isDarkMode ? Colors.black : Colors.white)
                         : (isDarkMode ? Colors.white : Colors.black),
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 26,
               ),
             ),
           ],

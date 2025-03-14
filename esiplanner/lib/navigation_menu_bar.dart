@@ -106,7 +106,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: isDarkMode ? Colors.black : Colors.indigo.shade900,
+            color: isDarkMode ? Colors.black : Colors.indigo,
           ),
         ),
         actions: [
