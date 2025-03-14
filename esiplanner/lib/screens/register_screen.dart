@@ -212,11 +212,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Por favor ingrese una contraseña';
-                              } else if (value.length < 8) {
-                                return 'Debe tener al menos 8 caracteres';
-                              } else if (!isValidPassword(value)) {
-                                return 'Debe contener letras y números';
-                              }
+                              } //else if (value.length < 8) {
+                                //return 'Debe tener al menos 8 caracteres';
+                              //} else if (!isValidPassword(value)) {
+                                //return 'Debe contener letras y números';
+                              //}
                               return null;
                             },
                           ),
