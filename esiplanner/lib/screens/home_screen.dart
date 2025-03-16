@@ -308,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Padding actualDayRow(bool isDarkMode, day) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -405,8 +405,8 @@ class _HomeScreenState extends State<HomeScreen> {
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withOpacity(0.45)
-                  : Colors.white.withOpacity(0.45),
+                  ? Colors.black.withValues( alpha: 0.45)
+                  : Colors.white.withValues( alpha: 0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
