@@ -420,6 +420,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList(List<Map<String, dynamic>> events) {
+    if (events.isEmpty) {
+      // Si no hay eventos, devolver un Text en grande
+      return Center(
+        child: Text(
+          'No hay clases',
+          style: TextStyle(
+            fontSize: 24, // Tamaño grande
+            fontWeight: FontWeight.bold, // Negrita
+            color: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
+                ? Colors.white // Color para modo oscuro
+                : Colors.black, // Color para modo claro
+          ),
+        ),
+      );
+    }
+
     final groupedByDate = <String, List<Map<String, dynamic>>>{};
     for (var eventData in events) {
       final eventDate = eventData['event']['date'];
@@ -460,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16), // Padding horizontal de 16
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: events.asMap().entries.map((entry) {
