@@ -146,11 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _getCurrentWeekday() {
     final now = DateTime.now();
-    final weekdayIndex = now.weekday - 1;
+    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
+    final weekdayIndex = isWeekend ? 0 : now.weekday - 1; // Si es fin de semana, devuelve lunes (0)
+    
     return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length)
-        ? _weekDays[weekdayIndex]
-        : 'L';
+      ? _weekDays[weekdayIndex]
+      : 'L';
   }
+
 
   String _getMonthName(int month) {
     const monthNames = [
@@ -244,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 20),
                     ],
                     actualDayRow(isDarkMode, DateTime.now().day.toString(),), 
-                    // const Divider(height: 10),
+                    const Divider(height: 10),
                     const SizedBox(height: 10),
                     dayButtonRow(weekDates, isDarkMode),
                     const SizedBox(height: 20),
@@ -549,10 +552,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<String> _getWeekDates() {
     final now = DateTime.now();
-    final startOfWeek = _startOfWeek(now);
+    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
+    final startOfWeek = isWeekend 
+        ? _startOfWeek(now.add(Duration(days: DateTime.monday - now.weekday + 7))) 
+        : _startOfWeek(now);
+    
     return List.generate(
       5,
       (index) => startOfWeek.add(Duration(days: index)).day.toString(),
     ); // Solo lunes a viernes
-  }
+  } 
 }
