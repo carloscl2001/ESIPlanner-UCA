@@ -231,13 +231,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 20),
                     ],
-                    principalRow(isDarkMode, DateTime.now().day.toString(),),
+                    principalRow(isDarkMode, DateTime.now().day.toString(),), 
+                    const Divider(height: 10),
                     const SizedBox(height: 10),
                     dayButtonRow(weekDates, isDarkMode),
                     const SizedBox(height: 10),
                     const Divider(),
                     Text(
-                      'Mis clases del día',
+                      'Mis clases del día seleccionado',
                       style: TextStyle(
                         color: isDarkMode ? Colors.grey : Colors.grey,
                         fontWeight: FontWeight.bold,
@@ -288,7 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start, // Alinea el texto del Column a la izquierda
               children: [
                 Text(
-                  _weekDaysFullName[DateTime.now().weekday - 1],
+                    (DateTime.now().weekday >= 1 && DateTime.now().weekday <= 5) 
+                    ? _weekDaysFullName[DateTime.now().weekday - 1] 
+                    : "Fin de semana", // Mensaje alternativo para sábado y domingo
                   style: TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
