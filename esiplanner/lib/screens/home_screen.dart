@@ -232,12 +232,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 20),
                     ],
                     principalRow(isDarkMode, DateTime.now().day.toString(),), 
-                    const Divider(height: 10),
+                    // const Divider(height: 10),
                     const SizedBox(height: 10),
                     dayButtonRow(weekDates, isDarkMode),
-                    const SizedBox(height: 10),
-                    const Divider(),
-                    Text(
+                    const SizedBox(height: 20),
+                    // const Divider(),
+                    Text( 
                       'Mis clases del día seleccionado',
                       style: TextStyle(
                         color: isDarkMode ? Colors.grey : Colors.grey,
@@ -319,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(16), // Bordes redondeados
           ),
           child: Text(
-            day == _selectedDay ? 'Hoy si' : 'Hoy', // Condición para mostrar "Hoy" o "No hoy"
+            'Hoy', // Condición para mostrar "Hoy" o "No hoy"
             style: TextStyle(
               color: isDarkMode ? Colors.black : Colors.white,
               fontWeight: FontWeight.bold,
