@@ -5,6 +5,7 @@ import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/class_cards.dart';
 import '../providers/theme_provider.dart';
+import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,13 +26,24 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _weekDays = ['L', 'M', 'X', 'J', 'V'];
   final List<String> _weekDaysFullName = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
+  // Controlador para el PageView
+  late PageController _pageController;
+
   @override
   void initState() {
     super.initState();
     _profileService = ProfileService();
     _subjectService = SubjectService();
     _selectedDay = _getCurrentWeekday();
+    _pageController = PageController(initialPage: _weekDays.indexOf(_selectedDay!));
     _loadSubjects();
+  }
+
+  
+  @override
+  void dispose() {
+    _pageController.dispose(); // Liberar el controlador
+    super.dispose();
   }
 
   Future<void> _loadSubjects() async {
@@ -335,11 +347,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDayButton(String day, String date, bool isDarkMode) {
-    // Verificar si hay eventos para el día seleccionado
     final hasEvents = _getFilteredEvents(_subjects, day).isNotEmpty;
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedDay = day),
+      onTap: () {
+        final index = _weekDays.indexOf(day);
+        _pageController.animateToPage(
+          index,
+          duration: const Duration(milliseconds: 1),
+          curve: Curves.easeInOut,
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
         decoration: BoxDecoration(
@@ -363,8 +381,8 @@ class _HomeScreenState extends State<HomeScreen> {
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withValues( alpha: 0.45)
-                  : Colors.white.withValues( alpha: 0.45),
+                  ? Colors.black.withOpacity(0.45)
+                  : Colors.white.withOpacity(0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
@@ -399,9 +417,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 4),
               ],
             ),
-            if (hasEvents) // Mostrar círculo si hay eventos
+            if (hasEvents)
               Positioned(
-                bottom: 0, // Ajusta la posición vertical del círculo
+                bottom: 0,
                 child: Container(
                   width: 6,
                   height: 6,
@@ -420,82 +438,95 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList(List<Map<String, dynamic>> events) {
-    if (events.isEmpty) {
-      // Si no hay eventos, devolver un Text en grande
-      return Center(
-        child: Text(
-          'No hay clases',
-          style: TextStyle(
-            fontSize: 24, // Tamaño grande
-            fontWeight: FontWeight.bold, // Negrita
-            color: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
-                ? Colors.white // Color para modo oscuro
-                : Colors.black, // Color para modo claro
-          ),
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+        }, // Permitir desplazamiento con el mouse y el tacto
+      ),
+      child: PageView.builder(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedDay = _weekDays[index]; // Actualizar el día seleccionado
+          });
+        },
+        physics: const PageScrollPhysics().applyTo(
+          const BouncingScrollPhysics(), // Mejorar la sensibilidad
         ),
-      );
-    }
+        itemCount: _weekDays.length,
+        itemBuilder: (context, index) {
+          final day = _weekDays[index];
+          final dayEvents = _getFilteredEvents(_subjects, day);
 
-    final groupedByDate = <String, List<Map<String, dynamic>>>{};
-    for (var eventData in events) {
-      final eventDate = eventData['event']['date'];
-      groupedByDate.putIfAbsent(eventDate, () => []).add(eventData);
-    }
-
-    final sortedDates = groupedByDate.keys.toList()..sort();
-
-    return ListView.builder(
-      itemCount: sortedDates.length,
-      itemBuilder: (context, index) {
-        final date = sortedDates[index];
-        final events =
-            groupedByDate[date]!..sort((a, b) {
-              final timeA = DateTime.parse(
-                '${a['event']['date']} ${a['event']['start_hour']}',
-              );
-              final timeB = DateTime.parse(
-                '${b['event']['date']} ${b['event']['start_hour']}',
-              );
-              return timeA.compareTo(timeB);
-            });
-
-        // Detectar solapamientos
-        final isOverlapping = List<bool>.filled(events.length, false);
-        for (int i = 0; i < events.length - 1; i++) {
-          final endTimeCurrent = DateTime.parse(
-            '${events[i]['event']['date']} ${events[i]['event']['end_hour']}',
-          );
-          final startTimeNext = DateTime.parse(
-            '${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}',
-          );
-
-          if (endTimeCurrent.isAfter(startTimeNext)) {
-            isOverlapping[i] = true;
-            isOverlapping[i + 1] = true;
+          if (dayEvents.isEmpty) {
+            return Center(
+              child: Text(
+                'No hay clases',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
+            );
           }
-        }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: events.asMap().entries.map((entry) {
-              final index = entry.key;
-              final eventData = entry.value;
-              final event = eventData['event'];
-              final classType = eventData['classType'];
-              final subjectName = eventData['subjectName'];
+          final groupedByDate = <String, List<Map<String, dynamic>>>{};
+          for (var eventData in dayEvents) {
+            final eventDate = eventData['event']['date'];
+            groupedByDate.putIfAbsent(eventDate, () => []).add(eventData);
+          }
 
-              return ClassCards(
-                subjectName: subjectName,
-                classType: '$classType - ${_getGroupLabel(classType[0])}',
-                event: event,
-                isOverlap: isOverlapping[index],
+          final sortedDates = groupedByDate.keys.toList()..sort();
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: sortedDates.length,
+            itemBuilder: (context, index) {
+              final date = sortedDates[index];
+              final events = groupedByDate[date]!..sort((a, b) {
+                final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+                final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+                return timeA.compareTo(timeB);
+              });
+
+              // Detectar solapamientos
+              final isOverlapping = List<bool>.filled(events.length, false);
+              for (int i = 0; i < events.length - 1; i++) {
+                final endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
+                final startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
+
+                if (endTimeCurrent.isAfter(startTimeNext)) {
+                  isOverlapping[i] = true;
+                  isOverlapping[i + 1] = true;
+                }
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: events.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final eventData = entry.value;
+                  final event = eventData['event'];
+                  final classType = eventData['classType'];
+                  final subjectName = eventData['subjectName'];
+
+                  return ClassCards(
+                    subjectName: subjectName,
+                    classType: '$classType - ${_getGroupLabel(classType[0])}',
+                    event: event,
+                    isOverlap: isOverlapping[index],
+                  );
+                }).toList(),
               );
-            }).toList(),
-          ),
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 
