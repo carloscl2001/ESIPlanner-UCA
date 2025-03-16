@@ -332,77 +332,84 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDayButton(String day, String date, bool isDarkMode) {
+    // Verificar si hay eventos para el día seleccionado
+    final hasEvents = _getFilteredEvents(_subjects, day).isNotEmpty;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedDay = day),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
         decoration: BoxDecoration(
-          color:
-              _selectedDay == day
-                  ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
-                  : null, // Deja el color como nulo para usar el gradiente cuando no está seleccionado
-          gradient:
-              _selectedDay != day
-                  ? (isDarkMode
-                      ? LinearGradient(
-                        colors: [
-                          Colors.black,
-                          Colors.black,
-                        ], // Degradado oscuro
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                      : LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white,
-                        ], // Degradado claro
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ))
-                  : null, // No hay gradiente cuando el día está seleccionado
+          color: _selectedDay == day
+              ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
+              : null,
+          gradient: _selectedDay != day
+              ? (isDarkMode
+                  ? LinearGradient(
+                      colors: [Colors.black, Colors.black],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : LinearGradient(
+                      colors: [Colors.white, Colors.white],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ))
+              : null,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color:
-                  !isDarkMode
-                      ? Colors.black.withValues(alpha: (0.45))
-                      : Colors.white.withValues(
-                        alpha: (0.45),
-                      ), // La opacidad típica de una sombra de elevación 4
-              blurRadius: 8.0, // Simula el blur de una elevación 4
-              offset: const Offset(
-                0,
-                0,
-              ), // Un pequeño desplazamiento vertical, como el de una Card
+              color: !isDarkMode
+                  ? Colors.black.withOpacity(0.45)
+                  : Colors.white.withOpacity(0.45),
+              blurRadius: 8.0,
+              offset: const Offset(0, 0),
             ),
           ],
         ),
-        child: Column(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Text(
-              day,
-              style: TextStyle(
-                color:
-                    _selectedDay == day
+            Column(
+              children: [
+                Text(
+                  day,
+                  style: TextStyle(
+                    color: _selectedDay == day
                         ? (isDarkMode ? Colors.black : Colors.white)
-                        : ( Colors.grey),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              date,
-              style: TextStyle(
-                color:
-                    _selectedDay == day
+                        : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  date,
+                  style: TextStyle(
+                    color: _selectedDay == day
                         ? (isDarkMode ? Colors.black : Colors.white)
                         : (isDarkMode ? Colors.white : Colors.black),
-                fontWeight: FontWeight.bold,
-                fontSize: 26,
-              ),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 26,
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
             ),
+            if (hasEvents) // Mostrar círculo si hay eventos
+              Positioned(
+                bottom: 0, // Ajusta la posición vertical del círculo
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _selectedDay == day
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : (isDarkMode ? Colors.white : Colors.black),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
