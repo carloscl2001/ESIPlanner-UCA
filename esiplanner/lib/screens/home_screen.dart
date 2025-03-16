@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
                 child: Column(
                   children: [
                     if (_errorMessage.isNotEmpty) ...[
@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 20),
                     ],
-                    principalRow(isDarkMode, DateTime.now().day.toString(),), 
+                    actualDayRow(isDarkMode, DateTime.now().day.toString(),), 
                     // const Divider(height: 10),
                     const SizedBox(height: 10),
                     dayButtonRow(weekDates, isDarkMode),
@@ -270,64 +270,67 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Row principalRow(bool isDarkMode, day) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribuye el espacio entre los hijos
-      children: [
-        Row(
-          children: [
-            Text(
-              DateTime.now().day.toString(),
+  Padding actualDayRow(bool isDarkMode, day) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16), // Padding horizontal de 16
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribuye el espacio entre los hijos
+        children: [
+          Row(
+            children: [
+              Text(
+                DateTime.now().day.toString(),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 55,
+                ),
+              ),
+              const SizedBox(width: 16), // Espacio entre el día y la columna (opcional)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // Alinea el texto del Column a la izquierda
+                children: [
+                  Text(
+                    (DateTime.now().weekday >= 1 && DateTime.now().weekday <= 5)
+                        ? _weekDaysFullName[DateTime.now().weekday - 1]
+                        : "Fin de semana", // Mensaje alternativo para sábado y domingo
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    '${_getMonthName(DateTime.now().month)} ${DateTime.now().year}',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 8), // Margen derecho
+            alignment: Alignment.center, // Centra el texto dentro del Container
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Espacio interno
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo, // Color de fondo
+              borderRadius: BorderRadius.circular(16), // Bordes redondeados
+            ),
+            child: Text(
+              'Hoy', // Condición para mostrar "Hoy" o "No hoy"
               style: TextStyle(
-                color: isDarkMode ? Colors.white : Colors.black,
+                color: isDarkMode ? Colors.black : Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 55,
+                fontSize: 20,
               ),
             ),
-            SizedBox(width: 16), // Espacio entre el día y la columna (opcional)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Alinea el texto del Column a la izquierda
-              children: [
-                Text(
-                    (DateTime.now().weekday >= 1 && DateTime.now().weekday <= 5) 
-                    ? _weekDaysFullName[DateTime.now().weekday - 1] 
-                    : "Fin de semana", // Mensaje alternativo para sábado y domingo
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                Text(
-                  '${_getMonthName(DateTime.now().month)} ${DateTime.now().year}',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.only(right: 8), // Margen derecho
-          alignment: Alignment.center, // Centra el texto dentro del Container
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Espacio interno
-          decoration: BoxDecoration(
-            color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo, // Color de fondo
-            borderRadius: BorderRadius.circular(16), // Bordes redondeados
           ),
-          child: Text(
-            'Hoy', // Condición para mostrar "Hoy" o "No hoy"
-            style: TextStyle(
-              color: isDarkMode ? Colors.black : Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -360,8 +363,8 @@ class _HomeScreenState extends State<HomeScreen> {
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withOpacity(0.45)
-                  : Colors.white.withOpacity(0.45),
+                  ? Colors.black.withValues( alpha: 0.45)
+                  : Colors.white.withValues( alpha: 0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
@@ -456,23 +459,25 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:
-              events.asMap().entries.map((entry) {
-                final index = entry.key;
-                final eventData = entry.value;
-                final event = eventData['event'];
-                final classType = eventData['classType'];
-                final subjectName = eventData['subjectName'];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16), // Padding horizontal de 16
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: events.asMap().entries.map((entry) {
+              final index = entry.key;
+              final eventData = entry.value;
+              final event = eventData['event'];
+              final classType = eventData['classType'];
+              final subjectName = eventData['subjectName'];
 
-                return ClassCards(
-                  subjectName: subjectName,
-                  classType: '$classType - ${_getGroupLabel(classType[0])}',
-                  event: event,
-                  isOverlap: isOverlapping[index],
-                );
-              }).toList(),
+              return ClassCards(
+                subjectName: subjectName,
+                classType: '$classType - ${_getGroupLabel(classType[0])}',
+                event: event,
+                isOverlap: isOverlapping[index],
+              );
+            }).toList(),
+          ),
         );
       },
     );
