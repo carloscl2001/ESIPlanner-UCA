@@ -219,10 +219,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return allEvents;
   }
 
-  DateTime _startOfWeek(DateTime date) =>
-      date.subtract(Duration(days: date.weekday - 1));
-  DateTime _endOfWeek(DateTime date) =>
-      date.add(Duration(days: 5 - date.weekday)); // Solo lunes a viernes
+  DateTime _startOfWeek(DateTime date) {
+    return DateTime.utc(date.year, date.month, date.day - (date.weekday - 1));
+  }
+
+  DateTime _endOfWeek(DateTime date) {
+    return DateTime.utc(date.year, date.month, date.day + (5 - date.weekday)); // Solo lunes a viernes
+  }
 
   @override
   Widget build(BuildContext context) {
