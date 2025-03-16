@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadSubjects();
   }
 
-  
   @override
   void dispose() {
     _pageController.dispose(); // Liberar el controlador
@@ -144,16 +143,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }).toList();
   }
 
-  String _getCurrentWeekday() {
-    final now = DateTime.now();
-    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
-    final weekdayIndex = isWeekend ? 0 : now.weekday - 1; // Si es fin de semana, devuelve lunes (0)
-    
-    return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length)
-      ? _weekDays[weekdayIndex]
-      : 'L';
+  bool _isWeekend(DateTime date) {
+    return date.weekday == DateTime.saturday || date.weekday == DateTime.sunday;
   }
 
+  String _getCurrentWeekday() {
+    final now = DateTime.now();
+    final weekdayIndex = _isWeekend(now) ? 0 : now.weekday - 1; // Lunes si es fin de semana
+    return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length)
+        ? _weekDays[weekdayIndex]
+        : 'L';
+  }
 
   String _getMonthName(int month) {
     const monthNames = [
@@ -173,23 +173,41 @@ class _HomeScreenState extends State<HomeScreen> {
     return monthNames[month - 1];
   }
 
+  DateTime _startOfWeek(DateTime date) {
+    return DateTime.utc(date.year, date.month, date.day - (date.weekday - 1));
+  }
+
+  DateTime _endOfWeek(DateTime date) {
+    return DateTime.utc(date.year, date.month, date.day + (5 - date.weekday)); // Solo lunes a viernes
+  }
+
+  Map<String, List<Map<String, dynamic>>> _groupEventsByDay(List<Map<String, dynamic>> events) {
+    final groupedEvents = <String, List<Map<String, dynamic>>>{};
+    for (var event in events) {
+      final eventDate = event['event']['date'].split(' ')[0]; // Extraer solo la fecha (sin la hora)
+      groupedEvents.putIfAbsent(eventDate, () => []).add(event);
+    }
+    return groupedEvents;
+  }
+
   List<Map<String, dynamic>> _getFilteredEvents(
     List<Map<String, dynamic>> subjects,
     String? selectedDay,
   ) {
     final now = DateTime.now();
-    final startOfWeek = _startOfWeek(now);
-    final endOfWeek = _endOfWeek(now);
+    final isWeekend = _isWeekend(now);
+    final startOfWeek = isWeekend
+        ? _startOfWeek(now.add(Duration(days: DateTime.monday - now.weekday + 7)))
+        : _startOfWeek(now);
+    final endOfWeek = _endOfWeek(startOfWeek);
 
+    // Obtener todos los eventos de la semana
     List<Map<String, dynamic>> allEvents = [];
-
     for (var subject in subjects) {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          if (eventDate.isAfter(
-                startOfWeek.subtract(const Duration(days: 1)),
-              ) &&
+          if (eventDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
               eventDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
             allEvents.add({
               'subjectName': subject['name'] ?? 'No Name',
@@ -201,30 +219,32 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
+    // Agrupar eventos por día
+    final groupedEvents = _groupEventsByDay(allEvents);
+
+    // Filtrar eventos para el día seleccionado
     if (selectedDay != null) {
       final selectedDayIndex = _weekDays.indexOf(selectedDay);
-      final selectedDate = _startOfWeek(
-        now,
-      ).add(Duration(days: selectedDayIndex));
+      final selectedDate = startOfWeek.add(Duration(days: selectedDayIndex));
+      final selectedDateString = selectedDate.toIso8601String().split('T')[0];
 
-      allEvents =
-          allEvents.where((eventData) {
-            final eventDate = DateTime.parse(eventData['event']['date']);
-            return eventDate.year == selectedDate.year &&
-                eventDate.month == selectedDate.month &&
-                eventDate.day == selectedDate.day;
-          }).toList();
+      return groupedEvents[selectedDateString] ?? [];
     }
 
     return allEvents;
   }
 
-  DateTime _startOfWeek(DateTime date) {
-    return DateTime.utc(date.year, date.month, date.day - (date.weekday - 1));
-  }
+  List<String> _getWeekDates() {
+    final now = DateTime.now();
+    final isWeekend = _isWeekend(now);
+    final startOfWeek = isWeekend
+        ? _startOfWeek(now.add(Duration(days: DateTime.monday - now.weekday + 7)))
+        : _startOfWeek(now);
 
-  DateTime _endOfWeek(DateTime date) {
-    return DateTime.utc(date.year, date.month, date.day + (5 - date.weekday)); // Solo lunes a viernes
+    return List.generate(
+      5,
+      (index) => startOfWeek.add(Duration(days: index)).day.toString(),
+    );
   }
 
   @override
@@ -234,65 +254,63 @@ class _HomeScreenState extends State<HomeScreen> {
     final weekDates = _getWeekDates();
 
     return Scaffold(
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-                child: Column(
-                  children: [
-                    if (_errorMessage.isNotEmpty) ...[
-                      Text(
-                        _errorMessage,
-                        style: const TextStyle(color: Colors.red, fontSize: 14),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    actualDayRow(isDarkMode, DateTime.now().day.toString(),), 
-                    const Divider(height: 10),
-                    const SizedBox(height: 10),
-                    dayButtonRow(weekDates, isDarkMode),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+              child: Column(
+                children: [
+                  if (_errorMessage.isNotEmpty) ...[
+                    Text(
+                      _errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(height: 20),
-                    // const Divider(),
-                    Text( 
-                      'Mis clases del día seleccionado',
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.grey : Colors.grey,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Expanded(
-                      child: _buildEventList(
-                        _getFilteredEvents(_subjects, _selectedDay),
-                      ),
-                    ),
                   ],
-                ),
+                  actualDayRow(isDarkMode, DateTime.now().day.toString()),
+                  // const SizedBox(height: 10),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  dayButtonRow(weekDates, isDarkMode),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Mis clases del día seleccionado',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.grey : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                  Expanded(
+                    child: _buildEventList(
+                      _getFilteredEvents(_subjects, _selectedDay),
+                    ),
+                  ),
+                ],
               ),
+            ),
     );
   }
 
   Row dayButtonRow(List<String> weekDates, bool isDarkMode) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children:
-          _weekDays.asMap().entries.map((entry) {
-            final index = entry.key;
-            final day = entry.value;
-            final date = weekDates[index];
-            return _buildDayButton(day, date, isDarkMode);
-          }).toList(),
+      children: _weekDays.asMap().entries.map((entry) {
+        final index = entry.key;
+        final day = entry.value;
+        final date = weekDates[index];
+        return _buildDayButton(day, date, isDarkMode);
+      }).toList(),
     );
   }
 
   Padding actualDayRow(bool isDarkMode, day) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16), // Padding horizontal de 16
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribuye el espacio entre los hijos
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -304,14 +322,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 55,
                 ),
               ),
-              const SizedBox(width: 16), // Espacio entre el día y la columna (opcional)
+              const SizedBox(width: 16),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Alinea el texto del Column a la izquierda
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     (DateTime.now().weekday >= 1 && DateTime.now().weekday <= 5)
                         ? _weekDaysFullName[DateTime.now().weekday - 1]
-                        : "Fin de semana", // Mensaje alternativo para sábado y domingo
+                        : "Fin de semana",
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -331,15 +349,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Container(
-            margin: const EdgeInsets.only(right: 8), // Margen derecho
-            alignment: Alignment.center, // Centra el texto dentro del Container
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Espacio interno
+            margin: const EdgeInsets.only(right: 8),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo, // Color de fondo
-              borderRadius: BorderRadius.circular(16), // Bordes redondeados
+              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              'Hoy', // Condición para mostrar "Hoy" o "No hoy"
+              'Hoy',
               style: TextStyle(
                 color: isDarkMode ? Colors.black : Colors.white,
                 fontWeight: FontWeight.bold,
@@ -444,22 +462,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList(List<Map<String, dynamic>> events) {
+    final groupedEvents = _groupEventsByDay(events);
+
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
         dragDevices: {
           PointerDeviceKind.touch,
           PointerDeviceKind.mouse,
-        }, // Permitir desplazamiento con el mouse y el tacto
+        },
       ),
       child: PageView.builder(
         controller: _pageController,
         onPageChanged: (index) {
           setState(() {
-            _selectedDay = _weekDays[index]; // Actualizar el día seleccionado
+            _selectedDay = _weekDays[index];
           });
         },
         physics: const PageScrollPhysics().applyTo(
-          const BouncingScrollPhysics(), // Mejorar la sensibilidad
+          const BouncingScrollPhysics(),
         ),
         itemCount: _weekDays.length,
         itemBuilder: (context, index) {
@@ -481,20 +501,14 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          final groupedByDate = <String, List<Map<String, dynamic>>>{};
-          for (var eventData in dayEvents) {
-            final eventDate = eventData['event']['date'];
-            groupedByDate.putIfAbsent(eventDate, () => []).add(eventData);
-          }
-
-          final sortedDates = groupedByDate.keys.toList()..sort();
+          final sortedDates = groupedEvents.keys.toList()..sort();
 
           return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: sortedDates.length,
             itemBuilder: (context, index) {
               final date = sortedDates[index];
-              final events = groupedByDate[date]!..sort((a, b) {
+              final events = groupedEvents[date]!..sort((a, b) {
                 final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
                 final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
                 return timeA.compareTo(timeB);
@@ -552,17 +566,4 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'Clase de teória-práctica';
     }
   }
-
-  List<String> _getWeekDates() {
-    final now = DateTime.now();
-    final isWeekend = now.weekday == DateTime.saturday || now.weekday == DateTime.sunday;
-    final startOfWeek = isWeekend 
-        ? _startOfWeek(now.add(Duration(days: DateTime.monday - now.weekday + 7))) 
-        : _startOfWeek(now);
-    
-    return List.generate(
-      5,
-      (index) => startOfWeek.add(Duration(days: index)).day.toString(),
-    ); // Solo lunes a viernes
-  } 
 }
