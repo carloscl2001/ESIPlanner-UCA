@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _errorMessage = '';
   String? _selectedDay;
 
-  final List<String> _weekDays = ['L', 'M', 'X', 'J', 'V'];
+  final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
   final List<String> _weekDaysFullName = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
   // Controlador para el PageView

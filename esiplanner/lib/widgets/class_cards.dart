@@ -115,7 +115,7 @@ class ClassCards extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           text,
-          style: TextStyle(color: colorTexto, fontWeight: FontWeight.bold),
+          style: TextStyle(color: colorTexto, fontWeight: FontWeight.normal),
         ),
       ],
     );
