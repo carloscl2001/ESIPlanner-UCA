@@ -476,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final sortedDates = groupedEvents.keys.toList()..sort();
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             itemCount: sortedDates.length,
             itemBuilder: (context, index) {
               final date = sortedDates[index];
