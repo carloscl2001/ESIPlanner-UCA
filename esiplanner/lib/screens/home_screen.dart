@@ -247,54 +247,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-    final weekDates = _getWeekDates();
-
-    return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-              child: Column(
-                children: [
-                  if (_errorMessage.isNotEmpty) ...[
-                    Text(
-                      _errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  actualDayRow(isDarkMode, DateTime.now().day.toString()),
-                  // const SizedBox(height: 10),
-                  const Divider(),
-                  const SizedBox(height: 10),
-                  dayButtonRow(weekDates, isDarkMode),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Mis clases del día seleccionado',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.grey : Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                  Expanded(
-                    child: _buildEventList(
-                      _getFilteredEvents(_subjects, _selectedDay),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-    );
+  String _getGroupLabel(String letter) {
+    switch (letter) {
+      case 'A':
+        return 'Clase de teoría';
+      case 'B':
+        return 'Clase de problemas';
+      case 'C':
+        return 'Clase de prácticas informáticas';
+      case 'D':
+        return 'Clase de laboratorio';
+      case 'X':
+        return 'Clase de teória-práctica';
+      default:
+        return 'Clase de teória-práctica';
+    }
   }
-
+  
+  
   Row dayButtonRow(List<String> weekDates, bool isDarkMode) {
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: _weekDays.asMap().entries.map((entry) {
@@ -550,20 +522,50 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String _getGroupLabel(String letter) {
-    switch (letter) {
-      case 'A':
-        return 'Clase de teoría';
-      case 'B':
-        return 'Clase de problemas';
-      case 'C':
-        return 'Clase de prácticas informáticas';
-      case 'D':
-        return 'Clase de laboratorio';
-      case 'X':
-        return 'Clase de teória-práctica';
-      default:
-        return 'Clase de teória-práctica';
-    }
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    final weekDates = _getWeekDates();
+
+    return Scaffold(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+              child: Column(
+                children: [
+                  if (_errorMessage.isNotEmpty) ...[
+                    Text(
+                      _errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  actualDayRow(isDarkMode, DateTime.now().day.toString()),
+                  // const SizedBox(height: 10),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  dayButtonRow(weekDates, isDarkMode),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Mis clases del día seleccionado',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.grey : Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                  Expanded(
+                    child: _buildEventList(
+                      _getFilteredEvents(_subjects, _selectedDay),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 }
