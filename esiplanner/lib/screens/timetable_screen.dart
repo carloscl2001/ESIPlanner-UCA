@@ -26,6 +26,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
   List<DateTimeRange> _weekRanges = [];
   List<String> _weekLabels = [];
 
+  bool _showWeeks = true; // Controla si se muestran todas las semanas o solo la actual
+
   @override
   void initState() {
     super.initState();
@@ -175,13 +177,39 @@ class _TimetableScreenState extends State<TimetableScreen> {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Horario'),
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  _buildWeekSelector(isDarkMode),
+                  if (_showWeeks)
+                    _buildWeekSelector(isDarkMode), // Mostrar todas las semanas
+                  if (!_showWeeks)
+                    _buildCurrentWeek(isDarkMode), // Mostrar solo la semana actual
+
+                  // Botón para alternar la visibilidad de las semanas
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _showWeeks = !_showWeeks; // Cambiar el estado
+                      });
+                    },
+                    child: Text(
+                      _showWeeks ? '^' : 'V',
+                      style: TextStyle(
+                        color: isDarkMode ? Colors.black : Colors.white,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    ),
+                  ),
+
                   if (_errorMessage.isNotEmpty) ...[
                     Text(
                       _errorMessage,
@@ -192,12 +220,48 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   ],
                   const SizedBox(height: 10),
                   const Divider(),
-                  Expanded(child: _buildEventList(isDarkMode)),
+                  Expanded(
+                    child: _buildEventList(isDarkMode),
+                  ),
                 ],
               ),
             ),
     );
   }
+
+  // Método para construir la semana actual
+  Widget _buildCurrentWeek(bool isDarkMode) {
+    final weeks = _getWeeksOfSemester();
+
+    // Verificar que la semana seleccionada esté dentro del rango
+    if (_selectedWeekIndex < 0 || _selectedWeekIndex >= weeks.length) {
+      return const Center(child: Text('Semana no válida'));
+    }
+
+    final weekDays = weeks[_selectedWeekIndex];
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'].map((day) {
+            return Text(
+              day,
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 8),
+        _buildWeekRow(weekDays, _selectedWeekIndex, isDarkMode),
+      ],
+    );
+  }
+
+
 
   List<List<DateTime>> _getWeeksOfSemester() {
     if (_subjects.isEmpty) return [];
@@ -236,6 +300,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return weeks;
   }
 
+  // Método para construir el selector de semanas
   Widget _buildWeekSelector(bool isDarkMode) {
     final weeks = _getWeeksOfSemester();
 
@@ -258,6 +323,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
         SizedBox(
           height: 200,
           child: ListView.builder(
+            physics: _showWeeks
+                ? const AlwaysScrollableScrollPhysics() // Permitir desplazamiento
+                : const NeverScrollableScrollPhysics(), // Bloquear desplazamiento
             itemCount: weeks.length,
             itemBuilder: (context, index) {
               final weekDays = weeks[index];
@@ -269,13 +337,16 @@ class _TimetableScreenState extends State<TimetableScreen> {
     );
   }
 
+
+
+   // Método para construir una fila de la semana
   Widget _buildWeekRow(List<DateTime> weekDays, int weekIndex, bool isDarkMode) {
     final isSelected = _selectedWeekIndex == weekIndex;
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedWeekIndex = weekIndex;
+          _selectedWeekIndex = weekIndex; // Seleccionar la semana
         });
       },
       child: Container(
