@@ -214,27 +214,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Selecciona una semana',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0, // Cambia este valor según el tamaño que necesites
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(
-              25,
-            ), // Ajusta el radio para cambiar la curvatura
-          ),
-        ),
-        toolbarHeight:
-            45.0, // Cambia este valor para ajustar la altura del AppBar
-      ),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
