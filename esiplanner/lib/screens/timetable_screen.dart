@@ -188,7 +188,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
               child: Column(
                 children: [
                   if (_showWeeks)
@@ -227,11 +227,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
     );
   }
 
-  // Método para construir la semana actual con el nombre del mes
   Widget _buildCurrentWeek(bool isDarkMode) {
     final weeks = _getWeeksOfSemester();
 
-    // Verificar que la semana seleccionada esté dentro del rango
     if (_selectedWeekIndex < 0 || _selectedWeekIndex >= weeks.length) {
       return const Center(child: Text('Semana no válida'));
     }
@@ -311,7 +309,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return weeks;
   }
 
-  // Método para construir el selector de semanas con el nombre del mes
   Widget _buildWeekSelector(bool isDarkMode) {
     final weeks = _getWeeksOfSemester();
 
@@ -325,7 +322,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
               style: TextStyle(
                 color: isDarkMode ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 20,
               ),
             );
           }).toList(),
@@ -335,14 +332,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
           height: 200,
           child: ListView.builder(
             physics: _showWeeks
-                ? const AlwaysScrollableScrollPhysics() // Permitir desplazamiento
-                : const NeverScrollableScrollPhysics(), // Bloquear desplazamiento
+                ? const AlwaysScrollableScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
             itemCount: weeks.length,
             itemBuilder: (context, index) {
               final weekDays = weeks[index];
               final startDate = weekDays.first;
-              final endDate = weekDays.last;
-              final monthLabel = _formatDateWithWeekNumber(startDate, endDate);
+  
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,6 +365,22 @@ class _TimetableScreenState extends State<TimetableScreen> {
     );
   }
 
+  bool _dayHasClass(DateTime day) {
+    for (var subject in _subjects) {
+      for (var classData in subject['classes']) {
+        for (var event in classData['events']) {
+          final eventDate = DateTime.parse(event['date']);
+          if (eventDate.year == day.year &&
+              eventDate.month == day.month &&
+              eventDate.day == day.day) {
+            return true; // El día tiene al menos una clase
+          }
+        }
+      }
+    }
+    return false; // El día no tiene clases
+  }
+
   // Método para verificar si una semana pertenece a un nuevo mes
   bool _isNewMonth(List<DateTime> currentWeek, List<DateTime> previousWeek) {
     final currentMonth = currentWeek.first.month;
@@ -378,7 +390,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
 
 
-   // Método para construir una fila de la semana
   Widget _buildWeekRow(List<DateTime> weekDays, int weekIndex, bool isDarkMode) {
     final isSelected = _selectedWeekIndex == weekIndex;
 
@@ -390,30 +401,17 @@ class _TimetableScreenState extends State<TimetableScreen> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8.0),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
         decoration: BoxDecoration(
           color: isSelected
               ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo)
-              : null,
-          gradient: !isSelected
-              ? (isDarkMode
-                  ? LinearGradient(
-                      colors: [Colors.grey.shade900, Colors.grey.shade900],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : LinearGradient(
-                      colors: [Colors.indigo.shade50, Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ))
-              : null,
+              : (isDarkMode ? Colors.black : Colors.white),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withOpacity(0.45)
-                  : Colors.white.withOpacity(0.45),
+                  ? Colors.black.withValues( alpha:  0.45)
+                  : Colors.white.withValues( alpha:  0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
@@ -422,14 +420,36 @@ class _TimetableScreenState extends State<TimetableScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: weekDays.map((day) {
-            return Text(
-              DateFormat('d', 'es_ES').format(day),
-              style: TextStyle(
-                color: isSelected
-                    ? (isDarkMode ? Colors.black : Colors.white)
-                    : (isDarkMode ? Colors.white : Colors.black),
-                fontSize: 16,
-              ),
+            final hasClass = _dayHasClass(day); // Verificar si el día tiene clase
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  DateFormat('d', 'es_ES').format(day), // Mostrar el número del día
+                  style: TextStyle(
+                    color: isSelected
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : (isDarkMode ? Colors.white : Colors.black),
+                    fontSize: 26,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (hasClass) // Mostrar círculo si el día tiene clase
+                  Positioned(
+                    bottom: 0, // Ajustar la posición vertical del círculo
+                    child: Container(
+                      width: 6, // Tamaño del círculo
+                      height: 6, // Tamaño del círculo
+                      decoration: BoxDecoration(
+                        color: isSelected 
+                          ? isDarkMode ? Colors.black : Colors.white
+                          : isDarkMode ? Colors.white : Colors.black,
+                        shape: BoxShape.circle, // Forma del círculo
+                      ),
+                    ),
+                  ),
+              ],
             );
           }).toList(),
         ),
