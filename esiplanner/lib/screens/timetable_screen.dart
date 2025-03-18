@@ -160,7 +160,15 @@ class _TimetableScreenState extends State<TimetableScreen> {
   DateTime _getStartOfWeek(DateTime date) => date.subtract(Duration(days: date.weekday - 1));
 
   String _formatDateWithWeekNumber(DateTime startDate, DateTime endDate) {
-    return '${_formatDateShort(startDate)} - ${_formatDateShort(endDate)}';
+    final startMonth = DateFormat('MMMM', 'es_ES').format(startDate);
+    final endMonth = DateFormat('MMMM', 'es_ES').format(endDate);
+
+    // Si la semana abarca dos meses, mostramos ambos meses
+    if (startMonth != endMonth) {
+      return '${_formatDateShort(startDate)} - ${_formatDateShort(endDate)} ($startMonth - $endMonth)';
+    } else {
+      return '${_formatDateShort(startDate)} - ${_formatDateShort(endDate)} ($startMonth)';
+    }
   }
 
   String _formatDateShort(DateTime date) {
@@ -177,9 +185,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Horario'),
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -192,24 +197,18 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     _buildCurrentWeek(isDarkMode), // Mostrar solo la semana actual
 
                   // Botón para alternar la visibilidad de las semanas
-                  ElevatedButton(
+                  IconButton(
                     onPressed: () {
                       setState(() {
                         _showWeeks = !_showWeeks; // Cambiar el estado
                       });
                     },
-                    child: Text(
-                      _showWeeks ? '^' : 'V',
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    icon: Icon(
+                      _showWeeks ? Icons.expand_less : Icons.expand_more,
+                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                      size: 25, // Ajusta este valor para cambiar el tamaño del ícono
                     ),
                   ),
-
                   if (_errorMessage.isNotEmpty) ...[
                     Text(
                       _errorMessage,
@@ -219,7 +218,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     const SizedBox(height: 10),
                   ],
                   const SizedBox(height: 10),
-                  const Divider(),
                   Expanded(
                     child: _buildEventList(isDarkMode),
                   ),
@@ -229,7 +227,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     );
   }
 
-  // Método para construir la semana actual
+  // Método para construir la semana actual con el nombre del mes
   Widget _buildCurrentWeek(bool isDarkMode) {
     final weeks = _getWeeksOfSemester();
 
@@ -239,9 +237,23 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
 
     final weekDays = weeks[_selectedWeekIndex];
+    final startDate = weekDays.first;
+    final monthLabel = DateFormat('MMMM y', 'es_ES').format(startDate);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+          child: Text(
+            monthLabel,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+            ),
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'].map((day) {
@@ -260,7 +272,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
       ],
     );
   }
-
 
 
   List<List<DateTime>> _getWeeksOfSemester() {
@@ -300,7 +311,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return weeks;
   }
 
-  // Método para construir el selector de semanas
+  // Método para construir el selector de semanas con el nombre del mes
   Widget _buildWeekSelector(bool isDarkMode) {
     final weeks = _getWeeksOfSemester();
 
@@ -329,12 +340,40 @@ class _TimetableScreenState extends State<TimetableScreen> {
             itemCount: weeks.length,
             itemBuilder: (context, index) {
               final weekDays = weeks[index];
-              return _buildWeekRow(weekDays, index, isDarkMode);
+              final startDate = weekDays.first;
+              final endDate = weekDays.last;
+              final monthLabel = _formatDateWithWeekNumber(startDate, endDate);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (index == 0 || _isNewMonth(weekDays, weeks[index - 1]))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                      child: Text(
+                        DateFormat('MMMM y', 'es_ES').format(startDate),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                        ),
+                      ),
+                    ),
+                  _buildWeekRow(weekDays, index, isDarkMode),
+                ],
+              );
             },
           ),
         ),
       ],
     );
+  }
+
+  // Método para verificar si una semana pertenece a un nuevo mes
+  bool _isNewMonth(List<DateTime> currentWeek, List<DateTime> previousWeek) {
+    final currentMonth = currentWeek.first.month;
+    final previousMonth = previousWeek.first.month;
+    return currentMonth != previousMonth;
   }
 
 
