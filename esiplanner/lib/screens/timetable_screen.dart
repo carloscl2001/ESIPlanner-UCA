@@ -197,18 +197,18 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     _buildCurrentWeek(isDarkMode), // Mostrar solo la semana actual
 
                   // Botón para alternar la visibilidad de las semanas
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showWeeks = !_showWeeks; // Cambiar el estado
-                      });
-                    },
-                    icon: Icon(
-                      _showWeeks ? Icons.expand_less : Icons.expand_more,
-                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                      size: 25, // Ajusta este valor para cambiar el tamaño del ícono
-                    ),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     setState(() {
+                  //       _showWeeks = !_showWeeks; // Cambiar el estado
+                  //     });
+                  //   },
+                  //   icon: Icon(
+                  //     _showWeeks ? Icons.expand_less : Icons.expand_more,
+                  //     color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                  //     size: 25, // Ajusta este valor para cambiar el tamaño del ícono
+                  //   ),
+                  // ),
                   if (_errorMessage.isNotEmpty) ...[
                     Text(
                       _errorMessage,
@@ -396,7 +396,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedWeekIndex = weekIndex; // Seleccionar la semana
+          if (isSelected) {
+            // Si la semana ya está seleccionada, alternar la visibilidad del ListView
+            _showWeeks = !_showWeeks;
+          } else {
+            // Si es una semana diferente, seleccionarla y colapsar el ListView
+            _selectedWeekIndex = weekIndex;
+            _showWeeks = false;
+          }
         });
       },
       child: Container(
@@ -410,8 +417,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withValues( alpha:  0.45)
-                  : Colors.white.withValues( alpha:  0.45),
+                  ? Colors.black.withOpacity(0.45)
+                  : Colors.white.withOpacity(0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
@@ -442,9 +449,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       width: 6, // Tamaño del círculo
                       height: 6, // Tamaño del círculo
                       decoration: BoxDecoration(
-                        color: isSelected 
-                          ? isDarkMode ? Colors.black : Colors.white
-                          : isDarkMode ? Colors.white : Colors.black,
+                        color: isSelected
+                            ? isDarkMode ? Colors.black : Colors.white
+                            : isDarkMode ? Colors.white : Colors.black,
                         shape: BoxShape.circle, // Forma del círculo
                       ),
                     ),
