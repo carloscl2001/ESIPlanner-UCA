@@ -148,13 +148,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   ),
                   const SizedBox(height: 10),
                 ],
-                const SizedBox(height: 5),
                 // Días de la semana (Lun, Mar, Mié, Jue, Vie)
                 _buildWeekDaysHeader(isDarkMode),
-                Divider(
-                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                  thickness: 2,
-                ),
                 // Lista de semanas
                 Expanded(
                   child: _buildWeekSelector(isDarkMode),
@@ -166,25 +161,46 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
   // Encabezado con los días de la semana
   Widget _buildWeekDaysHeader(bool isDarkMode) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'].map((day) {
-          return SizedBox(
-            width: 40, // Ancho fijo para alinear con los números
-            child: Center(
-              child: Text(
-                day,
-                style: TextStyle(
-                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+    return Container(
+      margin: EdgeInsets.all(0), // Padding eliminado
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.black : Colors.white, // Fondo blanco
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12.0), // Borde redondeado abajo izquierda
+          bottomRight: Radius.circular(12.0), // Borde redondeado abajo derecha
+        ),
+        border: Border.all(
+          color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+          width: 3, // Grosor del borde
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkMode ? Colors.grey.withValues(alpha: 0.45) : Colors.black.withValues(alpha: 0.45), // Color de la sombra
+            blurRadius: 6.0, // Difuminado de la sombra
+            offset: Offset(0, 3), // Desplazamiento de la sombra (x, y)
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'].map((day) {
+            return SizedBox(
+              width: 40, // Ancho fijo para alinear con los números
+              child: Center(
+                child: Text(
+                  day,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -207,13 +223,42 @@ class _TimetableScreenState extends State<TimetableScreen> {
             if (index == 0 || _isNewMonth(weekDays, weeks[index - 1]))
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
-                child: Text(
-                  DateFormat('MMMM y', 'es_ES').format(startDate),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Mes en un cuadrado a la izquierda
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.grey : Colors.grey,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                      child: Text(
+                        DateFormat('MMMM', 'es_ES').format(startDate),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.black : Colors.white,
+                        ),
+                      ),
+                    ),
+                    // Año en un cuadrado a la derecha
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.grey : Colors.grey,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                      child: Text(
+                        DateFormat('y', 'es_ES').format(startDate),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.black : Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             _buildWeekRow(weekDays, index, isDarkMode, isCurrentWeek), // Pasar isCurrentWeek
@@ -364,8 +409,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
           boxShadow: [
             BoxShadow(
               color: !isDarkMode
-                  ? Colors.black.withOpacity(0.45)
-                  : Colors.white.withOpacity(0.45),
+                  ? Colors.black.withValues(alpha: 0.45)
+                  : Colors.grey.withValues(alpha: 0.45),
               blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
