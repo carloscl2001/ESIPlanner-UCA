@@ -105,7 +105,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(0.0),
                 child: Column(
                   children: <Widget>[
                     if (errorMessage.isNotEmpty) ...[
@@ -119,6 +119,7 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                     if (userSubjects.isNotEmpty) ...[
                       Expanded(
                         child: ListView.builder(
+                          padding: EdgeInsets.all(16.0), // Padding general de 16 en todos los lados
                           itemCount: userSubjects.length,
                           itemBuilder: (context, index) {
                             final subject = userSubjects[index];

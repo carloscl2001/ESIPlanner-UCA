@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo,
+        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo.shade900,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(

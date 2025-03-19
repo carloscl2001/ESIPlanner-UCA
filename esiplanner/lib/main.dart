@@ -4,7 +4,7 @@ import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 import '/providers/overlap_class_provider.dart';
 
-// Naviagtion menu
+// Navigation menu
 import 'navigation_menu_bar.dart';
 
 // Screens
@@ -17,6 +17,7 @@ import 'screens/edit_subjects_profile_screen.dart';
 import 'screens/view_subjects_profile_screen.dart';
 
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:google_fonts/google_fonts.dart'; // Importa google_fonts
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,9 +29,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
-        ChangeNotifierProvider(
-          create: (context) => ThemeProvider(),
-        ), // Añade el ThemeProvider
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => OverlapClassProvider()),
       ],
       child: const MyApp(),
@@ -61,9 +60,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ESIP', // Título de la aplicación
-      //TEMA CLARO
+      // TEMA CLARO
       theme: ThemeData.light().copyWith(
-        // Tema claro
+        // Usar la fuente Inter para el tema claro
+        textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.indigo,
           brightness: Brightness.light,
@@ -72,8 +72,8 @@ class _MyAppState extends State<MyApp> {
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-          labelStyle: const TextStyle(color: Colors.indigo),
-          hintStyle: TextStyle(color: Colors.grey[400]),
+          labelStyle: GoogleFonts.inter(color: Colors.indigo), // Usar Inter
+          hintStyle: GoogleFonts.inter(color: Colors.grey[400]), // Usar Inter
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.indigo, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
@@ -86,12 +86,12 @@ class _MyAppState extends State<MyApp> {
         navigationBarTheme: NavigationBarThemeData(
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
-              return const TextStyle(
+              return GoogleFonts.inter( // Usar Inter
                 color: Colors.indigo,
                 fontWeight: FontWeight.bold,
               );
             }
-            return const TextStyle(color: Colors.grey);
+            return GoogleFonts.inter(color: Colors.grey); // Usar Inter
           }),
           indicatorColor: Colors.indigo.shade100,
           backgroundColor: Colors.white,
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            textStyle: const TextStyle(
+            textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.indigo.shade700,
-          titleTextStyle: const TextStyle(
+          titleTextStyle: GoogleFonts.inter( // Usar Inter
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -131,8 +131,10 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      //TEMA OSCURO
+      // TEMA OSCURO
       darkTheme: ThemeData.dark().copyWith(
+        // Usar la fuente Inter para el tema oscuro
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.white,
           brightness: Brightness.dark,
@@ -141,8 +143,8 @@ class _MyAppState extends State<MyApp> {
           filled: true,
           fillColor: Colors.grey.shade900,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-          labelStyle: const TextStyle(color: Colors.white),
-          hintStyle: const TextStyle(color: Colors.white),
+          labelStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
+          hintStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.white, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
@@ -155,12 +157,12 @@ class _MyAppState extends State<MyApp> {
         navigationBarTheme: NavigationBarThemeData(
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
-              return TextStyle(
+              return GoogleFonts.inter( // Usar Inter
                 color: Colors.yellow.shade700,
                 fontWeight: FontWeight.bold,
               );
             }
-            return const TextStyle(color: Colors.grey);
+            return GoogleFonts.inter(color: Colors.grey); // Usar Inter
           }),
           indicatorColor: Colors.yellow.shade700,
           backgroundColor: Colors.black,
@@ -182,7 +184,7 @@ class _MyAppState extends State<MyApp> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            textStyle: const TextStyle(
+            textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -191,7 +193,7 @@ class _MyAppState extends State<MyApp> {
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900],
-          titleTextStyle: const TextStyle(
+          titleTextStyle: GoogleFonts.inter( // Usar Inter
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -199,12 +201,10 @@ class _MyAppState extends State<MyApp> {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
       ),
-      themeMode:
-          themeProvider.themeMode, // Usa el tema actual del ThemeProvider
+      themeMode: themeProvider.themeMode, // Usa el tema actual del ThemeProvider
       initialRoute: '/',
       routes: {
-        '/':
-            (context) => Consumer<AuthProvider>(
+        '/': (context) => Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 return authProvider.isAuthenticated
                     ? const NavigationMenuBar()
