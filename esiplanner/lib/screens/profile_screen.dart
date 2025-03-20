@@ -12,23 +12,6 @@ class ProfileScreen extends StatelessWidget {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Perfil',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.indigo.shade900,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(
-              25,
-            ), // Ajusta el radio para cambiar la curvatura
-          ),
-        ),
-        toolbarHeight:
-            45.0, // Cambia este valor para ajustar la altura del AppBar
-      ),
       body: Center(
         // Envolvemos el contenido con un Center
         child: Column(

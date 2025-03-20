@@ -151,7 +151,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
                 color: isDarkMode ? Colors.black : Colors.indigo,
               ),
               icon: const Icon(
-                Icons.calendar_month_rounded,
+                Icons.calendar_month_outlined,
                 color: Colors.grey,
               ),
               label: 'Horario',
