@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/timetable_screen.dart';
-import 'screens/agenda_screen.dart';
+// import 'screens/agenda_screen.dart';
 import 'screens/profile_screen.dart';
 import 'providers/theme_provider.dart'; // Importa el ThemeProvider
 

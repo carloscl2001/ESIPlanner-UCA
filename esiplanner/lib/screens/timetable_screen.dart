@@ -336,8 +336,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
       for (var classData in subject['classes']) {
         for (var event in classData['events']) {
           final eventDate = DateTime.parse(event['date']);
-          print("Event date: ${eventDate.toIso8601String()}, Weekday: ${eventDate.weekday}"); // Verificación
-
           if (eventDate.weekday >= DateTime.monday && eventDate.weekday <= DateTime.friday) {
             // Solo procesar eventos de lunes a viernes
             if (firstDate == null || eventDate.isBefore(firstDate)) {
@@ -357,13 +355,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
     _weekLabels = [];
 
     DateTime currentStart = _getStartOfWeek(firstDate); // Lunes de la primera semana
-    print("Start of week: ${currentStart.toIso8601String()}, Weekday: ${currentStart.weekday}"); // Verificación
 
     while (currentStart.isBefore(lastDate) || currentStart.isAtSameMomentAs(lastDate)) {
       DateTime currentEnd = currentStart.add(const Duration(days: 4)); // Viernes de la semana
       _weekRanges.add(DateTimeRange(start: currentStart, end: currentEnd));
       _weekLabels.add(_formatDateWithWeekNumber(currentStart, currentEnd));
-      print("Week range: ${currentStart.toIso8601String()} - ${currentEnd.toIso8601String()}"); // Verificación
       currentStart = currentStart.add(const Duration(days: 7)); // Siguiente lunes
     }
 
@@ -377,7 +373,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
   }
 
   Widget _buildWeekRow(List<DateTime> weekDays, int weekIndex, bool isDarkMode, bool isCurrentWeek) {
-    print("Building week row: ${weekDays.map((date) => date.toIso8601String()).toList()}"); // Verificación
 
     return GestureDetector(
       onTap: () {
@@ -498,7 +493,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     for (int i = 0; i < 5; i++) {
       week.add(currentStart.add(Duration(days: i))); // Lunes a viernes
     }
-    print("Week: ${week.map((date) => date.toIso8601String()).toList()}"); // Verificación
     weeks.add(week);
     currentStart = currentStart.add(const Duration(days: 7)); // Siguiente lunes
   }

@@ -109,7 +109,7 @@ class WeekClassesScreen extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode ? Colors.grey.withOpacity(0.45) : Colors.black.withOpacity(0.45),
+            color: isDarkMode ? Colors.grey.withValues(alpha: 0.45) : Colors.black.withValues(alpha: 0.45),
             blurRadius: 6.0,
             offset: const Offset(0, 3),
           ),
