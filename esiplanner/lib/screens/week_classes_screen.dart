@@ -61,7 +61,7 @@ class WeekClassesScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(16.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
@@ -77,7 +77,7 @@ class WeekClassesScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.circular(16.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
@@ -170,7 +170,7 @@ class WeekClassesScreen extends StatelessWidget {
         final isOverlapping = _calculateOverlappingEvents(events);
 
         return Padding(
-          padding: const EdgeInsets.only(top: 10.0), // Margen inferior de 16.0
+          padding: const EdgeInsets.only(top: 10.0), 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -179,6 +179,8 @@ class WeekClassesScreen extends StatelessWidget {
                   _formatDateToFullDate(DateTime.parse(date)),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
                 ),
               ),

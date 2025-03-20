@@ -148,11 +148,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _getCurrentWeekday() {
-    final now = DateTime.now();
-    final weekdayIndex = _isWeekend(now) ? 0 : now.weekday - 1; // Lunes si es fin de semana
-    return (weekdayIndex >= 0 && weekdayIndex < _weekDays.length)
-        ? _weekDays[weekdayIndex]
-        : 'L';
+    final now = DateTime.now().toUtc();
+    final isWeekend = _isWeekend(now);
+
+    // Si es fin de semana, seleccionar el próximo lunes
+    if (isWeekend) {
+      return _weekDays[0]; // Lunes
+    }
+
+    // De lo contrario, devolver el día actual
+    return _weekDays[now.weekday - 1];
   }
 
   String _getMonthName(int month) {
@@ -176,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _startOfWeek(DateTime date) {
     return DateTime.utc(date.year, date.month, date.day - (date.weekday - 1));
   }
+
 
   DateTime _endOfWeek(DateTime date) {
     return DateTime.utc(date.year, date.month, date.day + (5 - date.weekday)); // Solo lunes a viernes
@@ -278,7 +284,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Padding actualDayRow(bool isDarkMode, day) {
+  Padding actualDayRow(bool isDarkMode, String selectedDay) {
+    // Obtener la fecha actual
+    final now = DateTime.now();
+    final isWeekend = _isWeekend(now);
+    final startOfWeek = isWeekend
+        ? _startOfWeek(now.add(Duration(days: DateTime.monday - now.weekday + 7)))
+        : _startOfWeek(now);
+
+    // Obtener el índice del día seleccionado
+    final selectedDayIndex = _weekDays.indexOf(selectedDay);
+    final selectedDate = startOfWeek.add(Duration(days: selectedDayIndex));
+
+    // Verificar si el día seleccionado es hoy
+    final isToday = selectedDate.year == now.year &&
+        selectedDate.month == now.month &&
+        selectedDate.day == now.day;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
@@ -287,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Text(
-                DateTime.now().day.toString(),
+                selectedDate.day.toString(), // Mostrar el día seleccionado
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
@@ -299,8 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (DateTime.now().weekday >= 1 && DateTime.now().weekday <= 5)
-                        ? _weekDaysFullName[DateTime.now().weekday - 1]
+                    (selectedDate.weekday >= 1 && selectedDate.weekday <= 5)
+                        ? _weekDaysFullName[selectedDate.weekday - 1]
                         : "Fin de semana",
                     style: TextStyle(
                       color: Colors.grey,
@@ -309,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Text(
-                    '${_getMonthName(DateTime.now().month)} ${DateTime.now().year}',
+                    '${_getMonthName(selectedDate.month)} ${selectedDate.year}',
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
@@ -320,23 +342,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              'Hoy',
-              style: TextStyle(
-                color: isDarkMode ? Colors.black : Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+          if (isToday) // Mostrar el cuadro de "Hoy" solo si el día seleccionado es hoy
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                'Hoy',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -543,21 +566,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 20),
                   ],
-                  actualDayRow(isDarkMode, DateTime.now().day.toString()),
+                  actualDayRow(isDarkMode, _selectedDay!),
                   // const SizedBox(height: 10),
-                  const Divider(),
                   const SizedBox(height: 10),
                   dayButtonRow(weekDates, isDarkMode),
                   const SizedBox(height: 20),
-                  Text(
-                    'Mis clases del día seleccionado',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.grey : Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
                   Expanded(
                     child: _buildEventList(
                       _getFilteredEvents(_subjects, _selectedDay),

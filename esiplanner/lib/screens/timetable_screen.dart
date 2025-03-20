@@ -231,7 +231,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     Container(
                       decoration: BoxDecoration(
                         color: isDarkMode ? Colors.grey : Colors.grey,
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                       child: Text(
@@ -247,7 +247,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     Container(
                       decoration: BoxDecoration(
                         color: isDarkMode ? Colors.grey : Colors.grey,
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                       child: Text(
