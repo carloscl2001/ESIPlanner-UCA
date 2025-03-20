@@ -7,8 +7,9 @@ class WeekClassesScreen extends StatelessWidget {
   final int selectedWeekIndex;
   final bool isDarkMode;
   final DateTime weekStartDate; // Fecha de inicio de la semana
+  final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
 
-  const WeekClassesScreen({
+  WeekClassesScreen({
     super.key,
     required this.events,
     required this.selectedWeekIndex,
@@ -98,8 +99,8 @@ class WeekClassesScreen extends StatelessWidget {
     final startOfWeek = _getStartOfWeek(weekStartDate); // Usar la fecha de inicio de la semana
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -122,11 +123,11 @@ class WeekClassesScreen extends StatelessWidget {
           return Column(
             children: [
               Text(
-                DateFormat('E', 'es_ES').format(day), // Nombre del día (Lun, Mar, etc.)
+                _weekDays[index], // Usar el vector _weekDays para mostrar los días abreviados
                 style: TextStyle(
                   color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 18,
                 ),
               ),
               const SizedBox(height: 4), // Espacio entre el nombre del día y el número
@@ -161,7 +162,7 @@ class WeekClassesScreen extends StatelessWidget {
     final sortedDates = groupedByDate.keys.toList()..sort();
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       itemCount: sortedDates.length,
       itemBuilder: (context, index) {
         final date = sortedDates[index];
@@ -169,15 +170,17 @@ class WeekClassesScreen extends StatelessWidget {
         final isOverlapping = _calculateOverlappingEvents(events);
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0), // Margen inferior de 16.0
+          padding: const EdgeInsets.only(top: 10.0), // Margen inferior de 16.0
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                _formatDateToFullDate(DateTime.parse(date)),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                    ),
+              Center(
+                child: Text(
+                  _formatDateToFullDate(DateTime.parse(date)),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                      ),
+                ),
               ),
               ...events.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -193,6 +196,7 @@ class WeekClassesScreen extends StatelessWidget {
                   isOverlap: isOverlapping[index],
                 );
               }),
+              const SizedBox(height: 20), // Espacio entre las fechas
             ],
           ),
         );
@@ -230,8 +234,14 @@ class WeekClassesScreen extends StatelessWidget {
     return isOverlapping;
   }
 
+  String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
   String _formatDateToFullDate(DateTime date) {
-    return DateFormat('EEEE d MMMM y', 'es_ES').format(date);
+    final formattedDate = DateFormat('EEEE', 'es_ES').format(date);
+    return _capitalize(formattedDate);
   }
 
   String _getGroupLabel(String letter) {
@@ -245,9 +255,9 @@ class WeekClassesScreen extends StatelessWidget {
       case 'D':
         return 'Clase de laboratorio';
       case 'X':
-        return 'Clase de teórico-práctica';
+        return 'Clase de teoría-práctica';
       default:
-        return 'Clase de teórico-práctica';
+        return 'Clase de teoría-práctica';
     }
   }
 

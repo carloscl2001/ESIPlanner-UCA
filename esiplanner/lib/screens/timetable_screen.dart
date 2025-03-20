@@ -186,7 +186,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'].map((day) {
+          children: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'].map((day) {
             return SizedBox(
               width: 40, // Ancho fijo para alinear con los números
               child: Center(
