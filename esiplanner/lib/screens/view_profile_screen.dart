@@ -61,10 +61,6 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor:
-            isDarkMode
-                ? Colors.grey.shade800
-                : Colors.indigo, // Color de la barra de navegación
       ),
       body: Center(
         child: Padding(

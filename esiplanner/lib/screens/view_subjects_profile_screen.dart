@@ -96,10 +96,6 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor:
-            isDarkMode
-                ? Colors.grey.shade800
-                : Colors.indigo, // Color de la barra de navegación
       ),
       body:
           isLoading

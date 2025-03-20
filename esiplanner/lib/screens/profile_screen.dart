@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
 import '../widgets/profile_cards.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -8,9 +6,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-
     return Scaffold(
       body: Center(
         // Envolvemos el contenido con un Center
