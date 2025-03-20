@@ -149,12 +149,17 @@ class WeekClassesScreen extends StatelessWidget {
   Widget _buildEventList(BuildContext context) {
     if (events.isEmpty) {
       return Center(
-        child: Text(
-          'No hay clases esta semana',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
-        ),
+        child: 
+          Text(
+            'No hay clases',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          )
       );
     }
 
