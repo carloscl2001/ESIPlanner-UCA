@@ -284,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Padding actualDayRow(bool isDarkMode, String selectedDay) {
+  Padding selectedDayRow(bool isDarkMode, String selectedDay) {
     // Obtener la fecha actual
     final now = DateTime.now();
     final isWeekend = _isWeekend(now);
@@ -302,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedDate.day == now.day;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -555,7 +555,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Column(
                 children: [
                   if (_errorMessage.isNotEmpty) ...[
@@ -566,9 +566,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 20),
                   ],
-                  actualDayRow(isDarkMode, _selectedDay!),
+                  selectedDayRow(isDarkMode, _selectedDay!),
                   // const SizedBox(height: 10),
-                  const SizedBox(height: 10),
                   dayButtonRow(weekDates, isDarkMode),
                   const SizedBox(height: 20),
                   Expanded(
