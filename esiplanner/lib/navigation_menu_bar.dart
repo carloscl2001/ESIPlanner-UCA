@@ -139,34 +139,34 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           destinations: <Widget>[
             NavigationDestination(
               selectedIcon: Icon(
-                Icons.home_filled,
+                Icons.view_week,
                 color: isDarkMode ? Colors.black : Colors.indigo,
               ),
-              icon: const Icon(Icons.home_filled, color: Colors.grey),
-              label: 'Inicio',
+              icon: const Icon(Icons.view_week_outlined, color: Colors.grey),
+              label: 'Mi semana',
             ),
             NavigationDestination(
               selectedIcon: Icon(
-                Icons.calendar_view_week,
+                Icons.calendar_month_rounded,
                 color: isDarkMode ? Colors.black : Colors.indigo,
               ),
               icon: const Icon(
-                Icons.calendar_view_week_outlined,
+                Icons.calendar_month_rounded,
                 color: Colors.grey,
               ),
               label: 'Horario',
             ),
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.calendar_month_rounded,
-                color: isDarkMode ? Colors.black : Colors.indigo,
-              ),
-              icon: const Icon(
-                Icons.calendar_month_rounded,
-                color: Colors.grey,
-              ),
-              label: 'Agenda',
-            ),
+            // NavigationDestination(
+            //   selectedIcon: Icon(
+            //     Icons.calendar_month_rounded,
+            //     color: isDarkMode ? Colors.black : Colors.indigo,
+            //   ),
+            //   icon: const Icon(
+            //     Icons.calendar_month_rounded,
+            //     color: Colors.grey,
+            //   ),
+            //   label: 'Agenda',
+            // ),
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.person,
@@ -184,7 +184,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             <Widget>[
               const HomeScreen(),
               const TimetableScreen(),
-              const AgendaScreen(),
+              //const AgendaScreen(),
               const ProfileScreen(),
             ][currentPageIndex],
       ),

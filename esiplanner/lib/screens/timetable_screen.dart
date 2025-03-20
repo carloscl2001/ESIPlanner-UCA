@@ -25,6 +25,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
   int _selectedWeekIndex = 0;
   List<DateTimeRange> _weekRanges = [];
   List<String> _weekLabels = [];
+  
 
   @override
   void initState() {
@@ -387,10 +388,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => WeekClassesScreen(
-                events: allEvents,
-                selectedWeekIndex: weekIndex,
-                isDarkMode: isDarkMode,
-              ),
+              events: allEvents,
+              selectedWeekIndex: weekIndex,
+              isDarkMode: isDarkMode,
+              weekStartDate: weekDays.first, // Pasar la fecha de inicio de la semana
+            ),
           ),
         );
       },
@@ -453,7 +455,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
       ),
     );
   }
-
 
   DateTime _parseDate(String dateString) {
     final dateTime = DateTime.parse(dateString);
