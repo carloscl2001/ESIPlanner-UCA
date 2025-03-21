@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -211,6 +212,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
     final currentWeekIndex = _getCurrentWeekIndex(weeks); // Obtener el índice de la semana actual
 
     return ListView.builder(
+      key: PageStorageKey('timetable'),
+      shrinkWrap: false,
+      physics: defaultTargetPlatform == TargetPlatform.iOS
+          ? const BouncingScrollPhysics()
+          : const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: weeks.length,
       itemBuilder: (context, index) {
