@@ -302,11 +302,16 @@ class _ViewSubjectsProfileScreenState extends State<ViewSubjectsProfileScreen> {
                         ),
                       ),
                     ] else ...[
-                      Text(
-                        'No hay asignaturas disponibles',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: isDarkMode ? Colors.white : Colors.black,
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0), // Padding de 16 en todos los lados
+                        child: Text(
+                          'No has seleccionado ninguna asignatura',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.red,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],

@@ -153,7 +153,7 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                         padding: const EdgeInsets.only(top: 16.0),
                         child: Text(
                           errorMessage,
-                          style: const TextStyle(color: Colors.red, fontSize: 14),
+                          style: const TextStyle(color: Colors.red, fontSize: 20),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -163,8 +163,8 @@ class _EditPasswordProfileScreenState extends State<EditPasswordProfileScreen> {
                         child: Text(
                           successMessage,
                           style: TextStyle(
-                            color: Colors.indigo.shade700,
-                            fontSize: 14,
+                            color: Colors.green,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,

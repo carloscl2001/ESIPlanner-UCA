@@ -39,12 +39,7 @@ class ProfileService {
     required BuildContext context,
   }) async {
     try {
-      final String? token =
-          Provider.of<AuthProvider>(context, listen: false).token;
-
-      if (token == null) {
-        return {'success': false, 'message': 'No estás autenticado'};
-      }
+      final String? token = Provider.of<AuthProvider>(context, listen: false).token;
 
       final response = await http.put(
         Uri.parse('${ApiServices.baseUrl}/auth/$username/changePassword'),

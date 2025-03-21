@@ -143,12 +143,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
           : Column(
               children: [
                 if (_errorMessage.isNotEmpty) ...[
+                  const SizedBox(height: 20),
                   Text(
                     _errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                    style: const TextStyle(color: Colors.red, fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                 ],
                 // Días de la semana (Lun, Mar, Mié, Jue, Vie)
                 _buildWeekDaysHeader(isDarkMode),
