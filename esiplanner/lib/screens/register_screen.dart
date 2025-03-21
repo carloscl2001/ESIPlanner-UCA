@@ -56,11 +56,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final authService = AuthService();
     final result = await authService.register(
-      email: emailController.text,
-      username: usernameController.text,
-      password: passwordController.text,
-      name: nameController.text,
-      surname: surnameController.text,
+      email: emailController.text.trim(),
+      username: usernameController.text.trim(),
+      password: passwordController.text.trim(),
+      name: nameController.text.trim(),
+      surname: surnameController.text.trim(),
       degree: selectedDegree ?? '', // Usar el grado seleccionado
     );
 
