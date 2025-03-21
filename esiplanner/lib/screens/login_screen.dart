@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMessage = "";
  
   Future<void> login() async {
+    print(context.read<AuthProvider>().isAuthenticated);
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -36,7 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
       final String? token = result['data']['access_token']; // Accediendo al token correctamente
       if (token != null) {
         context.read<AuthProvider>().login(username, token);
+        print('Token en login: $token'); // Imprimir el token en la consola
         Navigator.pushReplacementNamed(context, '/home');
+
       } else {
         setState(() {
           errorMessage = 'No se recibió un token válido.';

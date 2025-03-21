@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
-import '/providers/overlap_class_provider.dart';
 
 // Navigation menu
 import 'navigation_menu_bar.dart';
@@ -30,7 +29,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => OverlapClassProvider()),
       ],
       child: const MyApp(),
     ),
@@ -51,6 +49,10 @@ class _MyAppState extends State<MyApp> {
     // Cargar el tema guardado al iniciar la aplicación
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     themeProvider.loadTheme();
+
+    // Cargar el estado de autenticación al iniciar la aplicación
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.loadAuthState();
   }
 
   @override
