@@ -18,15 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorMessage = "";
  
   Future<void> login() async {
-    print(context.read<AuthProvider>().isAuthenticated);
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
 
 
-    final String username = usernameController.text;
-    final String password = passwordController.text;
+    final String username = usernameController.text.trim();
+    final String password = passwordController.text.trim();
 
     final authService = AuthService();
     final result = await authService.login(username: username, password: password);
@@ -37,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final String? token = result['data']['access_token']; // Accediendo al token correctamente
       if (token != null) {
         context.read<AuthProvider>().login(username, token);
-        print('Token en login: $token'); // Imprimir el token en la consola
         Navigator.pushReplacementNamed(context, '/home');
 
       } else {

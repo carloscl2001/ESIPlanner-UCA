@@ -30,9 +30,6 @@ class AuthProvider extends ChangeNotifier {
     await prefs.setBool('isAuthenticated', true);
     await prefs.setString('username', username);
     await prefs.setString('token', token);
-
-    print('Token en provider: $_token');
-    print(_isAuthenticated);
     notifyListeners();
   }
 
