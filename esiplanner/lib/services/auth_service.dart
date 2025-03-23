@@ -29,7 +29,19 @@ class AuthService {
       );
 
       if (response.statusCode == 201) {
-        return {'success': true};
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        // Extraer el token de la respuesta
+        final token = responseData['token'];
+
+        if (token == null) {
+          return {'success': false, 'message': 'Token no recibido en la respuesta'};
+        }
+
+        return {
+          'success': true,
+          'token': token,  // Devolver el token
+        };
       } else {
         String errorMessage = 'Error';
         final errorData = jsonDecode(response.body);

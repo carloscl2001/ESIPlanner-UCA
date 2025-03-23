@@ -33,17 +33,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Función para registro (sin token)
-  Future<void> register(String username) async {
+  Future<void> register(String username, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _isAuthenticated = false;
+    _isAuthenticated = true; // El usuario está autenticado después del registro
     _username = username;
-    _token = null;
+    _token = token;
 
-    // Guardar el nombre de usuario en SharedPreferences
+    // Guardar el estado de autenticación, el nombre de usuario y el token en SharedPreferences
+    await prefs.setBool('isAuthenticated', true);
     await prefs.setString('username', username);
-    await prefs.setBool('isAuthenticated', false);
-    await prefs.remove('token'); // Asegurarse de que no haya token almacenado
+    await prefs.setString('token', token);
 
     notifyListeners();
   }
