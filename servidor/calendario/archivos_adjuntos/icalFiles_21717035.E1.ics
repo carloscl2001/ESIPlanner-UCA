@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717035.E1.001
+SUMMARY: Creación de Nuevos Productos - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20241213T100000
+DTEND;TZID=Europe/Madrid:20241213T140000
+END:VEVENT
+
+END:VCALENDAR

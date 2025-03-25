@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720035.C1.001
+SUMMARY: Mecanismos y Máquinas - C1 (prácticas informáticas)
+LOCATION: Aula D18
+DTSTART;TZID=Europe/Madrid:20250318T110000
+DTEND;TZID=Europe/Madrid:20250318T130000
+RDATE;TZID=Europe/Madrid:20250401T110000
+RDATE;TZID=Europe/Madrid:20250422T110000
+END:VEVENT
+
+END:VCALENDAR

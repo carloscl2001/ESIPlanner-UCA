@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717030.E2.001
+SUMMARY: Calidad y Gestión del Diseño - E2 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250314T160000
+DTEND;TZID=Europe/Madrid:20250314T200000
+RDATE;TZID=Europe/Madrid:20250328T160000
+RDATE;TZID=Europe/Madrid:20250516T160000
+END:VEVENT
+
+END:VCALENDAR

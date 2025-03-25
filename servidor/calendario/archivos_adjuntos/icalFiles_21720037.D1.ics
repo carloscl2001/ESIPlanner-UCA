@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720037.D1.001
+SUMMARY: Ingeniería de Procesos de Conformado con Conservación de Materiales - D1 (prácticas de laboratorio)
+LOCATION: Aula AS06
+DTSTART;TZID=Europe/Madrid:20241113T120000
+DTEND;TZID=Europe/Madrid:20241113T140000
+RDATE;TZID=Europe/Madrid:20241120T120000
+RDATE;TZID=Europe/Madrid:20241127T120000
+RDATE;TZID=Europe/Madrid:20241204T120000
+RDATE;TZID=Europe/Madrid:20241211T120000
+RDATE;TZID=Europe/Madrid:20241218T120000
+END:VEVENT
+
+END:VCALENDAR

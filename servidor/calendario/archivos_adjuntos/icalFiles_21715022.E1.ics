@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21715022.E1.001
+SUMMARY: Tecnología Ambiental - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20241121T153000
+DTEND;TZID=Europe/Madrid:20241121T203000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716041.D3.001
+SUMMARY: Tecnologías de Conformado de Materiales Aeroespaciales - D3 (prácticas de laboratorio)
+LOCATION: Aula AS01
+DTSTART;TZID=Europe/Madrid:20241016T183000
+DTEND;TZID=Europe/Madrid:20241016T203000
+RDATE;TZID=Europe/Madrid:20241030T183000
+RDATE;TZID=Europe/Madrid:20241113T183000
+RDATE;TZID=Europe/Madrid:20241120T183000
+RDATE;TZID=Europe/Madrid:20241204T183000
+RDATE;TZID=Europe/Madrid:20241218T183000
+END:VEVENT
+
+END:VCALENDAR

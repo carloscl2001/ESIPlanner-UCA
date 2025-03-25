@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718011.C4.001
+SUMMARY: Termotecnia - C4 (prácticas informáticas)
+LOCATION: Aula E07
+DTSTART;TZID=Europe/Madrid:20241031T150000
+DTEND;TZID=Europe/Madrid:20241031T170000
+RDATE;TZID=Europe/Madrid:20241128T150000
+END:VEVENT
+
+END:VCALENDAR

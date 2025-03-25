@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720026.E1.001
+SUMMARY: Cálculo, Construcción y Ensayo de Máquinas - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250320T120000
+DTEND;TZID=Europe/Madrid:20250320T140000
+RDATE;TZID=Europe/Madrid:20250403T120000
+END:VEVENT
+
+END:VCALENDAR

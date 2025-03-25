@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717017.D3.001
+SUMMARY: Ciencia e Ingeniería de los Materiales - D3 (prácticas de laboratorio)
+LOCATION: Aula AS04
+DTSTART;TZID=Europe/Madrid:20241122T090000
+DTEND;TZID=Europe/Madrid:20241122T140000
+RDATE;TZID=Europe/Madrid:20241129T090000
+RDATE;TZID=Europe/Madrid:20241213T090000
+END:VEVENT
+
+END:VCALENDAR

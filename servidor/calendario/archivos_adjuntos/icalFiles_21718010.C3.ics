@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718010.C3.001
+SUMMARY: Expresión Gráfica y Diseño Asistido - C3 (prácticas informáticas)
+LOCATION: Aula D16
+DTSTART;TZID=Europe/Madrid:20241009T150000
+DTEND;TZID=Europe/Madrid:20241009T170000
+RDATE;TZID=Europe/Madrid:20241106T150000
+RDATE;TZID=Europe/Madrid:20241218T150000
+END:VEVENT
+
+END:VCALENDAR

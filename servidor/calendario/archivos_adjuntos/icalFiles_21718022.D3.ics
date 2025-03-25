@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718022.D3.001
+SUMMARY: Tecnología Ambiental - D3 (prácticas de laboratorio)
+LOCATION: Aula B13
+DTSTART;TZID=Europe/Madrid:20241023T083000
+DTEND;TZID=Europe/Madrid:20241023T103000
+RDATE;TZID=Europe/Madrid:20241106T083000
+RDATE;TZID=Europe/Madrid:20241113T083000
+END:VEVENT
+
+END:VCALENDAR

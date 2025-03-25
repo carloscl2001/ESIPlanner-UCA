@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718031.E1.001
+SUMMARY: Centrales Eléctricas - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250529T083000
+DTEND;TZID=Europe/Madrid:20250529T143000
+END:VEVENT
+
+END:VCALENDAR

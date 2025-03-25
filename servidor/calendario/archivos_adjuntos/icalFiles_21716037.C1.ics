@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716037.C1.001
+SUMMARY: Elementos Estructurales Aeronáuticos - C1 (prácticas informáticas)
+LOCATION: Aula D19
+DTSTART;TZID=Europe/Madrid:20241029T150000
+DTEND;TZID=Europe/Madrid:20241029T170000
+RDATE;TZID=Europe/Madrid:20241112T150000
+RDATE;TZID=Europe/Madrid:20241126T150000
+RDATE;TZID=Europe/Madrid:20241217T150000
+END:VEVENT
+
+END:VCALENDAR

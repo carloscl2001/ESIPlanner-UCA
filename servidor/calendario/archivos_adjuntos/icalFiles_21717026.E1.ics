@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717026.E1.001
+SUMMARY: Envase y Embalaje - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250507T160000
+DTEND;TZID=Europe/Madrid:20250507T200000
+END:VEVENT
+
+END:VCALENDAR

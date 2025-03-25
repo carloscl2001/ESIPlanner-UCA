@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720033.E1.001
+SUMMARY: Aparatos de Elevación, Transporte y Manutención - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20241105T103000
+DTEND;TZID=Europe/Madrid:20241105T123000
+RDATE;TZID=Europe/Madrid:20241119T103000
+RDATE;TZID=Europe/Madrid:20241203T103000
+END:VEVENT
+
+END:VCALENDAR

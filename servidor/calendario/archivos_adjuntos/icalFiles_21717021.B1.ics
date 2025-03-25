@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717021.B1.001
+SUMMARY: Desarrollo Histórico-Culturales del Diseño Industrial - B1 (clases de problemas)
+LOCATION: Aula D17
+DTSTART;TZID=Europe/Madrid:20241009T170000
+DTEND;TZID=Europe/Madrid:20241009T190000
+RDATE;TZID=Europe/Madrid:20241023T170000
+RDATE;TZID=Europe/Madrid:20241106T170000
+RDATE;TZID=Europe/Madrid:20241120T170000
+RDATE;TZID=Europe/Madrid:20241204T170000
+END:VEVENT
+
+END:VCALENDAR

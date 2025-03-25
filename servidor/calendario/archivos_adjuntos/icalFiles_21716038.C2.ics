@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716038.C2.001
+SUMMARY: Sistemas de Propulsión Aeroespacial - C2 (prácticas informáticas)
+LOCATION: Aula B07
+DTSTART;TZID=Europe/Madrid:20250317T170000
+DTEND;TZID=Europe/Madrid:20250317T210000
+RDATE;TZID=Europe/Madrid:20250407T170000
+RDATE;TZID=Europe/Madrid:20250428T170000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720033.B1.001
+SUMMARY: Aparatos de Elevación, Transporte y Manutención - B1 (clases de problemas)
+LOCATION: Aula B06
+DTSTART;TZID=Europe/Madrid:20241212T103000
+DTEND;TZID=Europe/Madrid:20241212T123000
+RDATE;TZID=Europe/Madrid:20241219T103000
+RDATE;TZID=Europe/Madrid:20250109T103000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21720033.B1.002
+SUMMARY: Aparatos de Elevación, Transporte y Manutención - B1 (clases de problemas)
+LOCATION: Aula B06
+DTSTART;TZID=Europe/Madrid:20241217T093000
+DTEND;TZID=Europe/Madrid:20241217T113000
+RDATE;TZID=Europe/Madrid:20250107T093000
+RDATE;TZID=Europe/Madrid:20250114T093000
+END:VEVENT
+
+END:VCALENDAR

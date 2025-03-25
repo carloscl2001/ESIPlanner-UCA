@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718032.D1.001
+SUMMARY: Diseño de Subestaciones y Centros de Transformación - D1 (prácticas de laboratorio)
+LOCATION: Aula AS02
+DTSTART;TZID=Europe/Madrid:20241010T160000
+DTEND;TZID=Europe/Madrid:20241010T180000
+RDATE;TZID=Europe/Madrid:20241024T160000
+RDATE;TZID=Europe/Madrid:20241107T160000
+RDATE;TZID=Europe/Madrid:20241121T160000
+RDATE;TZID=Europe/Madrid:20241205T160000
+END:VEVENT
+
+END:VCALENDAR

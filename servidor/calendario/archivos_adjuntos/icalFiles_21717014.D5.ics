@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717014.D5.001
+SUMMARY: Teoría de Mecanismos y Máquinas - D5 (prácticas de laboratorio)
+LOCATION: Aula C12
+DTSTART;TZID=Europe/Madrid:20250424T190000
+DTEND;TZID=Europe/Madrid:20250424T210000
+RDATE;TZID=Europe/Madrid:20250508T190000
+RDATE;TZID=Europe/Madrid:20250515T190000
+RDATE;TZID=Europe/Madrid:20250522T190000
+END:VEVENT
+
+END:VCALENDAR

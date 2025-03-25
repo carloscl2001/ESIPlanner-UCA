@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716052.C2.001
+SUMMARY: Mecánica del Vuelo (Equipos y Materiales Aeroespaciales) - C2 (prácticas informáticas)
+LOCATION: Aula D16
+DTSTART;TZID=Europe/Madrid:20250224T110000
+DTEND;TZID=Europe/Madrid:20250224T130000
+RDATE;TZID=Europe/Madrid:20250310T110000
+RDATE;TZID=Europe/Madrid:20250331T110000
+END:VEVENT
+
+END:VCALENDAR

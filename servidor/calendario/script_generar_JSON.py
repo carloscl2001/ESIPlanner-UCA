@@ -60,11 +60,11 @@ def extract_subject_codes_from_pdf(pdf_reader):
     return list(subject_codes)  # Convertimos el set a lista antes de devolverlo
 
 
-def process_pdf(pdf_file):
+def process_pdf(pdf_path):
     """Procesa el archivo PDF y extrae información relevante."""
-    degree_code = pdf_file.split(".")[0]
+    degree_code = os.path.splitext(os.path.basename(pdf_path))[0]
     
-    with open(pdf_file, 'rb') as handler:
+    with open(pdf_path, 'rb') as handler:
         reader = pypdf.PdfReader(handler)
         degree_name = extract_degree_name_from_pdf(reader)
         subject_codes = extract_subject_codes_from_pdf(reader)
@@ -94,13 +94,23 @@ def save_attachments(attachments):
 
 
 def extract_data_from_pdfs():
-    """Extrae los datos de los PDFs en el directorio y crea los archivos JSON correspondientes."""
-    pdf_files = [f for f in os.listdir() if f.lower().endswith('.pdf')]
+    """Extrae los datos de los PDFs en el directorio 'archivos_pdf' y crea los archivos JSON correspondientes."""
+    pdf_dir = "archivos_pdf"
+    
+    # Verificar si la carpeta existe
+    if not os.path.exists(pdf_dir):
+        print(f"Error: No se encontró la carpeta '{pdf_dir}'.")
+        return []
+    
+    # Listar archivos PDF en la carpeta especificada
+    pdf_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith('.pdf')]
     
     all_degree_data = []
     
     for pdf_file in pdf_files:
-        degree_data = process_pdf(pdf_file)
+        # Construir la ruta completa al archivo PDF
+        pdf_path = os.path.join(pdf_dir, pdf_file)
+        degree_data = process_pdf(pdf_path)  # Pasar la ruta completa
         
         all_degree_data.append(degree_data)
         
@@ -110,7 +120,6 @@ def extract_data_from_pdfs():
         json_filename = os.path.join("archivos_grados", f"{degree_data['code']}.json")
         with open(json_filename, "w", encoding="utf-8") as json_file:
             json.dump(degree_data, json_file, indent=4, ensure_ascii=False)
-        
     
     return all_degree_data
 
@@ -295,7 +304,7 @@ def main():
     save_json_for_each_subject(combined_courses)
     print("Se han creado los archivos JSON para las asignaturas")
 
-    print("\nSCRIPT FINALIZADO ")
+    print("\nSCRIPT FINALIZADO")
 
 
 if __name__ == "__main__":

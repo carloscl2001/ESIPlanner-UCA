@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718028.D3.001
+SUMMARY: Líneas y Redes Eléctricas - D3 (prácticas de laboratorio)
+LOCATION: Aula A14
+DTSTART;TZID=Europe/Madrid:20250430T183000
+DTEND;TZID=Europe/Madrid:20250430T203000
+RDATE;TZID=Europe/Madrid:20250507T183000
+RDATE;TZID=Europe/Madrid:20250514T183000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21714003.D1.001
+SUMMARY: Fundamentos Físicos y Electrónicos de la Informática - D1 (prácticas de laboratorio)
+LOCATION: Aula E12
+DTSTART;TZID=Europe/Madrid:20250310T180000
+DTEND;TZID=Europe/Madrid:20250310T200000
+RDATE;TZID=Europe/Madrid:20250407T180000
+RDATE;TZID=Europe/Madrid:20250428T180000
+RDATE;TZID=Europe/Madrid:20250512T180000
+RDATE;TZID=Europe/Madrid:20250526T180000
+END:VEVENT
+
+END:VCALENDAR

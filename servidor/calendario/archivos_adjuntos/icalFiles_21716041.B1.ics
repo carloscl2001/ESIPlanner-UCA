@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716041.B1.001
+SUMMARY: Tecnologías de Conformado de Materiales Aeroespaciales - B1 (clases de problemas)
+LOCATION: Aula B05
+DTSTART;TZID=Europe/Madrid:20241009T163000
+DTEND;TZID=Europe/Madrid:20241009T183000
+RDATE;TZID=Europe/Madrid:20241023T163000
+RDATE;TZID=Europe/Madrid:20241106T163000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718028.E1.001
+SUMMARY: Líneas y Redes Eléctricas - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250515T083000
+DTEND;TZID=Europe/Madrid:20250515T143000
+END:VEVENT
+
+END:VCALENDAR

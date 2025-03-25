@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21714034.D1.001
+SUMMARY: Diseño Avanzado de Arquitectura de Computadores - D1 (prácticas de laboratorio)
+LOCATION: Aula E15
+DTSTART;TZID=Europe/Madrid:20241003T110000
+DTEND;TZID=Europe/Madrid:20241003T130000
+RDATE;TZID=Europe/Madrid:20241010T110000
+RDATE;TZID=Europe/Madrid:20241017T110000
+RDATE;TZID=Europe/Madrid:20241024T110000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21714034.D1.002
+SUMMARY: Diseño Avanzado de Arquitectura de Computadores - D1 (prácticas de laboratorio)
+LOCATION: Aula E15
+DTSTART;TZID=Europe/Madrid:20241107T113000
+DTEND;TZID=Europe/Madrid:20241107T140000
+RDATE;TZID=Europe/Madrid:20241114T113000
+RDATE;TZID=Europe/Madrid:20241121T113000
+RDATE;TZID=Europe/Madrid:20241128T113000
+END:VEVENT
+
+END:VCALENDAR

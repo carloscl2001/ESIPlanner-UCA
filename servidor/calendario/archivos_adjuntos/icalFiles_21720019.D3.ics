@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720019.D3.001
+SUMMARY: Ingeniería de Fabricación - D3 (prácticas de laboratorio)
+LOCATION: Aula AS03
+DTSTART;TZID=Europe/Madrid:20250328T150000
+DTEND;TZID=Europe/Madrid:20250328T200000
+RDATE;TZID=Europe/Madrid:20250516T150000
+END:VEVENT
+
+END:VCALENDAR

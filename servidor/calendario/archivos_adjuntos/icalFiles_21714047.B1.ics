@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21714047.B1.001
+SUMMARY: Implementación e Implantación de Sistemas Software - B1 (clases de problemas)
+LOCATION: Aula D06
+DTSTART;TZID=Europe/Madrid:20250428T160000
+DTEND;TZID=Europe/Madrid:20250428T180000
+RDATE;TZID=Europe/Madrid:20250505T160000
+RDATE;TZID=Europe/Madrid:20250512T160000
+RDATE;TZID=Europe/Madrid:20250519T160000
+RDATE;TZID=Europe/Madrid:20250526T160000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21715018.D1.001
+SUMMARY: Elasticidad y Resistencia de Materiales I - D1 (prácticas de laboratorio)
+LOCATION: Aula C13
+DTSTART;TZID=Europe/Madrid:20241022T150000
+DTEND;TZID=Europe/Madrid:20241022T163000
+RDATE;TZID=Europe/Madrid:20241105T150000
+RDATE;TZID=Europe/Madrid:20241119T150000
+RDATE;TZID=Europe/Madrid:20241203T150000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720029.C4.001
+SUMMARY: Cálculo y Diseño de Estructuras - C4 (prácticas informáticas)
+LOCATION: Aula B09
+DTSTART;TZID=Europe/Madrid:20250403T100000
+DTEND;TZID=Europe/Madrid:20250403T120000
+END:VEVENT
+
+END:VCALENDAR

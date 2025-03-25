@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718011.C1.001
+SUMMARY: Termotecnia - C1 (prácticas informáticas)
+LOCATION: Aula E09
+DTSTART;TZID=Europe/Madrid:20241017T123000
+DTEND;TZID=Europe/Madrid:20241017T143000
+RDATE;TZID=Europe/Madrid:20241128T123000
+END:VEVENT
+
+END:VCALENDAR

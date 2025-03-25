@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716039.E2.001
+SUMMARY: Materiales Aeroespaciales - E2 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20241212T083000
+DTEND;TZID=Europe/Madrid:20241212T123000
+RDATE;TZID=Europe/Madrid:20241219T083000
+RDATE;TZID=Europe/Madrid:20250109T083000
+END:VEVENT
+
+END:VCALENDAR

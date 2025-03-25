@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720028.C2.001
+SUMMARY: Elasticidad y Resistencia de Materiales II - C2 (prácticas informáticas)
+LOCATION: Aula D19
+DTSTART;TZID=Europe/Madrid:20241017T123000
+DTEND;TZID=Europe/Madrid:20241017T140000
+RDATE;TZID=Europe/Madrid:20241031T123000
+RDATE;TZID=Europe/Madrid:20241114T123000
+RDATE;TZID=Europe/Madrid:20241128T123000
+END:VEVENT
+
+END:VCALENDAR

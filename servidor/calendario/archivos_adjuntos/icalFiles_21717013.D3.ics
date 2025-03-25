@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717013.D3.001
+SUMMARY: Resistencia de Materiales - D3 (prácticas de laboratorio)
+LOCATION: Aula C13
+DTSTART;TZID=Europe/Madrid:20250313T103000
+DTEND;TZID=Europe/Madrid:20250313T123000
+RDATE;TZID=Europe/Madrid:20250327T103000
+END:VEVENT
+
+END:VCALENDAR

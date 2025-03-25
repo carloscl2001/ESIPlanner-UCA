@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717025.E1.001
+SUMMARY: Diseño Ergonómico y Ecodiseño - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250411T150000
+DTEND;TZID=Europe/Madrid:20250411T180000
+RDATE;TZID=Europe/Madrid:20250516T150000
+END:VEVENT
+
+END:VCALENDAR

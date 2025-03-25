@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716040.D1.001
+SUMMARY: Comportamiento y Control de Materiales Aeroespaciales - D1 (prácticas de laboratorio)
+LOCATION: Aula B19
+DTSTART;TZID=Europe/Madrid:20241017T180000
+DTEND;TZID=Europe/Madrid:20241017T203000
+RDATE;TZID=Europe/Madrid:20241031T180000
+RDATE;TZID=Europe/Madrid:20241114T180000
+RDATE;TZID=Europe/Madrid:20241128T180000
+RDATE;TZID=Europe/Madrid:20241212T180000
+RDATE;TZID=Europe/Madrid:20250109T180000
+END:VEVENT
+
+END:VCALENDAR

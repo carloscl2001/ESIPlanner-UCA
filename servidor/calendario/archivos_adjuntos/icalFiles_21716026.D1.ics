@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716026.D1.001
+SUMMARY: Mecánica y Vibraciones - D1 (prácticas de laboratorio)
+LOCATION: Aula C12
+DTSTART;TZID=Europe/Madrid:20241121T100000
+DTEND;TZID=Europe/Madrid:20241121T120000
+RDATE;TZID=Europe/Madrid:20241212T100000
+RDATE;TZID=Europe/Madrid:20241219T100000
+END:VEVENT
+
+END:VCALENDAR

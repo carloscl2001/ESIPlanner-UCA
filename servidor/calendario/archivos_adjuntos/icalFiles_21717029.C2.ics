@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21717029.C2.001
+SUMMARY: Materiales para el Diseño - C2 (prácticas informáticas)
+LOCATION: Aula B08
+DTSTART;TZID=Europe/Madrid:20241112T150000
+DTEND;TZID=Europe/Madrid:20241112T190000
+RDATE;TZID=Europe/Madrid:20241119T150000
+END:VEVENT
+
+END:VCALENDAR

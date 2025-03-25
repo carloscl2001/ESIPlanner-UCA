@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21714027.B1.001
+SUMMARY: Teoría de Automátas y Lenguajes Formales - B1 (clases de problemas)
+LOCATION: Aula B07
+DTSTART;TZID=Europe/Madrid:20250508T100000
+DTEND;TZID=Europe/Madrid:20250508T120000
+RDATE;TZID=Europe/Madrid:20250515T100000
+RDATE;TZID=Europe/Madrid:20250522T100000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21714027.B1.002
+SUMMARY: Teoría de Automátas y Lenguajes Formales - B1 (clases de problemas)
+LOCATION: Aula D08
+DTSTART;TZID=Europe/Madrid:20250529T100000
+DTEND;TZID=Europe/Madrid:20250529T140000
+END:VEVENT
+
+END:VCALENDAR

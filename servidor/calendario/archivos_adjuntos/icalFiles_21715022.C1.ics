@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21715022.C1.001
+SUMMARY: Tecnología Ambiental - C1 (prácticas informáticas)
+LOCATION: Aula B09
+DTSTART;TZID=Europe/Madrid:20241113T160000
+DTEND;TZID=Europe/Madrid:20241113T180000
+RDATE;TZID=Europe/Madrid:20241120T160000
+END:VEVENT
+
+END:VCALENDAR

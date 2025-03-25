@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21720039.E1.001
+SUMMARY: Estructuras Metálicas, de Hormigón y Cimentaciones - E1 (salidas de campo)
+LOCATION: Aula None
+DTSTART;TZID=Europe/Madrid:20250430T120000
+DTEND;TZID=Europe/Madrid:20250430T140000
+RDATE;TZID=Europe/Madrid:20250507T120000
+END:VEVENT
+
+END:VCALENDAR

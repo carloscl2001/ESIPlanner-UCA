@@ -1,0 +1,43 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21715071.X1.001
+SUMMARY: Modelos Matemáticos y Estadísticos en Ingeniería - X1 (clases teórico-prácticas)
+LOCATION: Aula B08
+DTSTART;TZID=Europe/Madrid:20241002T120000
+DTEND;TZID=Europe/Madrid:20241002T140000
+RDATE;TZID=Europe/Madrid:20241009T120000
+RDATE;TZID=Europe/Madrid:20241016T120000
+RDATE;TZID=Europe/Madrid:20250108T120000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21715071.X1.002
+SUMMARY: Modelos Matemáticos y Estadísticos en Ingeniería - X1 (clases teórico-prácticas)
+LOCATION: Aula B09
+DTSTART;TZID=Europe/Madrid:20241018T093000
+DTEND;TZID=Europe/Madrid:20241018T113000
+RDATE;TZID=Europe/Madrid:20241108T093000
+RDATE;TZID=Europe/Madrid:20241115T093000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21715071.X1.003
+SUMMARY: Modelos Matemáticos y Estadísticos en Ingeniería - X1 (clases teórico-prácticas)
+LOCATION: Aula C18
+DTSTART;TZID=Europe/Madrid:20241129T090000
+DTEND;TZID=Europe/Madrid:20241129T130000
+RDATE;TZID=Europe/Madrid:20250110T090000
+END:VEVENT
+
+BEGIN:VEVENT
+UID: 21715071.X1.004
+SUMMARY: Modelos Matemáticos y Estadísticos en Ingeniería - X1 (clases teórico-prácticas)
+LOCATION: Aula B08
+DTSTART;TZID=Europe/Madrid:20241017T083000
+DTEND;TZID=Europe/Madrid:20241017T103000
+END:VEVENT
+
+END:VCALENDAR

@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21718019.D8.001
+SUMMARY: Ingeniería de Fabricación - D8 (prácticas de laboratorio)
+LOCATION: Aula AS03
+DTSTART;TZID=Europe/Madrid:20250422T083000
+DTEND;TZID=Europe/Madrid:20250422T133000
+RDATE;TZID=Europe/Madrid:20250527T083000
+END:VEVENT
+
+END:VCALENDAR

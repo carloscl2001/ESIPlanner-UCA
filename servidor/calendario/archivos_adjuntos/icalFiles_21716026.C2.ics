@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Escuela Superior de Ingeniería//Universidad de Cádiz//
+
+BEGIN:VEVENT
+UID: 21716026.C2.001
+SUMMARY: Mecánica y Vibraciones - C2 (prácticas informáticas)
+LOCATION: Aula D18
+DTSTART;TZID=Europe/Madrid:20241114T120000
+DTEND;TZID=Europe/Madrid:20241114T140000
+END:VEVENT
+
+END:VCALENDAR
