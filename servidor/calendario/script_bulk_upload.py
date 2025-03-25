@@ -2,10 +2,18 @@
 import json
 import os
 from datetime import datetime
-from db.client import db_client
 from pymongo.errors import BulkWriteError
 from tqdm import tqdm
 import sys
+from pathlib import Path
+
+# Añade el directorio servidor al path
+servidor_path = Path(__file__).parent.parent  # Sube a /servidor
+sys.path.append(str(servidor_path))
+
+# Ahora importa normalmente
+from fastAPI.db.client import db_client
+
 
 class ConsoleOutput:
     """Maneja la salida a consola con símbolos compatibles"""
