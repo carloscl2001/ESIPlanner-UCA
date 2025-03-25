@@ -26,11 +26,13 @@ class ConsoleOutput:
         print(title.center(60))
         print("="*60)
 
+    @staticmethod
     def print_header_processing(title):
         print("\n" + "_"*60)
         print(title.center(60))
         print("_"*60)
 
+    @staticmethod
     def print_finish(title1, title2):
         print("\n" + "="*60)
         print(title1.center(60))
@@ -57,6 +59,21 @@ class ConsoleOutput:
     @staticmethod
     def print_info(message):
         print(f"[i] {message}")
+
+def log_changes(collection_name: str, operation: str, filename: str, changes: dict):
+    """Registra cambios en la colección de log"""
+    log_entry = {
+        "timestamp": datetime.now(),
+        "collection": collection_name,
+        "operation": operation,
+        "source_file": filename,
+        "changes": changes,
+    }
+    
+    try:
+        db_client['logs'].insert_one(log_entry)
+    except Exception as e:
+        ConsoleOutput.print_warning(f"No se pudo registrar en el log: {str(e)}")
 
 def show_menu():
     """Muestra el menú principal y maneja la selección"""
@@ -116,16 +133,31 @@ def full_clean_load():
 
         ConsoleOutput.print_header_processing(f"PROCESANDO: {folder} -> {collection}")
 
-        
         # 1. Borrado completo
         count_before = db_client[collection].estimated_document_count()
-        db_client[collection].delete_many({})
+        deleted_result = db_client[collection].delete_many({})
+        
+        # Registrar el borrado en el log
+        log_changes(
+            collection_name=collection,
+            operation="delete",
+            filename="FULL_CLEAN_LOAD",
+            changes={
+                "deleted_count": deleted_result.deleted_count,
+                "operation": "full_clean_load",
+                "details": f"Se eliminaron todos los documentos ({deleted_result.deleted_count}) de la colección {collection}"
+            }
+        )
+        
         ConsoleOutput.print_success(f"Colección {collection} borrada. Documentos eliminados: {count_before}")
         
         # 2. Carga de archivos
         inserted = 0
+        processed_files = []
+        
         for filename in tqdm(files, desc=f"Cargando {collection}"):
-            loaded_files[collection].add(filename)  # Registrar archivo cargado
+            loaded_files[collection].add(filename)
+            processed_files.append(filename)
             filepath = os.path.join(folder, filename)
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
@@ -141,6 +173,20 @@ def full_clean_load():
                 ConsoleOutput.print_warning(f"Error en {filename}: {str(e)}")
                 continue
         
+        # Registrar la inserción en el log (un solo registro por colección)
+        log_changes(
+            collection_name=collection,
+            operation="insert",
+            filename="MULTIPLE_FILES",
+            changes={
+                "inserted_count": inserted,
+                "operation": "bulk_insert",
+                "processed_files": processed_files,
+                "file_count": len(processed_files),
+                "details": f"Se insertaron {inserted} documentos desde {len(processed_files)} archivos"
+            }
+        )
+        
         total_docs += inserted
         ConsoleOutput.print_success(f"Documentos insertados en {collection}: {inserted}")
     
@@ -150,7 +196,6 @@ def full_clean_load():
 def additional_load_menu():
     """Menú para carga adicional de archivos específicos"""
     while True:
-        # Opciones del submenú
         submenu_options = {
             '1': {
                 'label': 'Añadir asignaturas',
@@ -166,13 +211,12 @@ def additional_load_menu():
             }
         }
         
-        # Mostrar el submenú con el mismo formato que el menú principal
         ConsoleOutput.print_menu("CARGA ADICIONAL DE ARCHIVOS ESPECIFICOS", submenu_options)
         choice = input("Seleccione una opción (1-3): ")
         
         if choice in submenu_options:
             if choice == '3':
-                return  # Salir del submenú
+                return
             submenu_options[choice]['action']()
         else:
             ConsoleOutput.print_warning("Opción no válida. Intente nuevamente.")
@@ -218,7 +262,7 @@ def process_custom_files(folder_path: str, collection_name: str):
         duplicates = 0
         
         for filename in selected_files:
-            loaded_files[collection_name].add(filename)  # Registrar archivo cargado
+            loaded_files[collection_name].add(filename)
             filepath = os.path.join(folder_path, filename)
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
@@ -234,8 +278,30 @@ def process_custom_files(folder_path: str, collection_name: str):
                                 )
                                 if result.upserted_id:
                                     total_inserted += 1
+                                    
+                                    log_changes(
+                                        collection_name=collection_name,
+                                        operation="insert",
+                                        filename=filename,
+                                        changes={
+                                            "document_id": str(result.upserted_id),
+                                            "operation": "upsert_insert",
+                                            "details": f"Nuevo documento insertado desde {filename}"
+                                        }
+                                    )
                                 else:
                                     duplicates += 1
+                                    
+                                    log_changes(
+                                        collection_name=collection_name,
+                                        operation="update",
+                                        filename=filename,
+                                        changes={
+                                            "document_id": str(doc.get('_id')),
+                                            "operation": "upsert_update",
+                                            "details": f"Documento actualizado desde {filename}"
+                                        }
+                                    )
                             except Exception as e:
                                 ConsoleOutput.print_warning(f"Error en documento: {str(e)}")
                     else:
@@ -247,8 +313,30 @@ def process_custom_files(folder_path: str, collection_name: str):
                             )
                             if result.upserted_id:
                                 total_inserted += 1
+                                
+                                log_changes(
+                                    collection_name=collection_name,
+                                    operation="insert",
+                                    filename=filename,
+                                    changes={
+                                        "document_id": str(result.upserted_id),
+                                        "operation": "upsert_insert",
+                                        "details": f"Nuevo documento insertado desde {filename}"
+                                    }
+                                )
                             else:
                                 duplicates += 1
+                                
+                                log_changes(
+                                    collection_name=collection_name,
+                                    operation="update",
+                                    filename=filename,
+                                    changes={
+                                        "document_id": str(data.get('_id')),
+                                        "operation": "upsert_update",
+                                        "details": f"Documento actualizado desde {filename}"
+                                    }
+                                )
                         except Exception as e:
                             ConsoleOutput.print_warning(f"Error en documento: {str(e)}")
                             
@@ -278,7 +366,6 @@ def full_overwrite_load():
     start_time = datetime.now()
     total_docs = 0
     
-    # Limpiar registro de archivos cargados
     global loaded_files
     loaded_files = {'subjects': set(), 'degrees': set()}
     
@@ -296,13 +383,28 @@ def full_overwrite_load():
         
         # 1. Borrado completo
         count_before = db_client[collection].estimated_document_count()
-        db_client[collection].delete_many({})
+        deleted_result = db_client[collection].delete_many({})
+        
+        log_changes(
+            collection_name=collection,
+            operation="delete",
+            filename="FULL_OVERWRITE_LOAD",
+            changes={
+                "deleted_count": deleted_result.deleted_count,
+                "operation": "full_overwrite_load",
+                "details": f"Se eliminaron todos los documentos ({deleted_result.deleted_count}) de la colección {collection}"
+            }
+        )
+        
         ConsoleOutput.print_success(f"Colección {collection} borrada. Documentos eliminados: {count_before}")
         
         # 2. Carga de archivos
         inserted = 0
+        processed_files = []
+        
         for filename in files:
-            loaded_files[collection].add(filename)  # Registrar archivo cargado
+            loaded_files[collection].add(filename)
+            processed_files.append(filename)
             filepath = os.path.join(folder, filename)
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
@@ -318,6 +420,19 @@ def full_overwrite_load():
                 ConsoleOutput.print_warning(f"Error en {filename}: {str(e)}")
                 continue
         
+        log_changes(
+            collection_name=collection,
+            operation="insert",
+            filename="MULTIPLE_FILES",
+            changes={
+                "inserted_count": inserted,
+                "operation": "bulk_insert",
+                "processed_files": processed_files,
+                "file_count": len(processed_files),
+                "details": f"Se insertaron {inserted} documentos desde {len(processed_files)} archivos"
+            }
+        )
+        
         total_docs += inserted
         ConsoleOutput.print_success(f"Documentos insertados en {collection}: {inserted}")
     
@@ -330,25 +445,53 @@ def show_detailed_stats():
     ConsoleOutput.print_header("ESTADÍSTICAS DETALLADAS")
     collections = {
         'subjects': 'Asignaturas',
-        'degrees': 'Grados'
+        'degrees': 'Grados',
+        'logs': 'Registros de Cambios'
     }
     
     print("\nDocumentos en MongoDB:")
     for col, name in collections.items():
         try:
             count = db_client[col].estimated_document_count()
-            print(f"  {name+':':<15}{count:>10}")
+            print(f"  {name+':':<20}{count:>10}")
             
-            # Mostrar archivos cargados para esta colección
-            if loaded_files[col]:
+            if col in loaded_files and loaded_files[col]:
                 print(f"  Archivos cargados ({len(loaded_files[col])}):")
                 for i, filename in enumerate(sorted(loaded_files[col]), 1):
                     print(f"    {i}. {filename}")
-            else:
+            elif col in loaded_files:
                 print("  Ningún archivo cargado recientemente")
                 
         except Exception as e:
             ConsoleOutput.print_warning(f"No se pudo acceder a la colección {col}: {str(e)}")
+
+    # Mostrar los últimos 5 registros de cambios
+    try:
+        print("\nÚltimos 5 registros de cambios:")
+        last_logs = db_client['logs'].find().sort('timestamp', -1).limit(5)
+        for log in last_logs:
+            print(f"\n  [{log['timestamp']}] {log['collection']}.{log['operation']}")
+            print(f"  Archivo: {log['source_file']}")
+            print("  Detalles:")
+            
+            # Mostrar de forma especial los logs consolidados
+            if log['source_file'] in ["FULL_CLEAN_LOAD", "FULL_OVERWRITE_LOAD"]:
+                print(f"    Documentos afectados: {log['changes']['deleted_count']}")
+                print(f"    Operación: {log['changes']['operation']}")
+                print(f"    {log['changes']['details']}")
+                
+            elif log['source_file'] == "MULTIPLE_FILES":
+                print(f"    Documentos insertados: {log['changes']['inserted_count']}")
+                print(f"    Archivos procesados ({log['changes']['file_count']}):")
+                for i, fname in enumerate(log['changes']['processed_files'], 1):
+                    print(f"      {i}. {fname}")
+                print(f"    {log['changes']['details']}")
+            else:
+                print(f"    ID Documento: {log['changes'].get('document_id', 'N/A')}")
+                print(f"    Operación: {log['changes']['operation']}")
+                print(f"    {log['changes']['details']}")
+    except Exception as e:
+        ConsoleOutput.print_warning(f"No se pudieron obtener los registros de cambios: {str(e)}")
 
 def exit_program():
     """Sale del programa"""
@@ -357,6 +500,12 @@ def exit_program():
 
 if __name__ == "__main__":
     try:
+        # Verificar/crear índices para la colección de logs
+        db_client['logs'].create_index([("timestamp", -1)])
+        db_client['logs'].create_index([("collection", 1)])
+        db_client['logs'].create_index([("operation", 1)])
+        db_client['logs'].create_index([("source_file", 1)])
+        
         show_menu()
     except KeyboardInterrupt:
         ConsoleOutput.print_warning("\nOperación cancelada por el usuario")
