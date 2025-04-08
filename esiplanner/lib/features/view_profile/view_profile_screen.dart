@@ -13,25 +13,42 @@ class ViewProfileScreen extends StatefulWidget {
 
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
   late ViewProfileLogic logic;
+  bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
     logic = ViewProfileLogic(
-      refreshUI: () => setState(() {}),
+      refreshUI: () {
+        if (_isMounted) {
+          setState(() {});
+        }
+      },
       showError: (message) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        if (_isMounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
       },
     );
-    // Pasamos el context aquí
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      logic.loadUserProfile(context);
+      if (_isMounted) {
+        logic.loadUserProfile(context);
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    logic.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,9 +58,9 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Mi perfil',
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),

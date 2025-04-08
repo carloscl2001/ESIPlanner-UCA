@@ -10,6 +10,7 @@ class ViewProfileLogic {
 
   Map<String, dynamic> userProfile = {};
   String errorMessage = '';
+  bool _isDisposed = false;
 
   ViewProfileLogic({
     required this.refreshUI,
@@ -24,21 +25,29 @@ class ViewProfileLogic {
       
       if (username == null || username.isEmpty) {
         errorMessage = "El nombre de usuario no está disponible";
-        refreshUI();
+        if (!_isDisposed) refreshUI();
         return;
       }
 
       final profileData = await profileService.getProfileData(username: username);
 
-      if (profileData.isEmpty) {
-        errorMessage = 'No se pudo obtener la información del perfil';
-      } else {
-        userProfile = profileData;
+      if (!_isDisposed) {
+        if (profileData.isEmpty) {
+          errorMessage = 'No se pudo obtener la información del perfil';
+        } else {
+          userProfile = profileData;
+        }
+        refreshUI();
       }
     } catch (e) {
-      errorMessage = 'Error al cargar el perfil: $e';
-    } finally {
-      refreshUI();
+      if (!_isDisposed) {
+        errorMessage = 'Error al cargar el perfil: $e';
+        refreshUI();
+      }
     }
+  }
+
+  void dispose() {
+    _isDisposed = true;
   }
 }
