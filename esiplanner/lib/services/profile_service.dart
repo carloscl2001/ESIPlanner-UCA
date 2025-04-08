@@ -101,4 +101,32 @@ class ProfileService {
       };
     }
   }
+
+  //Actualizar asignaturas y grupos del usuario
+  Future<Map<String, dynamic>> updateSubjects({
+    required String username,
+    required List<Map<String, dynamic>> subjects,
+  }) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiServices.baseUrl}/users/$username/subjects'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'subjects': subjects}),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {
+          'success': false,
+          'message': 'Error al actualizar las asignaturas',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error al realizar la solicitud: $e',
+      };
+    }
+  }
 }

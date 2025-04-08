@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/profile_service.dart';
 import '../services/subject_service.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/class_cards.dart';
+import '../shared/widgets/class_cards.dart';
 import '../providers/theme_provider.dart';
 import 'package:intl/intl.dart';
 

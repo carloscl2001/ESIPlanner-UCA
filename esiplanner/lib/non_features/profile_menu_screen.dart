@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/profile_cards.dart';
+import '../shared/widgets/profile_cards.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileMenuScreen extends StatelessWidget {
+  const ProfileMenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,32 +16,31 @@ class ProfileScreen extends StatelessWidget {
             // GridView con las tarjetas reutilizando CustomCard
             GridView.count(
               crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
+              mainAxisSpacing: 20,
               padding: const EdgeInsets.all(16),
               shrinkWrap: true,
               physics:
                   const NeverScrollableScrollPhysics(), // Desactiva el desplazamiento
               children: const [
-                ProfileCard(
+                ProfileCard( 
                   text: 'Mi perfil',
-                  icon: Icons.person,
+                  icon: Icons.person_pin,
                   route: '/viewProfile',
                 ),
                 ProfileCard(
                   text: 'Cambiar mi contraseña',
-                  icon: Icons.lock,
-                  route: '/editPassWordProfile',
+                  icon: Icons.password_rounded,
+                  route: '/editPassWord',
                 ),
                 ProfileCard(
                   text: 'Mis asignaturas',
-                  icon: Icons.school,
-                  route: '/viewSubjectsProfile',
+                  icon: Icons.book_rounded,
+                  route: '/viewSubjects',
                 ),
                 ProfileCard(
-                  text: 'Elegir mis asignaturas',
-                  icon: Icons.edit,
-                  route: '/editSubjectsProfile',
+                  text: 'Seleccionar asignaturas',
+                  icon: Icons.edit_note_rounded,
+                  route: '/selectionSubjects',
                 ),
               ],
             ),

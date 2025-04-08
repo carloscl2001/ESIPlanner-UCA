@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// Providers
 import 'package:provider/provider.dart';
 import '/providers/auth_provider.dart';
 import '/providers/theme_provider.dart';
 
 // Navigation menu
-import 'navigation_menu_bar.dart';
+import 'features/login/login_screen.dart';
+import 'features/register/register_screen.dart';
+import 'shared/navigation_menu_bar.dart';
 
 // Screens
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/view_profile_screen.dart';
-import 'screens/edit_password_profile_screen.dart';
-import 'screens/edit_subjects_profile_screen.dart';
-import 'screens/view_subjects_profile_screen.dart';
+import 'non_features/profile_menu_screen.dart';
 
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:google_fonts/google_fonts.dart'; // Importa google_fonts
+
+// Screens of features
+import 'features/timetable/timetable_home/timetable_home_logic.dart';
+import 'features/edit_password/edit_password_screen.dart';
+import 'features/view_profile/view_profile_screen.dart';
+import 'features/selection_subjects/select_subjects_home/select_subjects_home_screen.dart';
+import 'features/view_subjects/view_subjects_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +34,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => TimetableLogic(context)),
       ],
       child: const MyApp(),
     ),
@@ -61,13 +67,12 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ESIP', // Título de la aplicación
       // TEMA CLARO
       theme: ThemeData.light().copyWith(
         // Usar la fuente Inter para el tema claro
         textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
+          seedColor: Colors.blue.shade900,
           brightness: Brightness.light,
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -89,7 +94,7 @@ class _MyAppState extends State<MyApp> {
           labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((states) {
             if (states.contains(WidgetState.selected)) {
               return GoogleFonts.inter( // Usar Inter
-                color: Colors.indigo,
+                color: Colors.blue.shade900,
                 fontWeight: FontWeight.bold,
               );
             }
@@ -109,11 +114,11 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo.shade700,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            backgroundColor: Colors.indigo.shade700,
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -123,7 +128,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.indigo.shade700,
+          backgroundColor: Colors.blue.shade900,
           titleTextStyle: GoogleFonts.inter( // Usar Inter
             color: Colors.white,
             fontSize: 20,
@@ -138,21 +143,21 @@ class _MyAppState extends State<MyApp> {
         // Usar la fuente Inter para el tema oscuro
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
+          seedColor: Colors.yellow.shade700,
           brightness: Brightness.dark,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.grey.shade900,
+          fillColor: Colors.black,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
           labelStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
           hintStyle: GoogleFonts.inter(color: Colors.white), // Usar Inter
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white, width: 1.5),
+            borderSide: BorderSide(color: Colors.yellow.shade700, width: 1.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white, width: 2.0),
+            borderSide: BorderSide(color: Colors.yellow.shade700, width: 2.5),
             borderRadius: BorderRadius.circular(12.0),
           ),
         ),
@@ -170,7 +175,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.black,
         ),
         cardTheme: CardTheme(
-          color: Colors.grey[800],
+          color: Colors.black,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -180,16 +185,16 @@ class _MyAppState extends State<MyApp> {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            backgroundColor: Colors.yellow.shade700,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             textStyle: GoogleFonts.inter( // Usar Inter
               fontSize: 18,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
           ),
         ),
@@ -216,11 +221,11 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const NavigationMenuBar(),
-        '/profile': (context) => const ProfileScreen(),
+        '/profileMenu': (context) => const ProfileMenuScreen(),
         '/viewProfile': (context) => const ViewProfileScreen(),
-        '/editPassWordProfile': (context) => const EditPasswordProfileScreen(),
-        '/viewSubjectsProfile': (context) => const ViewSubjectsProfileScreen(),
-        '/editSubjectsProfile': (context) => const EditSubjectsProfileScreen(),
+        '/editPassWord': (context) => const EditPasswordScreen(),
+        '/viewSubjects': (context) => const ViewSubjectsScreen(),
+        '/selectionSubjects': (context) => const SubjectSelectionScreen(),
       },
     );
   }

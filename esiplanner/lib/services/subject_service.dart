@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../services/api_services.dart';
 
 class SubjectService {
-  //Funcion que hace la solictud HTTP para obtner los datos de una asignatura
+  //Funcion que hace la solictud HTTP para obtener los datos de una asignatura
   Future<Map<String, dynamic>> getSubjectData({
     required String codeSubject,
   }) async {
@@ -29,6 +29,7 @@ class SubjectService {
     }
   }
 
+  //Funcion que hace la solictud HTTP para obtener los datos de un grado
   Future<Map<String, dynamic>> getDegreeData({
     required String degreeName,
   }) async {
@@ -54,30 +55,28 @@ class SubjectService {
     }
   }
 
-  Future<Map<String, dynamic>> updateSubjects({
-    required String username,
-    required List<Map<String, dynamic>> subjects,
-  }) async {
+  Future<List<String>> getAllDegrees() async {
     try {
-      final response = await http.patch(
-        Uri.parse('${ApiServices.baseUrl}/users/$username/subjects'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'subjects': subjects}),
+      final response = await http.get(
+        Uri.parse('${ApiServices.baseUrl}/degrees/names/'),
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        // Decodificar el cuerpo de la respuesta en UTF-8
+        String responseBody = utf8.decode(response.bodyBytes);
+        
+        // Decodificar el JSON y convertirlo a List<String>
+        List<dynamic> degreesJson = json.decode(responseBody);
+        List<String> degrees = degreesJson.map((degree) => degree.toString()).toList();
+        
+        return degrees;
       } else {
-        return {
-          'success': false,
-          'message': 'Error al actualizar las asignaturas',
-        };
+        throw Exception('Error al obtener los grados: ${response.statusCode}');
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error al realizar la solicitud: $e',
-      };
+      throw Exception('Error en la solicitud: $e');
     }
   }
+
+
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
+import '../../providers/theme_provider.dart';
 
 class ClassCards extends StatelessWidget {
   final String subjectName;
@@ -41,7 +41,7 @@ class ClassCards extends StatelessWidget {
                 isDarkMode
                     ? [
                       Colors.black,
-                      const Color.fromARGB(177, 19, 19, 19),
+                      const Color.fromARGB(173, 44, 43, 43),
                     ] // Degradado oscuro
                     : [
                       Colors.indigo.shade50,
@@ -69,21 +69,21 @@ class ClassCards extends StatelessWidget {
               _buildRow(
                 Icons.school,
                 classType,
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               const SizedBox(height: 8),
               _buildRow(
                 Icons.access_time,
                 '${event['start_hour']} - ${event['end_hour']}',
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               const SizedBox(height: 8),
               _buildRow(
                 Icons.location_on,
                 event['location'].toString(),
-                isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade700,
+                isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 isDarkMode ? Colors.white : Colors.black,
               ),
               if (isOverlap)
