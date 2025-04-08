@@ -1,9 +1,12 @@
+import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../services/subject_service.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_subjects_groups/select_subjects_groups_screen.dart';
 import 'package:esiplanner/features/selection_subjects/select_subjects_home/select_subjects_home_widgets.dart';
 import 'select_subjects_home_logic.dart';
+import 'package:esiplanner/providers/auth_provider.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   const SubjectSelectionScreen({super.key});
@@ -14,16 +17,42 @@ class SubjectSelectionScreen extends StatefulWidget {
 
 class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   late SubjectSelectionHomeLogic logic;
+  bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
+    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final subjectService = SubjectService();
+
     logic = SubjectSelectionHomeLogic(
-      context: context,
-      subjectService: SubjectService(),
-      refreshUI: () => setState(() {}),
+      authProvider: authProvider,
+      subjectService: subjectService,
+      refreshUI: () {
+        if (_isMounted) setState(() {});
+      },
+      showError: (message) {
+        if (_isMounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      },
     );
+    
     logic.loadDegrees();
+  }
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    logic.dispose();
+    super.dispose();
   }
 
   void _navigateToDegreeSubjects(String degree) async {
@@ -37,12 +66,14 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       ),
     );
 
-    if (result != null) {
+    if (result != null && _isMounted) {
       logic.updateSelections(result, degree);
     }
   }
 
   void _showSelectionInstructions() {
+    if (!_isMounted) return;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -94,6 +125,8 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   }
 
   void _navigateToGroupSelection() async {
+    if (!_isMounted) return;
+    
     if (logic.selectedSubjects.isEmpty) {
       logic.showError('Selecciona al menos una asignatura');
       return;
@@ -109,17 +142,18 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       ),
     );
 
-    if (result != null) {
-      setState(() {
-        logic.selectedGroupsMap = result;
-        result.forEach((code, groups) {
-          logic.groupsSelected[code] = groups.isNotEmpty;
-        });
+    if (result != null && _isMounted) {
+      logic.selectedGroupsMap = result;
+      result.forEach((code, groups) {
+        logic.groupsSelected[code] = groups.isNotEmpty;
       });
+      if (_isMounted) setState(() {});
     }
   }
 
   Future<void> _showConfirmationDialog() async {
+    if (!_isMounted) return;
+    
     await showDialog(
       context: context,
       barrierDismissible: false,
@@ -132,7 +166,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             onPressed: () {
               Navigator.pop(context); // Cierra el diálogo
               logic.resetSelection(); // Limpia la seleccion
-              Navigator.pop(context); // Navega hacia atrás
+              if (_isMounted) Navigator.pop(context); // Navega hacia atrás
             },
             child: const Text('Continuar'),
           ),
@@ -146,13 +180,16 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
 
   Future<void> _confirmSelections() async {
     await logic.confirmSelections();
-    if (mounted && logic.groupsSelected.values.every((selected) => selected)) {
+    if (_isMounted && logic.groupsSelected.values.every((selected) => selected)) {
       await _showConfirmationDialog();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Selección de asignaturas'),
@@ -167,7 +204,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: logic.isDarkMode 
+            gradient: isDarkMode 
                 ? null
                 : LinearGradient(
                     begin: Alignment.centerLeft,
@@ -178,7 +215,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                       Colors.blueAccent.shade400,
                     ],
                   ),
-            color: logic.isDarkMode ? Colors.black : null,
+            color: isDarkMode ? Colors.black : null,
           ),
         ),
       ),
@@ -188,7 +225,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             context: context,
             availableDegrees: logic.availableDegrees,
             onDegreeSelected: _navigateToDegreeSubjects,
-            isDarkMode: logic.isDarkMode,
+            isDarkMode: isDarkMode,
           ),
           Expanded(
             child: logic.isLoading
@@ -213,13 +250,15 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                   degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
                                   hasGroupsSelected: logic.groupsSelected[code] ?? false,
                                   onDelete: () {
-                                    setState(() {
-                                      logic.selectedSubjects.remove(code);
-                                      logic.subjectNames.remove(code);
-                                      logic.subjectDegrees.remove(code);
-                                      logic.groupsSelected.remove(code);
-                                      logic.selectedGroupsMap.remove(code);
-                                    });
+                                    if (_isMounted) {
+                                      setState(() {
+                                        logic.selectedSubjects.remove(code);
+                                        logic.subjectNames.remove(code);
+                                        logic.subjectDegrees.remove(code);
+                                        logic.groupsSelected.remove(code);
+                                        logic.selectedGroupsMap.remove(code);
+                                      });
+                                    }
                                   },
                                 );
                               },
@@ -230,7 +269,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                               context: context,
                               onPressed: _navigateToGroupSelection,
                               hasSelectedSubjects: logic.selectedSubjects.isNotEmpty,
-                              isDarkMode: logic.isDarkMode
+                              isDarkMode: isDarkMode,
                             ),
                           if (logic.groupsSelected.values.every((selected) => selected))
                             Padding(
