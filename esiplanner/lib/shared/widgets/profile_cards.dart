@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart'; // Asegúrate de importar correctamente el provider
+import '../../providers/theme_provider.dart';
 
 class ProfileCard extends StatelessWidget {
   final String text;
@@ -22,36 +22,22 @@ class ProfileCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0), // Bordes más redondeados
+        borderRadius: BorderRadius.circular(20.0),
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, route);
-        },
-        borderRadius: BorderRadius.circular(
-          20.0,
-        ), // Bordes redondeados para el InkWell
+        onTap: () => Navigator.pushNamed(context, route),
+        borderRadius: BorderRadius.circular(20.0),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors:
-                  isDarkMode
-                      ? [
-                        Colors.grey.shade900,
-                        Colors.grey.shade900,
-                      ] // Degradado oscuro
-                      : [
-                        Colors.indigo.shade50,
-                        Colors.white,
-                      ], // Degradado claro
+              colors: isDarkMode
+                  ? [Colors.grey.shade900, Colors.grey.shade900]
+                  : [Colors.indigo.shade50, Colors.white],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(
-              20.0,
-            ), // Coincide con el radio de la tarjeta
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          alignment: Alignment.center,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -59,25 +45,17 @@ class ProfileCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 50, // Tamaño del icono
-                  color:
-                      isDarkMode
-                          ? Colors.yellow.shade700
-                          : Colors.blue.shade900, // Color del icono
+                  size: 50,
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 ),
-                const SizedBox(
-                  height: 5,
-                ), // Espaciado entre el icono y el texto
+                const SizedBox(height: 8),
                 Text(
                   text,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color:
-                        isDarkMode
-                            ? Colors.white
-                            : Colors.black, // Color del texto
+                    fontSize: 16, // Reducido ligeramente para mejor ajuste
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
               ],

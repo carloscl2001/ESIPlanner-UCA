@@ -22,46 +22,43 @@ class SelectSubjectsHomeWidgets {
           InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () {}, // Feedback táctil (opcional)
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-              child: DropdownButtonFormField<String>(
-                isExpanded: true,
-                dropdownColor: isDarkMode ? Colors.black : Colors.white,
-                icon: Icon(Icons.arrow_drop_down, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
-                iconSize: 28,
-                decoration: InputDecoration(
-                  labelText: 'Seleccionar grado',
-                  labelStyle: TextStyle(
-                    color: isDarkMode ? Colors.yellow.shade700 : Colors.black,
-                    fontSize: 14,
-                  ),
-                  prefixIcon: Icon(Icons.school_rounded, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
+            child: DropdownButtonFormField<String>(
+              isExpanded: true,
+              dropdownColor: isDarkMode ? Colors.black : Colors.white,
+              icon: Icon(Icons.arrow_drop_down, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
+              iconSize: 28,
+              decoration: InputDecoration(
+                labelText: 'Seleccionar grado',
+                labelStyle: TextStyle(
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.black,
+                  fontSize: 14,
                 ),
-                items: availableDegrees.map((degree) {
-                  return DropdownMenuItem(
-                    value: degree,
-                    child: Text(
-                      degree,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (degree) {
-                  if (degree != null) {
-                    onDegreeSelected(degree);
-                    // Feedback de selección (opcional)
-                    HapticFeedback.lightImpact();
-                  }
-                },
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                elevation: 4,
+                prefixIcon: Icon(Icons.school_rounded, color: isDarkMode? Colors.yellow.shade700 : Colors.indigo),
               ),
+              items: availableDegrees.map((degree) {
+                return DropdownMenuItem(
+                  value: degree,
+                  child: Text(
+                    degree,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              onChanged: (degree) {
+                if (degree != null) {
+                  onDegreeSelected(degree);
+                  // Feedback de selección (opcional)
+                  HapticFeedback.lightImpact();
+                }
+              },
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              elevation: 4,
             ),
           ),
         ],
