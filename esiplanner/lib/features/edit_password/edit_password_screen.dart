@@ -43,6 +43,23 @@ class _EditPasswordScreenState extends State<EditPasswordScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        elevation: 10,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDarkMode 
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.indigo.shade900,
+                      Colors.blue.shade900,
+                      Colors.blueAccent.shade400,
+                    ],
+                  ),
+            color: isDarkMode ? Colors.black : null,
+          ),
+        ),
       ),
       body: Center(
         child: EditPasswordForm(
