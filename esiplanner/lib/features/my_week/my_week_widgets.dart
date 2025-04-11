@@ -24,6 +24,7 @@ class SelectedDayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final isDesktop = MediaQuery.of(context).size.width > 600;
     
     // Encuentra el índice seguro
     final selectedDayLower = selectedDay.toLowerCase();
@@ -42,7 +43,12 @@ class SelectedDayRow extends StatelessWidget {
                    selectedDate.day == now.day;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 14, right: 8, top: 8, bottom: 8),
+      padding: EdgeInsets.only(
+        left: isDesktop ? 80 : 14, 
+        right: isDesktop ? 70 : 8, 
+        top: isDesktop ? 16 : 8, 
+        bottom: isDesktop ? 16 : 8
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -53,27 +59,27 @@ class SelectedDayRow extends StatelessWidget {
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 55,
+                  fontSize: isDesktop ? 72 : 55,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: isDesktop ? 24 : 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     weekDaysFullName[safeIndex],
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: isDesktop ? 28 : 20,
                     ),
                   ),
                   Text(
                     '${getMonthName(selectedDate.month)} ${selectedDate.year}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: isDesktop ? 28 : 20,
                     ),
                   ),
                 ],
@@ -84,17 +90,20 @@ class SelectedDayRow extends StatelessWidget {
             Container(
               margin: const EdgeInsets.only(right: 8),
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 24 : 16, 
+                vertical: isDesktop ? 12 : 8
+              ),
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 'Hoy',
                 style: TextStyle(
                   color: isDarkMode ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: isDesktop ? 24 : 20,
                 ),
               ),
             ),
@@ -126,10 +135,12 @@ class DayButtonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width > 600;
+    
     return LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 50 : 8),
           child: Row(
             children: weekDays.asMap().entries.map((entry) {
               final index = entry.key;
@@ -141,8 +152,11 @@ class DayButtonRow extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => onDaySelected(day),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 6),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    margin: EdgeInsets.symmetric(horizontal: isDesktop ? 28 : 6),
+                    padding: EdgeInsets.symmetric(
+                      vertical: isDesktop ? 8 : 10, 
+                      horizontal: isDesktop ? 0 : 10
+                    ),
                     decoration: BoxDecoration(
                       color: selectedDay == day
                           ? (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900)
@@ -160,7 +174,7 @@ class DayButtonRow extends StatelessWidget {
                                   end: Alignment.bottomRight,
                                 ))
                           : null,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
                           color: !isDarkMode
@@ -184,7 +198,7 @@ class DayButtonRow extends StatelessWidget {
                                     ? (isDarkMode ? Colors.black : Colors.white)
                                     : Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: isDesktop ? 24 : 20,
                               ),
                             ),
                             Text(
@@ -194,18 +208,18 @@ class DayButtonRow extends StatelessWidget {
                                     ? (isDarkMode ? Colors.black : Colors.white)
                                     : (isDarkMode ? Colors.white : Colors.black),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 26,
+                                fontSize: isDesktop ? 32 : 26,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: isDesktop ? 8 : 4),
                           ],
                         ),
                         if (hasEvents)
                           Positioned(
-                            bottom: 0,
+                            bottom: isDesktop ? 0 : 0,
                             child: Container(
-                              width: 6,
-                              height: 6,
+                              width: isDesktop ? 8 : 6,
+                              height: isDesktop ? 8 : 6,
                               decoration: BoxDecoration(
                                 color: selectedDay == day
                                     ? (isDarkMode ? Colors.black : Colors.white)
@@ -250,6 +264,7 @@ class EventListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
@@ -272,7 +287,7 @@ class EventListView extends StatelessWidget {
               child: Text(
                 'No hay clases',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: isDesktop ? 32 : 24,
                   fontWeight: FontWeight.bold,
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
@@ -284,7 +299,10 @@ class EventListView extends StatelessWidget {
           final sortedDates = groupedEvents.keys.toList()..sort();
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? 24 : 16,
+              vertical: isDesktop ? 8 : 0
+            ),
             itemCount: sortedDates.length,
             itemBuilder: (context, index) {
               final date = sortedDates[index];
@@ -319,6 +337,7 @@ class EventListView extends StatelessWidget {
                     classType: '$classType - ${getGroupLabel(classType[0])}',
                     event: event,
                     isOverlap: isOverlapping[index],
+                    isDesktop: isDesktop,
                   );
                 }).toList(),
               );
@@ -335,15 +354,17 @@ class BuildEmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width > 600;
+    
     return Center(
       child: Card(
-        margin: const EdgeInsets.all(16),
-        elevation: 2,
+        margin: EdgeInsets.all(isDesktop ? 24 : 16),
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(isDesktop ? 32.0 : 24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -352,21 +373,25 @@ class BuildEmptyCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.person,
-                    size: 64,
+                    size: isDesktop ? 96 : 64,
                     color: Theme.of(context).disabledColor,
                   ),
-                  Icon(Icons.arrow_right_rounded, size: 64, color: Theme.of(context).disabledColor),
+                  Icon(
+                    Icons.arrow_right_rounded, 
+                    size: isDesktop ? 96 : 64, 
+                    color: Theme.of(context).disabledColor
+                  ),
                   Icon(
                     Icons.edit_note_rounded,
-                    size: 64,
+                    size: isDesktop ? 96 : 64,
                     color: Theme.of(context).disabledColor,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isDesktop ? 24 : 16),
               Text(
                 'Selecciona asignaturas en perfil',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(context).disabledColor,
                 ),
                 textAlign: TextAlign.center,
