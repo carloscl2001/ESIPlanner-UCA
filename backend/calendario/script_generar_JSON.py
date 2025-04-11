@@ -89,25 +89,19 @@ def extract_subject_codes_from_pdf(pdf_reader):
 
 
 def load_mapping_file():
-    """
-    Carga el archivo de mapeo de códigos desde un TSV.
+    """Carga el archivo de mapeo de códigos."""
     
-    Returns:
-        dict: Diccionario con mapeo {código_asignatura: código_ics}
-    """
     mapping_path = os.path.join("archivo_mapeo", "asignaturasInfo.tsv")
     if not os.path.exists(mapping_path):
         print(f"Advertencia: No se encontró el archivo de mapeo en {mapping_path}")
         return {}
     
-    # Leer y procesar el archivo TSV
     df = pd.read_csv(mapping_path, sep="\t")
     df = df[['id', 'horarioID']].dropna()
     df['id'] = df['id'].astype(str)
-    df['horarioID'] = df['horarioID'].astype(float).astype(int)  # Convertir a entero
-    
+    # Convertir a float primero, luego a int para eliminar decimales, y finalmente a string
+    df['horarioID'] = df['horarioID'].astype(float).astype(int).astype(str)
     return dict(zip(df['id'], df['horarioID']))
-
 
 def process_pdf(pdf_path, mapping_dict):
     """
@@ -135,7 +129,7 @@ def process_pdf(pdf_path, mapping_dict):
     for code in sorted(subject_codes):
         subject_data = {"code": code}
         if code in mapping_dict:
-            subject_data["code_ics"] = int(mapping_dict[code])  # Asegurar que es entero
+            subject_data["code_ics"] = mapping_dict[code]  # Se mantiene como string
         subjects_list.append(subject_data)
     
     return {

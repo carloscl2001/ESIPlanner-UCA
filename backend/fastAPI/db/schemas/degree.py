@@ -11,7 +11,8 @@ def degrees_schema(degrees) -> list:
 
 def subject_schema(subject) -> dict:
     return{
-        "code": subject["code"]
+        "code": subject["code"],
+        "code_ics": subject["code_ics"]
     }
 
 def subjects_schemas(subjects) -> list:

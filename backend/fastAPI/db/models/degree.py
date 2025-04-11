@@ -5,6 +5,7 @@ from typing import Optional, List
 # Modelo para la asignatura
 class Subject(BaseModel):
     code: str
+    code_ics: str
 
 
  # Modelo para el grado 

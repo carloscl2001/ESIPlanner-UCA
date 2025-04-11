@@ -37,7 +37,7 @@ class SelectSubjectsDegreeLogic {
 
         for (var subject in degreeData['subjects']) {
           final subjectData = await subjectService.getSubjectData(
-            codeSubject: subject['code'],
+            codeSubject: subject['code_ics'],
           );
           
           if (!_isMounted()) return;
