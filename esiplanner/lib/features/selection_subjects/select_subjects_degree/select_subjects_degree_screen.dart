@@ -3,9 +3,14 @@ import '../../../services/subject_service.dart';
 import 'select_subjects_degree_logic.dart';
 import 'select_subjects_degree_widgets.dart';
 
+/// Pantalla que muestra las asignaturas de un grado específico para su selección.
+/// Permite:
+/// - Visualizar la lista de asignaturas del grado
+/// - Seleccionar/deseleccionar asignaturas
+/// - Guardar la selección final
 class DegreeSubjectsScreen extends StatefulWidget {
-  final String degreeName;
-  final List<String> initiallySelected;
+  final String degreeName;         // Nombre del grado académico
+  final List<String> initiallySelected; // Lista de asignaturas preseleccionadas
 
   const DegreeSubjectsScreen({
     super.key,
@@ -18,11 +23,17 @@ class DegreeSubjectsScreen extends StatefulWidget {
 }
 
 class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
-  late SelectSubjectsDegreeLogic logic;
+  late SelectSubjectsDegreeLogic logic; // Lógica de negocio de la pantalla
 
   @override
   void initState() {
     super.initState();
+    // Inicialización de la lógica con:
+    // - Contexto actual
+    // - Instancia del servicio
+    // - Nombre del grado (de los parámetros del widget)
+    // - Asignaturas preseleccionadas (de los parámetros del widget)
+    // - Función para refrescar la UI (setState)
     logic = SelectSubjectsDegreeLogic(
       context: context,
       subjectService: SubjectService(),
@@ -30,6 +41,7 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
       initiallySelected: widget.initiallySelected,
       refreshUI: () => setState(() {}),
     );
+    // Carga inicial de las asignaturas
     logic.loadSubjects();
   }
 
@@ -37,24 +49,29 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.degreeName),
+        title: Text(widget.degreeName), // Muestra el nombre del grado como título
         actions: [
+          // Botón de guardar en la AppBar
           IconButton(
             icon: const Icon(Icons.save),
+            // Al presionar, regresa a la pantalla anterior con la lista de seleccionados
             onPressed: () => Navigator.pop(context, logic.selectedSubjects.toList()),
             tooltip: 'Guardar selecciones',
           ),
         ],
       ),
-      body: _buildBody(),
+      body: _buildBody(), // Construye el cuerpo principal de la pantalla
     );
   }
 
+  /// Construye el widget principal del cuerpo según el estado actual
   Widget _buildBody() {
+    // Estado de carga - muestra indicador de progreso
     if (logic.isLoading) {
       return SelectSubjectsDegreeWdigets.buildLoadingIndicator();
     }
 
+    // Estado sin asignaturas - muestra mensaje de error
     if (logic.subjects.isEmpty) {
       return SelectSubjectsDegreeWdigets.buildErrorWidget(
         'No hay asignaturas disponibles', 
@@ -62,19 +79,21 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
       );
     }
 
+    // Estado con datos - muestra lista de asignaturas
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 16),
       itemCount: logic.subjects.length,
       separatorBuilder: (context, index) => const SizedBox(height: 2),
       itemBuilder: (context, index) {
         final subject = logic.subjects[index];
+        // Tarjeta individual para cada asignatura
         return SelectSubjectsDegreeWdigets.buildSubjectCard(
           context: context,
-          name: subject['name'],
-          code: subject['code'],
-          isSelected: logic.selectedSubjects.contains(subject['code']),
-          onTap: () => logic.toggleSelection(subject['code']),
-          isDarkMode: logic.isDarkMode,
+          name: subject['name'],      // Nombre de la asignatura
+          code: subject['code'],      // Código identificador
+          isSelected: logic.selectedSubjects.contains(subject['code']), // Estado de selección
+          onTap: () => logic.toggleSelection(subject['code']), // Acción al tocar
+          isDarkMode: logic.isDarkMode, // Estado del tema
         );
       },
     );
