@@ -36,7 +36,7 @@ class ClassCards extends StatelessWidget {
       elevation: isDesktop ? 6 : 4,
       margin: EdgeInsets.symmetric(
         vertical: isDesktop ? 12.0 : 8.0,
-        horizontal: screenWidth *(isDesktop ? 300 : 0.0),
+        horizontal: isDesktop ? 300 : 0.0,
       ),
       child: Container(
         decoration: BoxDecoration(
