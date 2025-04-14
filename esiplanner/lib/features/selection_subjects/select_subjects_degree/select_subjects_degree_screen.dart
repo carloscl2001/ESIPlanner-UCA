@@ -55,7 +55,18 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
           IconButton(
             icon: const Icon(Icons.save),
             // Al presionar, regresa a la pantalla anterior con la lista de seleccionados
-            onPressed: () => Navigator.pop(context, logic.selectedSubjects.toList()),
+            onPressed: () {
+                final result = {
+                  'codes': logic.selectedSubjects.keys.toList(),
+                  'codes_ics': logic.selectedSubjects.values.toList(),
+                  'names': logic.subjects
+                    .where((subject) => logic.selectedSubjects.containsKey(subject['code']))
+                    .map((subject) => subject['name'] as String)
+                    .toList(), // Enviamos los nombres
+                  'degree': widget.degreeName,
+                };
+              Navigator.pop(context, result);
+            },
             tooltip: 'Guardar selecciones',
           ),
         ],
@@ -90,9 +101,10 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         return SelectSubjectsDegreeWdigets.buildSubjectCard(
           context: context,
           name: subject['name'],      // Nombre de la asignatura
-          code: subject['code'],      // Código identificador
-          isSelected: logic.selectedSubjects.contains(subject['code']), // Estado de selección
-          onTap: () => logic.toggleSelection(subject['code']), // Acción al tocar
+          code: subject['code'],   
+          codeIcs: subject['code_ics'],   // Código identificador
+          isSelected: logic.selectedSubjects.containsKey(subject['code']), // Estado de selección
+          onTap: () => logic.toggleSelection(subject['code'], subject['code_ics']),// Acción al tocar
           isDarkMode: logic.isDarkMode, // Estado del tema
         );
       },

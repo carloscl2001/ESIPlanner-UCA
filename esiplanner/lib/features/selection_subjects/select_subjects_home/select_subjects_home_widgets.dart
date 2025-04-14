@@ -69,6 +69,7 @@ class SelectSubjectsHomeWidgets {
   static Widget buildSelectedSubjectCard({
     required BuildContext context,
     required String code,
+    required String icsCode,
     required String name,
     required String degree,
     required bool hasGroupsSelected,
@@ -100,6 +101,14 @@ class SelectSubjectsHomeWidgets {
                     const SizedBox(height: 4),
                     Text(
                       '$code • $degree',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      icsCode,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 13,

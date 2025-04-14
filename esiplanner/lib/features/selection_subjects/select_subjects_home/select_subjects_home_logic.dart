@@ -18,6 +18,8 @@ class SubjectSelectionHomeLogic {
   Map<String, String> subjectDegrees = {};
   Map<String, bool> groupsSelected = {};
   Map<String, Map<String, String>> selectedGroupsMap = {};
+   // Añadimos un nuevo mapa para almacenar los code_ics
+  Map<String, String> subjectIcsCodes = {};
 
   SubjectSelectionHomeLogic({
     required this.refreshUI,
@@ -43,39 +45,39 @@ class SubjectSelectionHomeLogic {
     }
   }
 
-  void updateSelections(List<String> newSelections, String degree) {
+  // Modificamos updateSelections para cargar ambos códigos
+  Future<void> updateSelections(Map<String, dynamic> selectionData) async {
     if (_isDisposed) return;
     
-    selectedSubjects = Set.from(newSelections);
-    for (var code in selectedSubjects) {
+    final codes = List<String>.from(selectionData['codes'] ?? []);
+    final codesIcs = List<String>.from(selectionData['codes_ics'] ?? []);
+    final names = List<String>.from(selectionData['names'] ?? []); // Nuevo: nombres
+    final degree = selectionData['degree'] as String;
+    
+    selectedSubjects = Set.from(codes);
+    
+    for (int i = 0; i < codes.length; i++) {
+      final code = codes[i];
+      final codeIcs = i < codesIcs.length ? codesIcs[i] : '';
+      final name = i < names.length ? names[i] : 'Cargando...'; // Obtenemos el nombre
+      
       if (!groupsSelected.containsKey(code)) {
         groupsSelected[code] = false;
       }
-      if (!subjectNames.containsKey(code)) {
-        subjectNames[code] = "Cargando...";
-        subjectDegrees[code] = degree;
-        loadSubjectName(code);
-      }
+      
+      // Asignamos todos los datos inmediatamente
+      subjectNames[code] = name;
+      subjectDegrees[code] = degree;
+      subjectIcsCodes[code] = codeIcs;
     }
+    
+    // Limpieza de datos no seleccionados
     subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
     subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
+    subjectIcsCodes.removeWhere((key, _) => !selectedSubjects.contains(key));
     groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
+    
     refreshUI();
-  }
-
-  Future<void> loadSubjectName(String code) async {
-    try {
-      final data = await subjectService.getSubjectData(codeSubject: code);
-      if (!_isDisposed) {
-        subjectNames[code] = data['name'] ?? 'Sin nombre';
-        refreshUI();
-      }
-    } catch (e) {
-      if (!_isDisposed) {
-        subjectNames[code] = 'Error al cargar';
-        refreshUI();
-      }
-    }
   }
 
   Future<void> confirmSelections() async {

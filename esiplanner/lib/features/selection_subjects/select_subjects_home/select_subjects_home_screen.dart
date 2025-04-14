@@ -55,19 +55,31 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     super.dispose();
   }
 
-  void _navigateToDegreeSubjects(String degree) async {
-    final result = await Navigator.push<List<String>>(
+  void _navigateToGroupSelection() async {
+    if (!_isMounted) return;
+    
+    if (logic.selectedSubjects.isEmpty) {
+      logic.showError('Selecciona al menos una asignatura');
+      return;
+    }
+
+    final result = await Navigator.push<Map<String, Map<String, String>>>(
       context,
       MaterialPageRoute(
-        builder: (context) => DegreeSubjectsScreen(
-          degreeName: degree,
-          initiallySelected: logic.selectedSubjects.toList(),
+        builder: (context) => SelectGroupsScreen(
+          selectedSubjectCodes: logic.selectedSubjects.toList(),
+          subjectDegrees: logic.subjectDegrees,
         ),
       ),
     );
 
     if (result != null && _isMounted) {
-      logic.updateSelections(result, degree);
+      setState(() {
+        logic.selectedGroupsMap = result;
+        result.forEach((code, groups) {
+          logic.groupsSelected[code] = groups.isNotEmpty;
+        });
+      });
     }
   }
 
@@ -124,30 +136,20 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     );
   }
 
-  void _navigateToGroupSelection() async {
-    if (!_isMounted) return;
-    
-    if (logic.selectedSubjects.isEmpty) {
-      logic.showError('Selecciona al menos una asignatura');
-      return;
-    }
-
-    final result = await Navigator.push<Map<String, Map<String, String>>>(
+  void _navigateToDegreeSubjects(String degree) async {
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectGroupsScreen(
-          selectedSubjectCodes: logic.selectedSubjects.toList(),
-          subjectDegrees: logic.subjectDegrees,
+        builder: (context) => DegreeSubjectsScreen(
+          degreeName: degree,
+          initiallySelected: logic.selectedSubjects.toList(),
         ),
       ),
     );
 
     if (result != null && _isMounted) {
-      logic.selectedGroupsMap = result;
-      result.forEach((code, groups) {
-        logic.groupsSelected[code] = groups.isNotEmpty;
-      });
-      if (_isMounted) setState(() {});
+      await logic.updateSelections(result); // Ahora es async
+      setState(() {});
     }
   }
 
@@ -246,6 +248,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                 return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
                                   context: context,
                                   code: code,
+                                  icsCode: logic.subjectIcsCodes[code] ?? 'Cargando ICS...', // Añadimos ICS code
                                   name: logic.subjectNames[code] ?? 'Cargando...',
                                   degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
                                   hasGroupsSelected: logic.groupsSelected[code] ?? false,
@@ -255,6 +258,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                         logic.selectedSubjects.remove(code);
                                         logic.subjectNames.remove(code);
                                         logic.subjectDegrees.remove(code);
+                                        logic.subjectIcsCodes.remove(code); // Limpiamos también el ICS code
                                         logic.groupsSelected.remove(code);
                                         logic.selectedGroupsMap.remove(code);
                                       });

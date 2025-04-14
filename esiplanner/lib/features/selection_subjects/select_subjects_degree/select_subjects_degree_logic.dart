@@ -32,68 +32,61 @@ class SelectSubjectsDegreeLogic {
   List<Map<String, dynamic>> subjects = [];
   
   // Conjunto de códigos de asignaturas seleccionadas por el usuario
-  Set<String> selectedSubjects = {};
+  Map<String, String> selectedSubjects = {}; // key: code, value: code_ics
 
   /// Constructor que inicializa el estado con las asignaturas preseleccionadas
   SelectSubjectsDegreeLogic({
     required this.context,
     required this.subjectService,
     required this.degreeName,
-    required this.initiallySelected,
     required this.refreshUI,
+    required this.initiallySelected,
   }) {
-    // Convertimos la lista inicial a un Set para mejor manejo de operaciones
-    selectedSubjects = Set.from(initiallySelected);
+    // Inicializamos con los códigos ICS vacíos (se llenarán al cargar)
+    for (var code in initiallySelected) {
+      selectedSubjects[code] = ''; // El code_ics se cargará después
+    }
   }
 
   /// Carga las asignaturas correspondientes al grado especificado
   /// Maneja estados de carga, éxito y error
   Future<void> loadSubjects() async {
     try {
-      // 1. Obtenemos los datos del grado desde el servicio
       final degreeData = await subjectService.getDegreeData(
         degreeName: degreeName,
       );
 
-      // Verificación de que el widget aún está montado antes de continuar
       if (!_isMounted()) return;
 
-      // 2. Procesamos las asignaturas si existen
       if (degreeData['subjects'] != null) {
         List<Map<String, dynamic>> loadedSubjects = [];
 
-        // 3. Para cada asignatura, obtenemos detalles adicionales
         for (var subject in degreeData['subjects']) {
-          // Usamos code_ics para obtener los datos completos de la asignatura
           final subjectData = await subjectService.getSubjectData(
             codeSubject: subject['code_ics'],
           );
           
-          // Nueva verificación de montaje
           if (!_isMounted()) return;
           
-          // 4. Construimos el objeto de asignatura con los datos esenciales
           loadedSubjects.add({
-            'name': subjectData['name'] ?? 'Sin nombre', // Nombre con valor por defecto
-            'code': subject['code'], // Código identificador
+            'name': subjectData['name'] ?? 'Sin nombre',
+            'code': subject['code'],
+            'code_ics': subject['code_ics'], // Aseguramos tener el code_ics
           });
+
+          // Actualizamos el code_ics de las asignaturas pre-seleccionadas
+          if (selectedSubjects.containsKey(subject['code'])) {
+            selectedSubjects[subject['code']] = subject['code_ics'];
+          }
         }
         
-        // Última verificación antes de actualizar el estado
         if (!_isMounted()) return;
         
-        // 5. Actualizamos el estado
         subjects = loadedSubjects;
         isLoading = false;
-        refreshUI(); // Notificamos a la UI para que se actualice
-      } else {
-        // Caso donde no hay asignaturas
-        isLoading = false;
         refreshUI();
-        showError('No se encontraron asignaturas');
       }
     } catch (e) {
-      // Manejo de errores durante la carga
       isLoading = false;
       refreshUI();
       showError('Error al cargar asignaturas: $e');
@@ -112,13 +105,13 @@ class SelectSubjectsDegreeLogic {
 
   /// Alterna la selección de una asignatura
   /// [code]: Código de la asignatura a seleccionar/deseleccionar
-  void toggleSelection(String code) {
-    if (selectedSubjects.contains(code)) {
+  void toggleSelection(String code, String codeIcs) {
+    if (selectedSubjects.containsKey(code)) {
       selectedSubjects.remove(code); // Deselecciona
     } else {
-      selectedSubjects.add(code); // Selecciona
+      selectedSubjects[code] = codeIcs; // Selecciona con su code_ics
     }
-    refreshUI(); // Actualiza la UI
+    refreshUI();
   }
 
   /// Verifica si el widget asociado aún está montado
