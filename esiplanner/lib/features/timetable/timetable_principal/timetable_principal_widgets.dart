@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'timetable_home_logic.dart';
+import 'timetable_principal_logic.dart';
 import '../timetable_week/timetable_week_screen.dart';
 
 class WeekDaysHeader extends StatelessWidget {

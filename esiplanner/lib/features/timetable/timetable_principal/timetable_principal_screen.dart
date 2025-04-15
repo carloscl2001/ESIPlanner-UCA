@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/theme_provider.dart';
-import 'timetable_home_logic.dart';
-import 'timetable_home_widgets.dart';
+import 'timetable_principal_logic.dart';
+import 'timetable_principal_widgets.dart';
 
-class TimetableScreen extends StatefulWidget {
-  const TimetableScreen({super.key});
+class TimetablePrincipalScreen extends StatefulWidget {
+  const TimetablePrincipalScreen({super.key});
 
   @override
-  State<TimetableScreen> createState() => _TimetableScreenState();
+  State<TimetablePrincipalScreen> createState() => _TimetablePrincipalScreenState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen> {
+class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
   @override
   void initState() {
     super.initState();

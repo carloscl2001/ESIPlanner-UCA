@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'timetable_week_logic.dart';
-import 'timetable_week_widgets.dart';
+import 'timetable_week_widgets_desktop.dart';
+import 'timetable_week_widgets_mobile.dart';
 
 class TimetableWeekScreen extends StatelessWidget {
   final List<Map<String, dynamic>> events;
@@ -46,14 +47,31 @@ class TimetableWeekScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          WeekHeader(logic: logic, isDarkMode: isDarkMode),
-          WeekDaysHeader(logic: logic, isDarkMode: isDarkMode),
-          Expanded(
-            child: EventList(logic: logic, isDarkMode: isDarkMode),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Usamos 600 como punto de ruptura entre móvil y escritorio
+          final isDesktop = constraints.maxWidth > 600;
+
+          return Column(
+            children: [
+              if (isDesktop)
+                WeekHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
+              else
+                WeekHeaderMobile(logic: logic, isDarkMode: isDarkMode),
+              
+              if (isDesktop)
+                WeekDaysHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
+              else
+                WeekDaysHeaderMobile(logic: logic, isDarkMode: isDarkMode),
+              
+              Expanded(
+                child: isDesktop
+                    ? EventListDesktop(logic: logic, isDarkMode: isDarkMode)
+                    : EventListMobile(logic: logic, isDarkMode: isDarkMode),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

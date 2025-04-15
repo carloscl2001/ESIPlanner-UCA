@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'timetable_week_logic.dart';
 import '../../../shared/widgets/class_cards.dart';
 
-class WeekHeader extends StatelessWidget {
+class WeekHeaderMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const WeekHeader({super.key, required this.logic, required this.isDarkMode});
+  const WeekHeaderMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +60,11 @@ class WeekHeader extends StatelessWidget {
   }
 }
 
-class WeekDaysHeader extends StatelessWidget {
+class WeekDaysHeaderMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const WeekDaysHeader({super.key, required this.logic, required this.isDarkMode});
+  const WeekDaysHeaderMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -120,11 +120,11 @@ class WeekDaysHeader extends StatelessWidget {
   }
 }
 
-class EventList extends StatelessWidget {
+class EventListMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
 
-  const EventList({super.key, required this.logic, required this.isDarkMode});
+  const EventListMobile({super.key, required this.logic, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
