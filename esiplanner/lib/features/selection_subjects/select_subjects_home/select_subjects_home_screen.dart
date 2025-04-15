@@ -69,6 +69,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         builder: (context) => SelectGroupsScreen(
           selectedSubjectCodes: logic.selectedSubjects.toList(),
           subjectDegrees: logic.subjectDegrees,
+          subjectIcsCodes: logic.subjectIcsCodes, // Pasa los códigos ICS
         ),
       ),
     );

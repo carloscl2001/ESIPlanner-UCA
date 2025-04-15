@@ -6,6 +6,7 @@ import '../../../services/subject_service.dart';
 class SelectGroupsLogic extends ChangeNotifier {
   // Lista de códigos de asignaturas seleccionadas
   final List<String> selectedSubjectCodes;
+  final Map<String, String> subjectIcsCodes; // Añade este campo
   
   // Mapa que relaciona códigos de asignatura con nombres de grados
   final Map<String, String> subjectDegrees;
@@ -32,6 +33,7 @@ class SelectGroupsLogic extends ChangeNotifier {
   SelectGroupsLogic({
     required this.selectedSubjectCodes,
     required this.subjectDegrees,
+    required this.subjectIcsCodes, // Añade este parámetro
   }) {
     subjectService = SubjectService();
     _init(); // Inicialización asíncrona
@@ -47,33 +49,28 @@ class SelectGroupsLogic extends ChangeNotifier {
     try {
       List<Map<String, dynamic>> loadedSubjects = [];
       
-      // Para cada código de asignatura seleccionado
       for (var code in selectedSubjectCodes) {
-        // Obtenemos los datos completos de la asignatura
-        final subjectData = await subjectService.getSubjectData(codeSubject: code);
+        // Usa el código ICS para obtener los datos
+        final codeIcs = subjectIcsCodes[code] ?? code;
+        final subjectData = await subjectService.getSubjectData(codeSubject: codeIcs);
         
-        // Añadimos a la lista temporal
         loadedSubjects.add({
-          'name': subjectData['name'],      // Nombre de la asignatura
-          'code': code,                     // Código identificador
-          'classes': subjectData['classes'] ?? [], // Lista de grupos/clases
+          'name': subjectData['name'],
+          'code': code, // Mantenemos el código original para referencia
+          'code_ics': codeIcs, // Añadimos el código ICS
+          'classes': subjectData['classes'] ?? [],
         });
       }
 
-      // Actualizamos el estado
       subjects = loadedSubjects;
-      
-      // Inicializamos el mapa de grupos seleccionados
       selectedGroups = {
         for (var subject in subjects) 
-          subject['code']: {} // Inicialmente vacío para cada asignatura
+          subject['code']: {} // Seguimos usando el código original como clave
       };
       
-      // Finalizamos carga
       isLoading = false;
-      notifyListeners(); // Notificamos a los listeners
+      notifyListeners();
     } catch (e) {
-      // Manejo de errores
       errorMessage = 'Error al cargar los datos: $e';
       isLoading = false;
       notifyListeners();

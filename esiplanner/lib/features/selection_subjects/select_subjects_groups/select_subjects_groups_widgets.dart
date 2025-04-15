@@ -134,6 +134,20 @@ class SubjectGroupCard extends StatelessWidget {
                 isDarkMode: isDarkMode,
                 isTitle: false,
               ),
+              const SizedBox(height: 4),
+              InfoRow(
+                icon: Icons.code,
+                text: 'Código: ${subject['code']}',
+                isDarkMode: isDarkMode,
+                isTitle: false,
+              ),
+              const SizedBox(height: 4),
+              InfoRow(
+              icon: Icons.code_outlined,
+              text: 'Código ICS: ${subject['code_ics'] ?? 'N/A'}',
+              isDarkMode: isDarkMode,
+              isTitle: false,
+            ),
               const SizedBox(height: 12),
               if (missingTypes.isNotEmpty)
                 Padding(

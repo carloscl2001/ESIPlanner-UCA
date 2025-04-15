@@ -11,13 +11,15 @@ import 'select_subjects_groups_widgets.dart';
 /// - Validar que todas las selecciones requeridas estén completas
 /// - Guardar la selección final
 class SelectGroupsScreen extends StatefulWidget {
-  final List<String> selectedSubjectCodes; // Códigos de asignaturas seleccionadas
-  final Map<String, String> subjectDegrees; // Mapa de relación código->nombre grado
+  final List<String> selectedSubjectCodes;
+  final Map<String, String> subjectDegrees;
+  final Map<String, String> subjectIcsCodes; // Añade este parámetro
 
   const SelectGroupsScreen({
     super.key, 
     required this.selectedSubjectCodes,
     required this.subjectDegrees,
+    required this.subjectIcsCodes, // Añade este parámetro
   });
 
   @override
@@ -25,15 +27,15 @@ class SelectGroupsScreen extends StatefulWidget {
 }
 
 class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
-  late SelectGroupsLogic logic; // Lógica de negocio de la pantalla
+  late SelectGroupsLogic logic;
 
   @override
   void initState() {
     super.initState();
-    // Inicializa la lógica con los parámetros recibidos
     logic = SelectGroupsLogic(
       selectedSubjectCodes: widget.selectedSubjectCodes,
       subjectDegrees: widget.subjectDegrees,
+      subjectIcsCodes: widget.subjectIcsCodes, // Pasa los códigos ICS
     );
   }
 

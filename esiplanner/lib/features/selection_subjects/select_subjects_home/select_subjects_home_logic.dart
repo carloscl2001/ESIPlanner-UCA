@@ -51,7 +51,7 @@ class SubjectSelectionHomeLogic {
     
     final codes = List<String>.from(selectionData['codes'] ?? []);
     final codesIcs = List<String>.from(selectionData['codes_ics'] ?? []);
-    final names = List<String>.from(selectionData['names'] ?? []); // Nuevo: nombres
+    final names = List<String>.from(selectionData['names'] ?? []);
     final degree = selectionData['degree'] as String;
     
     selectedSubjects = Set.from(codes);
@@ -59,19 +59,18 @@ class SubjectSelectionHomeLogic {
     for (int i = 0; i < codes.length; i++) {
       final code = codes[i];
       final codeIcs = i < codesIcs.length ? codesIcs[i] : '';
-      final name = i < names.length ? names[i] : 'Cargando...'; // Obtenemos el nombre
+      final name = i < names.length ? names[i] : 'Cargando...';
       
       if (!groupsSelected.containsKey(code)) {
         groupsSelected[code] = false;
       }
       
-      // Asignamos todos los datos inmediatamente
       subjectNames[code] = name;
       subjectDegrees[code] = degree;
       subjectIcsCodes[code] = codeIcs;
     }
     
-    // Limpieza de datos no seleccionados
+    // Limpieza
     subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
     subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
     subjectIcsCodes.removeWhere((key, _) => !selectedSubjects.contains(key));
