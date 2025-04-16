@@ -24,6 +24,15 @@ class WeekHeaderDesktop extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.black : Colors.grey,
               borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: isDarkMode 
+                      ? Colors.grey.withValues(alpha: 0.4) 
+                      : Colors.black.withValues(alpha: 0.5),
+                  blurRadius: 4.0,
+                  offset: const Offset(0, 0),
+                ),
+              ],
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Text(
@@ -41,6 +50,15 @@ class WeekHeaderDesktop extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.black : Colors.grey,
               borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: isDarkMode 
+                      ? Colors.grey.withValues(alpha: 0.4) 
+                      : Colors.black.withValues(alpha: 0.5),
+                  blurRadius: 4.0,
+                  offset: const Offset(0, 0),
+                ),
+              ],
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             child: Text(
