@@ -50,7 +50,7 @@ class TimetableWeekScreen extends StatelessWidget {
       body: LayoutBuilder(
         builder: (context, constraints) {
           // Usamos 600 como punto de ruptura entre móvil y escritorio
-          final isDesktop = constraints.maxWidth > 600;
+          final isDesktop = constraints.maxWidth > 1024;
 
           return Column(
             children: [
@@ -59,9 +59,8 @@ class TimetableWeekScreen extends StatelessWidget {
               else
                 WeekHeaderMobile(logic: logic, isDarkMode: isDarkMode),
               
-              if (isDesktop)
-                WeekDaysHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
-              else
+              if (!isDesktop)
+                //WeekDaysHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
                 WeekDaysHeaderMobile(logic: logic, isDarkMode: isDarkMode),
               
               Expanded(
