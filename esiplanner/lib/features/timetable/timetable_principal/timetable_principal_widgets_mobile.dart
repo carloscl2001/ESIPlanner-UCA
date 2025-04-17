@@ -227,15 +227,15 @@ class WeekRowMobile extends StatelessWidget {
           DateFormat('d').format(day),
           style: TextStyle(
             color: textColor,
-            fontSize: 28,
+            fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 4),
         if (hasClass)
           Container(
-            width: 8,
-            height: 8,
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(
               color: accentColor,
               shape: BoxShape.circle,
