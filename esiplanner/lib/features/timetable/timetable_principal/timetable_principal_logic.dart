@@ -16,6 +16,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
   int _selectedWeekIndex = 0;
   
   final List<String> _weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'];
+  final List<String> _weekFullDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
   List<DateTimeRange> _weekRanges = [];
   List<String> _weekLabels = [];
 
@@ -29,6 +30,7 @@ class TimetablePrincipalLogic with ChangeNotifier {
   String get errorMessage => _errorMessage;
   int get selectedWeekIndex => _selectedWeekIndex;
   List<String> get weekDays => _weekDays;
+  List<String> get weekFullDays => _weekFullDays;
   List<DateTimeRange> get weekRanges => _weekRanges;
   List<String> get weekLabels => _weekLabels;
   List <Map<String, dynamic>> get userSubjects => _subjects;

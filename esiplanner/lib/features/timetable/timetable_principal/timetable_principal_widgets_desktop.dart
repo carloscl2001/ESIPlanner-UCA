@@ -5,13 +5,14 @@ import '../timetable_week/timetable_week_screen.dart';
 
 class WeekDaysHeaderDesktop extends StatelessWidget {
   final bool isDarkMode;
+  final TimetablePrincipalLogic timetableLogic;
 
-  const WeekDaysHeaderDesktop({super.key, required this.isDarkMode});
+  const WeekDaysHeaderDesktop({super.key, required this.isDarkMode, required this.timetableLogic});
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.indigo;
-    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.grey[50]!;
+    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.white;
+    final bgColor = isDarkMode ? Colors.black : Colors.blue.shade900;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -20,7 +21,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -30,7 +31,8 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].map((day) {
+          children: List.generate(5, (index) {
+            final dayNames = timetableLogic.weekFullDays;
             return Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -46,7 +48,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(
                     child: Text(
-                      day,
+                      dayNames[index],
                       style: TextStyle(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
@@ -58,7 +60,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ),
       ),
     );
@@ -114,7 +116,7 @@ class WeekSelectorDesktop extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alineación a los extremos
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             child: Container(
@@ -134,7 +136,7 @@ class WeekSelectorDesktop extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 20), // Espaciado añadido entre mes y año
+          const SizedBox(width: 20),
           Flexible(
             child: Container(
               decoration: BoxDecoration(
@@ -193,7 +195,7 @@ class WeekRowDesktop extends StatelessWidget {
               : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -202,12 +204,14 @@ class WeekRowDesktop extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: weekDays.map((day) {
+            children: List.generate(5, (index) {
+              final day = weekDays[index];
               final hasClass = timetableLogic.dayHasClass(day);
               
-              return _buildDayCell(day, hasClass, textColor, accentColor);
-            }).toList(),
+              return Expanded(
+                child: _buildDayCell(day, hasClass, textColor, accentColor),
+              );
+            }),
           ),
         ),
       ),
@@ -215,31 +219,28 @@ class WeekRowDesktop extends StatelessWidget {
   }
 
   Widget _buildDayCell(DateTime day, bool hasClass, Color textColor, Color accentColor) {
-    return SizedBox(
-      width: 72,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            DateFormat('d').format(day),
-            style: TextStyle(
-              color: textColor,
-              fontSize: 28,
-              fontWeight: FontWeight.w500,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          DateFormat('d').format(day),
+          style: TextStyle(
+            color: textColor,
+            fontSize: 28,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        if (hasClass)
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: accentColor,
+              shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(height: 4),
-          if (hasClass)
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: accentColor,
-                shape: BoxShape.circle,
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 

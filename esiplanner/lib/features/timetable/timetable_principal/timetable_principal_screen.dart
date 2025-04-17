@@ -53,7 +53,7 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
                       )
                     else ...[
                       isDesktop
-                        ? WeekDaysHeaderDesktop(isDarkMode: isDarkMode)
+                        ? WeekDaysHeaderDesktop(isDarkMode: isDarkMode, timetableLogic: timetableLogic)
                         : WeekDaysHeaderMobile(isDarkMode: isDarkMode),
                       Expanded(
                         child: isDesktop
