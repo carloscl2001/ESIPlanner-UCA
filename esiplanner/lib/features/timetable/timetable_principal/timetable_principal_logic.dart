@@ -5,7 +5,7 @@ import '../../../services/profile_service.dart';
 import '../../../services/subject_service.dart';
 import '../../../providers/auth_provider.dart';
 
-class TimetableLogic with ChangeNotifier {
+class TimetablePrincipalLogic with ChangeNotifier {
   final BuildContext context;
   final ProfileService _profileService;
   final SubjectService _subjectService;
@@ -19,7 +19,7 @@ class TimetableLogic with ChangeNotifier {
   List<DateTimeRange> _weekRanges = [];
   List<String> _weekLabels = [];
 
-  TimetableLogic(this.context)
+  TimetablePrincipalLogic(this.context)
       : _profileService = ProfileService(),
         _subjectService = SubjectService();
 

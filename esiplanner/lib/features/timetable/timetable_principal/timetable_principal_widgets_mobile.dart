@@ -4,17 +4,15 @@ import 'package:intl/intl.dart';
 import 'timetable_principal_logic.dart';
 import '../timetable_week/timetable_week_screen.dart';
 
-class WeekDaysHeader extends StatelessWidget {
+class WeekDaysHeaderMobile extends StatelessWidget {
   final bool isDarkMode;
 
-  const WeekDaysHeader({super.key, required this.isDarkMode});
+  const WeekDaysHeaderMobile({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 600;
-    
     return Container(
-      margin: EdgeInsets.all(isDesktop ? 8 : 0),
+      margin: EdgeInsets.zero,
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: const BorderRadius.only(
@@ -23,33 +21,30 @@ class WeekDaysHeader extends StatelessWidget {
         ),
         border: Border.all(
           color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-          width: isDesktop ? 4 : 3,
+          width: 3,
         ),
         boxShadow: [
           BoxShadow(
             color: isDarkMode ? Colors.grey.withAlpha(115) : Colors.black.withAlpha(115),
-            blurRadius: isDesktop ? 8.0 : 6.0,
+            blurRadius: 6.0,
             offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: isDesktop ? 16.0 : 8.0,
-          horizontal: isDesktop ? 24.0 : 16.0,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'].map((day) {
             return SizedBox(
-              width: isDesktop ? 60 : 40,
+              width: 40,
               child: Center(
                 child: Text(
                   day,
                   style: TextStyle(
                     color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
                     fontWeight: FontWeight.bold,
-                    fontSize: isDesktop ? 24 : 20,
+                    fontSize: 20,
                   ),
                 ),
               ),
@@ -61,11 +56,11 @@ class WeekDaysHeader extends StatelessWidget {
   }
 }
 
-class WeekSelector extends StatelessWidget {
+class WeekSelectorMobile extends StatelessWidget {
   final TimetableLogic timetableLogic;
   final bool isDarkMode;
 
-  const WeekSelector({
+  const WeekSelectorMobile({
     super.key,
     required this.timetableLogic,
     required this.isDarkMode,
@@ -73,7 +68,6 @@ class WeekSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 600;
     final weeks = timetableLogic.getWeeksOfSemester();
     final currentWeekIndex = timetableLogic.getCurrentWeekIndex(weeks);
 
@@ -83,10 +77,7 @@ class WeekSelector extends StatelessWidget {
       physics: defaultTargetPlatform == TargetPlatform.iOS
           ? const BouncingScrollPhysics()
           : const ClampingScrollPhysics(),
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 24 : 16,
-        vertical: isDesktop ? 8 : 0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       itemCount: weeks.length,
       itemBuilder: (context, index) {
         final weekDays = weeks[index];
@@ -97,14 +88,13 @@ class WeekSelector extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (index == 0 || timetableLogic.isNewMonth(weekDays, weeks[index - 1]))
-              _buildMonthHeader(startDate, isDarkMode, isDesktop),
-            WeekRow(
+              _buildMonthHeader(startDate, isDarkMode),
+            WeekRowMobile(
               weekDays: weekDays,
               weekIndex: index,
               isDarkMode: isDarkMode,
               isCurrentWeek: isCurrentWeek,
               timetableLogic: timetableLogic,
-              isDesktop: isDesktop,
             ),
           ],
         );
@@ -112,28 +102,22 @@ class WeekSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildMonthHeader(DateTime startDate, bool isDarkMode, bool isDesktop) {
+  Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: isDesktop ? 16.0 : 8.0,
-        bottom: isDesktop ? 8.0 : 4.0,
-      ),
+      padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade600,
+              color: isDarkMode ? Colors.grey : Colors.grey,
               borderRadius: BorderRadius.circular(20.0),
             ),
-            padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? 16.0 : 12.0,
-              vertical: isDesktop ? 10.0 : 6.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
               DateFormat('MMMM', 'es_ES').format(startDate),
               style: TextStyle(
-                fontSize: isDesktop ? 22 : 18,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? Colors.white : Colors.white,
               ),
@@ -141,17 +125,14 @@ class WeekSelector extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade600,
+              color: isDarkMode ? Colors.grey: Colors.grey,
               borderRadius: BorderRadius.circular(20.0),
             ),
-            padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? 16.0 : 12.0,
-              vertical: isDesktop ? 10.0 : 6.0,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
               DateFormat('y', 'es_ES').format(startDate),
               style: TextStyle(
-                fontSize: isDesktop ? 22 : 18,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? Colors.white : Colors.white,
               ),
@@ -163,22 +144,20 @@ class WeekSelector extends StatelessWidget {
   }
 }
 
-class WeekRow extends StatelessWidget {
+class WeekRowMobile extends StatelessWidget {
   final List<DateTime> weekDays;
   final int weekIndex;
   final bool isDarkMode;
   final bool isCurrentWeek;
   final TimetableLogic timetableLogic;
-  final bool isDesktop;
 
-  const WeekRow({
+  const WeekRowMobile({
     super.key,
     required this.weekDays,
     required this.weekIndex,
     required this.isDarkMode,
     required this.isCurrentWeek,
     required this.timetableLogic,
-    this.isDesktop = false,
   });
 
   @override
@@ -201,18 +180,15 @@ class WeekRow extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: isDesktop ? 8.0 : 4.0),
-        padding: EdgeInsets.symmetric(
-          vertical: isDesktop ? 16 : 8,
-          horizontal: isDesktop ? 8 : 0,
-        ),
+        margin: const EdgeInsets.symmetric(vertical: 4.0),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
         decoration: BoxDecoration(
           color: isDarkMode ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(isDesktop ? 20 : 16),
+          borderRadius: BorderRadius.circular(16),
           border: isCurrentWeek
               ? Border.all(
                   color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-                  width: isDesktop ? 4 : 3,
+                  width: 3,
                 )
               : null,
           boxShadow: [
@@ -220,7 +196,7 @@ class WeekRow extends StatelessWidget {
               color: !isDarkMode
                   ? Colors.black.withAlpha(115)
                   : Colors.grey.withAlpha(115),
-              blurRadius: isDesktop ? 12.0 : 8.0,
+              blurRadius: 8.0,
               offset: const Offset(0, 0),
             ),
           ],
@@ -231,7 +207,7 @@ class WeekRow extends StatelessWidget {
             final hasClass = timetableLogic.dayHasClass(day);
 
             return SizedBox(
-              width: isDesktop ? 60 : 40,
+              width: 40,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -239,15 +215,15 @@ class WeekRow extends StatelessWidget {
                     DateFormat('d', 'es_ES').format(day),
                     style: TextStyle(
                       color: isDarkMode ? Colors.white : Colors.black,
-                      fontSize: isDesktop ? 32 : 26,
+                      fontSize: 26,
                     ),
                   ),
                   if (hasClass)
                     Positioned(
-                      bottom: isDesktop ? 4 : 0,
+                      bottom: 0,
                       child: Container(
-                        width: isDesktop ? 8 : 5,
-                        height: isDesktop ? 8 : 5,
+                        width: 5,
+                        height: 5,
                         decoration: BoxDecoration(
                           color: isDarkMode ? Colors.white : Colors.black,
                           shape: BoxShape.circle,
@@ -264,22 +240,20 @@ class WeekRow extends StatelessWidget {
   }
 }
 
-class BuildEmptyCard extends StatelessWidget {
-  const BuildEmptyCard({super.key});
+class BuildEmptyCardMobile extends StatelessWidget {
+  const BuildEmptyCardMobile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 600;
-    
     return Center(
       child: Card(
-        margin: EdgeInsets.all(isDesktop ? 24 : 16),
-        elevation: isDesktop ? 4 : 2,
+        margin: const EdgeInsets.all(16),
+        elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(isDesktop ? 16 : 12),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: EdgeInsets.all(isDesktop ? 32.0 : 24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -288,27 +262,26 @@ class BuildEmptyCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.person,
-                    size: isDesktop ? 96 : 64,
+                    size: 64,
                     color: Theme.of(context).disabledColor,
                   ),
                   Icon(
                     Icons.arrow_right_rounded, 
-                    size: isDesktop ? 96 : 64, 
+                    size: 64, 
                     color: Theme.of(context).disabledColor,
                   ),
                   Icon(
                     Icons.edit_note_rounded,
-                    size: isDesktop ? 96 : 64,
+                    size: 64,
                     color: Theme.of(context).disabledColor,
                   ),
                 ],
               ),
-              SizedBox(height: isDesktop ? 24 : 16),
+              const SizedBox(height: 16),
               Text(
                 'Selecciona asignaturas en perfil',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(context).disabledColor,
-                  fontSize: isDesktop ? 24 : null,
                 ),
                 textAlign: TextAlign.center,
               ),

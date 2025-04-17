@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/theme_provider.dart';
 import 'timetable_principal_logic.dart';
-import 'timetable_principal_widgets.dart';
+import 'timetable_principal_widgets_mobile.dart';
+import 'timetable_principal_widgets_desktop.dart';
 
 class TimetablePrincipalScreen extends StatefulWidget {
   const TimetablePrincipalScreen({super.key});
@@ -16,7 +17,7 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<TimetableLogic>(context, listen: false).loadSubjects();
+      Provider.of<TimetablePrincipalLogic>(context, listen: false).loadSubjects();
     });
   }
 
@@ -24,8 +25,9 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
+    final isDesktop = MediaQuery.of(context).size.width > 600;
 
-    return Consumer<TimetableLogic>(
+    return Consumer<TimetablePrincipalLogic>(
       builder: (context, timetableLogic, child) {
         return Scaffold(
           body: timetableLogic.isLoading
@@ -33,11 +35,15 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
               : Column(
                   children: [
                     if (timetableLogic.userSubjects.isEmpty)...[
-                      Expanded(child: BuildEmptyCard()),
+                      Expanded(
+                        child: isDesktop 
+                          ? const BuildEmptyCardDesktop() 
+                          : const BuildEmptyCardMobile()
+                      ),
                     ]
                     else if (timetableLogic.errorMessage.isNotEmpty)
-                      Expanded( // Ocupa todo el espacio restante
-                        child: Center( // Centrado vertical y horizontal
+                      Expanded(
+                        child: Center(
                           child: Text(
                             timetableLogic.errorMessage,
                             style: const TextStyle(color: Colors.red, fontSize: 20),
@@ -46,12 +52,19 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
                         ),
                       )
                     else ...[
-                      WeekDaysHeader(isDarkMode: isDarkMode),
+                      isDesktop
+                        ? WeekDaysHeaderDesktop(isDarkMode: isDarkMode)
+                        : WeekDaysHeaderMobile(isDarkMode: isDarkMode),
                       Expanded(
-                        child: WeekSelector(
-                          timetableLogic: timetableLogic,
-                          isDarkMode: isDarkMode,
-                        ),
+                        child: isDesktop
+                          ? WeekSelectorDesktop(
+                              timetableLogic: timetableLogic,
+                              isDarkMode: isDarkMode,
+                            )
+                          : WeekSelectorMobile(
+                              timetableLogic: timetableLogic,
+                              isDarkMode: isDarkMode,
+                            ),
                       ),
                     ],
                   ],

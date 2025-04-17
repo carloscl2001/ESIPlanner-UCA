@@ -54,22 +54,21 @@ class TimetableWeekScreen extends StatelessWidget {
 
           return Column(
             children: [
-              if (isDesktop)
-                WeekHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
-              else
+              if (isDesktop) ...[
+                WeekHeaderDesktop(logic: logic, isDarkMode: isDarkMode),
+                Expanded(
+                  child: EventListDesktop(logic: logic, isDarkMode: isDarkMode),
+                ),
+              ] else ...[
                 WeekHeaderMobile(logic: logic, isDarkMode: isDarkMode),
-              
-              if (!isDesktop)
-                //WeekDaysHeaderDesktop(logic: logic, isDarkMode: isDarkMode)
                 WeekDaysHeaderMobile(logic: logic, isDarkMode: isDarkMode),
-              
-              Expanded(
-                child: isDesktop
-                    ? EventListDesktop(logic: logic, isDarkMode: isDarkMode)
-                    : EventListMobile(logic: logic, isDarkMode: isDarkMode),
-              ),
+                Expanded(
+                  child: EventListMobile(logic: logic, isDarkMode: isDarkMode),
+                ),
+              ],
             ],
           );
+
         },
       ),
     );
