@@ -36,14 +36,14 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
             return Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: accentColor,
-                      width: 2,
-                    ),
-                  ),
-                ),
+                // decoration: BoxDecoration(
+                //   border: Border(
+                //     bottom: BorderSide(
+                //       color: accentColor,
+                //       width: 2,
+                //     ),
+                //   ),
+                // ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(

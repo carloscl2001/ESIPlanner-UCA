@@ -13,7 +13,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.white;
-    final bgColor = isDarkMode ? Colors.grey[900] : Colors.blue.shade900;
+    final bgColor = isDarkMode ? Colors.black : Colors.blue.shade900;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -37,14 +37,14 @@ class WeekDaysHeaderMobile extends StatelessWidget {
             return Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: accentColor,
-                      width: 2,
-                    ),
-                  ),
-                ),
+                // decoration: BoxDecoration(
+                //   border: Border(
+                //     bottom: BorderSide(
+                //       color: accentColor,
+                //       width: 2,
+                //     ),
+                //   ),
+                // ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Center(
