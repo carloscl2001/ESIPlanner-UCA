@@ -6,7 +6,9 @@ import '../timetable_week/timetable_week_screen.dart';
 class WeekDaysHeaderMobile extends StatelessWidget {
   final bool isDarkMode;
 
-  const WeekDaysHeaderMobile({super.key, required this.isDarkMode});
+  final TimetablePrincipalLogic timetableLogic;
+
+  const WeekDaysHeaderMobile({super.key, required this.isDarkMode, required this.timetableLogic});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(5, (index) {
-            final dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
+            final dayNames = timetableLogic.weekDays;
             return Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -110,7 +112,7 @@ class WeekSelectorMobile extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = isDarkMode ? Colors.grey[800]! : Colors.grey[600]!;
+    final bgColor = Colors.grey;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -126,10 +128,10 @@ class WeekSelectorMobile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
                 DateFormat('MMMM', 'es_ES').format(startDate),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: isDarkMode ? Colors.black : Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -145,10 +147,10 @@ class WeekSelectorMobile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
                 DateFormat('y').format(startDate),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: isDarkMode ? Colors.black : Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
