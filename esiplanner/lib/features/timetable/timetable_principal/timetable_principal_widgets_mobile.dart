@@ -12,8 +12,8 @@ class WeekDaysHeaderMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.indigo;
-    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.grey[50]!;
+    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.white;
+    final bgColor = isDarkMode ? Colors.grey[900] : Colors.blue.shade900;
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -22,14 +22,14 @@ class WeekDaysHeaderMobile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(5, (index) {
@@ -53,7 +53,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
                       style: TextStyle(
                         color: accentColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 18,
+                        fontSize: 20,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -87,7 +87,7 @@ class WeekSelectorMobile extends StatelessWidget {
       key: const PageStorageKey('timetable'),
       shrinkWrap: false,
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       itemCount: weeks.length,
       itemBuilder: (context, index) {
         final weekDays = weeks[index];
@@ -180,7 +180,7 @@ class WeekRowMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.indigo;
+    final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900;
     final bgColor = isDarkMode ? Colors.grey[850]! : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     
@@ -196,7 +196,7 @@ class WeekRowMobile extends StatelessWidget {
               : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
