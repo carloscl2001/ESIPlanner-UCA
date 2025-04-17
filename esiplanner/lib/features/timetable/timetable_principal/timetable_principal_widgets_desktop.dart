@@ -20,7 +20,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -109,28 +109,47 @@ class WeekSelectorDesktop extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = isDarkMode ? Colors.grey : Colors.grey;
+    final bgColor = isDarkMode ? Colors.grey[800]! : Colors.grey[600]!;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alineación a los extremos
         children: [
-          Expanded(
+          Flexible(
             child: Container(
               decoration: BoxDecoration(
                 color: bgColor,
                 borderRadius: BorderRadius.circular(8),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Center(
-                child: Text(
-                  '${DateFormat('MMMM', 'es_ES').format(startDate)}    ${DateFormat('y').format(startDate)}',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                DateFormat('MMMM', 'es_ES').format(startDate),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          const SizedBox(width: 20), // Espaciado añadido entre mes y año
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                DateFormat('y').format(startDate),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -174,7 +193,7 @@ class WeekRowDesktop extends StatelessWidget {
               : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
