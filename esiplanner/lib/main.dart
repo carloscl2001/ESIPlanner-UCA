@@ -34,7 +34,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (context) => TimetableLogic(context)),
+        ChangeNotifierProvider(create: (context) => TimetablePrincipalLogic(context)),
       ],
       child: const MyApp(),
     ),

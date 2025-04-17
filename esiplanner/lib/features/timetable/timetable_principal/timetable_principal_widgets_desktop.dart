@@ -67,7 +67,7 @@ class WeekDaysHeaderDesktop extends StatelessWidget {
 }
 
 class WeekSelectorDesktop extends StatelessWidget {
-  final TimetableLogic timetableLogic;
+  final TimetablePrincipalLogic timetableLogic;
   final bool isDarkMode;
 
   const WeekSelectorDesktop({
@@ -146,7 +146,7 @@ class WeekRowDesktop extends StatelessWidget {
   final int weekIndex;
   final bool isDarkMode;
   final bool isCurrentWeek;
-  final TimetableLogic timetableLogic;
+  final TimetablePrincipalLogic timetableLogic;
 
   const WeekRowDesktop({
     super.key,

@@ -17,7 +17,7 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<TimetableLogic>(context, listen: false).loadSubjects();
+      Provider.of<TimetablePrincipalLogic>(context, listen: false).loadSubjects();
     });
   }
 
@@ -27,7 +27,7 @@ class _TimetablePrincipalScreenState extends State<TimetablePrincipalScreen> {
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
     final isDesktop = MediaQuery.of(context).size.width > 600;
 
-    return Consumer<TimetableLogic>(
+    return Consumer<TimetablePrincipalLogic>(
       builder: (context, timetableLogic, child) {
         return Scaffold(
           body: timetableLogic.isLoading

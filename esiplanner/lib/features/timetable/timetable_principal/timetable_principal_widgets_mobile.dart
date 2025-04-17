@@ -57,7 +57,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
 }
 
 class WeekSelectorMobile extends StatelessWidget {
-  final TimetableLogic timetableLogic;
+  final TimetablePrincipalLogic timetableLogic;
   final bool isDarkMode;
 
   const WeekSelectorMobile({
@@ -149,7 +149,7 @@ class WeekRowMobile extends StatelessWidget {
   final int weekIndex;
   final bool isDarkMode;
   final bool isCurrentWeek;
-  final TimetableLogic timetableLogic;
+  final TimetablePrincipalLogic timetableLogic;
 
   const WeekRowMobile({
     super.key,
