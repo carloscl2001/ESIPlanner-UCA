@@ -129,7 +129,7 @@ class WeekSelectorMobile extends StatelessWidget {
               child: Text(
                 DateFormat('MMMM', 'es_ES').format(startDate),
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: isDarkMode ? Colors.black : Colors.white,
                 ),
@@ -148,7 +148,7 @@ class WeekSelectorMobile extends StatelessWidget {
               child: Text(
                 DateFormat('y').format(startDate),
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: isDarkMode ? Colors.black : Colors.white,
                 ),
