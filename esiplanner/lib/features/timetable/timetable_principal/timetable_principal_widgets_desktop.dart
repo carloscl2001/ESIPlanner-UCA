@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_principal_logic.dart';
@@ -7,7 +6,7 @@ import '../timetable_week/timetable_week_screen.dart';
 class WeekDaysHeaderDesktop extends StatelessWidget {
   final bool isDarkMode;
 
-  WeekDaysHeaderDesktop({super.key, required this.isDarkMode});
+  const WeekDaysHeaderDesktop({super.key, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
