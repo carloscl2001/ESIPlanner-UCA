@@ -181,7 +181,7 @@ class WeekRowMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900;
-    final bgColor = isDarkMode ? Colors.grey[850]! : Colors.white;
+    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     
     return GestureDetector(
@@ -195,12 +195,14 @@ class WeekRowMobile extends StatelessWidget {
               ? Border.all(color: accentColor, width: 2)
               : null,
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          BoxShadow(
+            color: isDarkMode 
+                ? Colors.white.withValues(alpha: 0.25) 
+                : Colors.black.withValues(alpha: 0.35),
+            blurRadius: isDarkMode ? 3.0 : 6.0,
+            offset: const Offset(0, 0),
+          ),
+        ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),

@@ -77,7 +77,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
         border: Border.all(
-          color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+          color: isDarkMode ? Colors.transparent : Colors.blue.shade900,
           width: 2,
         ),
         boxShadow: [
@@ -85,8 +85,8 @@ class WeekDaysHeaderMobile extends StatelessWidget {
             color: isDarkMode 
                 ? Colors.grey.withValues(alpha: 0.45) 
                 : Colors.black.withValues(alpha: 0.45),
-            blurRadius: 6.0,
-            offset: const Offset(0, 3),
+            blurRadius: isDarkMode ? 0.0 : 6.0,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -99,7 +99,7 @@ class WeekDaysHeaderMobile extends StatelessWidget {
               Text(
                 (logic.weekDays[index]),
                 style: TextStyle(
-                  color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -161,7 +161,7 @@ class EventListMobile extends StatelessWidget {
                 child: Text(
                   logic.formatDateToFullDate(DateTime.parse(date)),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                        color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
