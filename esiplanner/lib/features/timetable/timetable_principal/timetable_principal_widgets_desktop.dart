@@ -122,7 +122,7 @@ class WeekSelectorDesktop extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
@@ -141,7 +141,7 @@ class WeekSelectorDesktop extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Text(
@@ -189,7 +189,7 @@ class WeekRowDesktop extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           border: isCurrentWeek
               ? Border.all(color: accentColor, width: 2)
               : null,
