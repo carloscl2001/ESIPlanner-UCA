@@ -30,7 +30,7 @@ class SubjectSelectionHomeLogic {
 
   Future<void> loadDegrees() async {
     try {
-      final degrees = await subjectService.getAllDegrees();
+      final degrees = await subjectService.getNameAllDegrees();
       if (!_isDisposed) {
         availableDegrees = degrees;
         isLoading = false;
