@@ -83,7 +83,7 @@ class SubjectService {
   Future<List<Map<String, dynamic>>> getSubjectMapping() async {
     try {
       final response = await http.get(
-        Uri.parse('${ApiServices.baseUrl}/mappings'),
+        Uri.parse('${ApiServices.baseUrl}/mappings/'),
       );
 
       if (response.statusCode == 200) {
