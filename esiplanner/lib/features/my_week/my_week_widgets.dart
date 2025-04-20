@@ -223,7 +223,7 @@ class DayButtonRow extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: selectedDay == day
                                     ? (isDarkMode ? Colors.black : Colors.white)
-                                    : (isDarkMode ? Colors.white : Colors.black),
+                                    : (isDarkMode ? Colors.yellow.shade700: Colors.blue.shade900),
                                 shape: BoxShape.circle,
                               ),
                             ),
