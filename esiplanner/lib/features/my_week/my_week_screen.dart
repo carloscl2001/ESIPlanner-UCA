@@ -98,10 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         const SizedBox(height: 8),
-        const Divider(
-          color: Colors.grey,
-          thickness: 2,
-        ),
         Expanded(
           child: EventListView(
             pageController: _pageController,
