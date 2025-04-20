@@ -231,16 +231,18 @@ class WeekRowMobile extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
-        if (hasClass)
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: accentColor,
-              shape: BoxShape.circle,
-            ),
-          ),
+        // Contenedor con altura fija para mantener la alineación
+        SizedBox(
+          height: 6, // Misma altura que el punto
+          child: hasClass
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    shape: BoxShape.circle,
+                  ),
+                )
+              : const SizedBox.shrink(), // Widget vacío cuando no hay clase
+        ),
       ],
     );
   }

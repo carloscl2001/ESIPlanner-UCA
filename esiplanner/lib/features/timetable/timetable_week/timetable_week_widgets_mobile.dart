@@ -23,7 +23,7 @@ class WeekHeaderMobile extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
@@ -40,7 +40,7 @@ class WeekHeaderMobile extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
             child: Text(
