@@ -230,16 +230,17 @@ class WeekRowDesktop extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
-        if (hasClass)
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: accentColor,
-              shape: BoxShape.circle,
-            ),
-          ),
+        SizedBox(
+          height: 8, // Misma altura que el punto
+          child: hasClass
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    shape: BoxShape.circle,
+                  ),
+                )
+              : const SizedBox.shrink(), // Widget vacío cuando no hay clase
+        ),
       ],
     );
   }
