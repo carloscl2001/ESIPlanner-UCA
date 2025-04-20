@@ -15,7 +15,15 @@ from fastAPI.db.client import db_client
 # Variable global para almacenar archivos cargados
 loaded_files = {
     'subjects': set(),
-    'degrees': set()
+    'degrees': set(),
+    'mapping': set()
+}
+
+# Configuración de carpetas y colecciones
+FOLDER_CONFIG = {
+    'archivos_asignaturas': 'subjects',
+    'archivos_grados': 'degrees',
+    'archivos_mapeo': 'mapping'
 }
 
 class ConsoleOutput:
@@ -109,24 +117,24 @@ def full_clean_load():
     """Borra toda la colección y realiza una carga nueva"""
     ConsoleOutput.print_header("REALIZANDO CARGA COMPLETA (BORRAR TODO E INSERTAR)")
     
-    FOLDER_CONFIG = {
-        'archivos_asignaturas': 'subjects',
-        'archivos_grados': 'degrees'
-    }
-    
     start_time = datetime.now()
     total_docs = 0
     
     # Limpiar registro de archivos cargados
     global loaded_files
-    loaded_files = {'subjects': set(), 'degrees': set()}
+    loaded_files = {col: set() for col in FOLDER_CONFIG.values()}
     
     for folder, collection in FOLDER_CONFIG.items():
         if not os.path.exists(folder):
             ConsoleOutput.print_warning(f"Carpeta no encontrada: {folder}")
             continue
 
-        files = [f for f in os.listdir(folder) if f.endswith('.json')]
+        # Manejo especial para archivos_mapeo (solo mapeo.json)
+        if folder == 'archivos_mapeo':
+            files = ['mapeo.json'] if os.path.exists(os.path.join(folder, 'mapeo.json')) else []
+        else:
+            files = [f for f in os.listdir(folder) if f.endswith('.json')]
+        
         if not files:
             ConsoleOutput.print_warning(f"No hay archivos JSON en {folder}")
             continue
@@ -137,7 +145,6 @@ def full_clean_load():
         count_before = db_client[collection].estimated_document_count()
         deleted_result = db_client[collection].delete_many({})
         
-        # Registrar el borrado en el log
         log_changes(
             collection_name=collection,
             operation="delete",
@@ -163,17 +170,26 @@ def full_clean_load():
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     
-                    if isinstance(data, list):
-                        result = db_client[collection].insert_many(data)
-                        inserted += len(result.inserted_ids)
-                    else:
-                        result = db_client[collection].insert_one(data)
+                    # Manejo especial para mapeo.json (insertar con nueva estructura)
+                    if filename == 'mapeo.json':
+                        mapping_doc = {
+                            'name': 'asignaturasInfo_mapping',
+                            'last_update': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            'mapping': data
+                        }
+                        result = db_client[collection].insert_one(mapping_doc)
                         inserted += 1
+                    else:
+                        if isinstance(data, list):
+                            result = db_client[collection].insert_many(data)
+                            inserted += len(result.inserted_ids)
+                        else:
+                            result = db_client[collection].insert_one(data)
+                            inserted += 1
             except Exception as e:
                 ConsoleOutput.print_warning(f"Error en {filename}: {str(e)}")
                 continue
         
-        # Registrar la inserción en el log (un solo registro por colección)
         log_changes(
             collection_name=collection,
             operation="insert",
@@ -206,16 +222,20 @@ def additional_load_menu():
                 'action': lambda: process_custom_files('archivos_grados', 'degrees')
             },
             '3': {
+                'label': 'Añadir/actualizar mapeo',
+                'action': lambda: process_custom_files('archivos_mapeo', 'mapping')
+            },
+            '4': {
                 'label': 'Volver al menú principal',
                 'action': lambda: None
             }
         }
         
         ConsoleOutput.print_menu("CARGA ADICIONAL DE ARCHIVOS ESPECIFICOS", submenu_options)
-        choice = input("Seleccione una opción (1-3): ")
+        choice = input("Seleccione una opción (1-4): ")
         
         if choice in submenu_options:
-            if choice == '3':
+            if choice == '4':
                 return
             submenu_options[choice]['action']()
         else:
@@ -228,7 +248,12 @@ def process_custom_files(folder_path: str, collection_name: str):
             ConsoleOutput.print_warning(f"Carpeta no encontrada: {folder_path}")
             return
 
-        available_files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
+        # Manejo especial para archivos_mapeo
+        if folder_path == 'archivos_mapeo':
+            available_files = ['mapeo.json'] if os.path.exists(os.path.join(folder_path, 'mapeo.json')) else []
+        else:
+            available_files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
+        
         if not available_files:
             ConsoleOutput.print_warning(f"No hay archivos JSON en {folder_path}")
             return
@@ -268,6 +293,43 @@ def process_custom_files(folder_path: str, collection_name: str):
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     
+                    # Manejo especial para mapeo.json
+                    if filename == 'mapeo.json':
+                        result = db_client[collection_name].update_one(
+                            {'name': 'asignaturasInfo_mapping'},
+                            {'$set': {
+                                'mapping': data,
+                                'last_update': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            }},
+                            upsert=True
+                        )
+                        
+                        if result.upserted_id:
+                            total_inserted += 1
+                            log_changes(
+                                collection_name=collection_name,
+                                operation="insert",
+                                filename=filename,
+                                changes={
+                                    "document_id": str(result.upserted_id),
+                                    "operation": "upsert_insert",
+                                    "details": f"Nuevo mapeo insertado desde {filename}"
+                                }
+                            )
+                        else:
+                            duplicates += 1
+                            log_changes(
+                                collection_name=collection_name,
+                                operation="update",
+                                filename=filename,
+                                changes={
+                                    "operation": "upsert_update",
+                                    "details": f"Mapeo actualizado desde {filename}"
+                                }
+                            )
+                        continue
+                    
+                    # Procesamiento normal para otros archivos
                     if isinstance(data, list):
                         for doc in data:
                             try:
@@ -278,7 +340,6 @@ def process_custom_files(folder_path: str, collection_name: str):
                                 )
                                 if result.upserted_id:
                                     total_inserted += 1
-                                    
                                     log_changes(
                                         collection_name=collection_name,
                                         operation="insert",
@@ -291,7 +352,6 @@ def process_custom_files(folder_path: str, collection_name: str):
                                     )
                                 else:
                                     duplicates += 1
-                                    
                                     log_changes(
                                         collection_name=collection_name,
                                         operation="update",
@@ -313,7 +373,6 @@ def process_custom_files(folder_path: str, collection_name: str):
                             )
                             if result.upserted_id:
                                 total_inserted += 1
-                                
                                 log_changes(
                                     collection_name=collection_name,
                                     operation="insert",
@@ -326,7 +385,6 @@ def process_custom_files(folder_path: str, collection_name: str):
                                 )
                             else:
                                 duplicates += 1
-                                
                                 log_changes(
                                     collection_name=collection_name,
                                     operation="update",
@@ -354,98 +412,13 @@ def process_custom_files(folder_path: str, collection_name: str):
     except Exception as e:
         ConsoleOutput.print_warning(f"Error: {str(e)}")
 
-def full_overwrite_load():
-    """Realiza una carga completa borrando todo lo existente"""
-    ConsoleOutput.print_header("CARGA COMPLETA (SOBREESCRIBIR TODO)")
-    
-    FOLDER_CONFIG = {
-        'archivos_asignaturas': 'subjects',
-        'archivos_grados': 'degrees'
-    }
-    
-    start_time = datetime.now()
-    total_docs = 0
-    
-    global loaded_files
-    loaded_files = {'subjects': set(), 'degrees': set()}
-    
-    for folder, collection in FOLDER_CONFIG.items():
-        if not os.path.exists(folder):
-            ConsoleOutput.print_warning(f"Carpeta no encontrada: {folder}")
-            continue
-
-        files = [f for f in os.listdir(folder) if f.endswith('.json')]
-        if not files:
-            ConsoleOutput.print_warning(f"No hay archivos JSON en {folder}")
-            continue
-
-        ConsoleOutput.print_header(f"SOBREESCRIBIENDO: {folder} -> {collection}")
-        
-        # 1. Borrado completo
-        count_before = db_client[collection].estimated_document_count()
-        deleted_result = db_client[collection].delete_many({})
-        
-        log_changes(
-            collection_name=collection,
-            operation="delete",
-            filename="FULL_OVERWRITE_LOAD",
-            changes={
-                "deleted_count": deleted_result.deleted_count,
-                "operation": "full_overwrite_load",
-                "details": f"Se eliminaron todos los documentos ({deleted_result.deleted_count}) de la colección {collection}"
-            }
-        )
-        
-        ConsoleOutput.print_success(f"Colección {collection} borrada. Documentos eliminados: {count_before}")
-        
-        # 2. Carga de archivos
-        inserted = 0
-        processed_files = []
-        
-        for filename in files:
-            loaded_files[collection].add(filename)
-            processed_files.append(filename)
-            filepath = os.path.join(folder, filename)
-            try:
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    
-                    if isinstance(data, list):
-                        result = db_client[collection].insert_many(data)
-                        inserted += len(result.inserted_ids)
-                    else:
-                        result = db_client[collection].insert_one(data)
-                        inserted += 1
-            except Exception as e:
-                ConsoleOutput.print_warning(f"Error en {filename}: {str(e)}")
-                continue
-        
-        log_changes(
-            collection_name=collection,
-            operation="insert",
-            filename="MULTIPLE_FILES",
-            changes={
-                "inserted_count": inserted,
-                "operation": "bulk_insert",
-                "processed_files": processed_files,
-                "file_count": len(processed_files),
-                "details": f"Se insertaron {inserted} documentos desde {len(processed_files)} archivos"
-            }
-        )
-        
-        total_docs += inserted
-        ConsoleOutput.print_success(f"Documentos insertados en {collection}: {inserted}")
-    
-    duration = (datetime.now() - start_time).total_seconds()
-    ConsoleOutput.print_success(f"\nCarga completada en {duration:.2f} segundos")
-    ConsoleOutput.print_success(f"Total documentos insertados: {total_docs}")
-
 def show_detailed_stats():
     """Muestra estadísticas detalladas incluyendo archivos cargados"""
     ConsoleOutput.print_header("ESTADÍSTICAS DETALLADAS")
     collections = {
         'subjects': 'Asignaturas',
         'degrees': 'Grados',
+        'mapping': 'Mapeos',
         'logs': 'Registros de Cambios'
     }
     
@@ -461,6 +434,13 @@ def show_detailed_stats():
                     print(f"    {i}. {filename}")
             elif col in loaded_files:
                 print("  Ningún archivo cargado recientemente")
+                
+            # Mostrar info adicional para el mapeo
+            if col == 'mapping':
+                mapping_data = db_client[col].find_one({'name': 'asignaturasInfo_mapping'})
+                if mapping_data:
+                    print(f"  Mapeo actualizado: {mapping_data.get('last_update', 'Desconocido')}")
+                    print(f"  Entradas en el mapeo: {len(mapping_data.get('mapping', []))}")
                 
         except Exception as e:
             ConsoleOutput.print_warning(f"No se pudo acceder a la colección {col}: {str(e)}")

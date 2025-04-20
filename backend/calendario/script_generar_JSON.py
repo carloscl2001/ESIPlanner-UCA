@@ -4,27 +4,17 @@ import pypdf
 import re
 from datetime import datetime
 from icalendar import Calendar, vDatetime
-import pandas as pd
-from tqdm import tqdm  # Para la barra de progreso
+from tqdm import tqdm  # Importamos tqdm para las barras de progreso
+
 
 # ================================
 # Funciones para procesar PDFs
 # ================================
 
 def get_attachments(reader):
-    """
-    Extrae los archivos adjuntos del PDF.
-    
-    Args:
-        reader: Objeto PdfReader del que extraer los adjuntos
-        
-    Returns:
-        dict: Diccionario con nombres de archivo como clave y contenido como valor
-    """
+    """Extrae los archivos adjuntos del PDF."""
     attachments = {}
     catalog = reader.trailer["/Root"]
-    
-    # Buscar adjuntos en el catálogo de nombres
     if "/Names" in catalog and "/EmbeddedFiles" in catalog["/Names"]:
         fileNames = catalog['/Names']['/EmbeddedFiles']['/Names']
         for i in range(0, len(fileNames), 2):
@@ -33,7 +23,6 @@ def get_attachments(reader):
             fData = fDict['/EF']['/F'].get_data()
             attachments[name] = fData
     
-    # Buscar adjuntos en anotaciones de páginas
     for page_object in reader.pages:
         if "/Annots" in page_object:
             for annot in page_object['/Annots']:
@@ -46,15 +35,7 @@ def get_attachments(reader):
 
 
 def extract_degree_name_from_pdf(pdf_reader):
-    """
-    Extrae el nombre del grado de la primera página del PDF.
-    
-    Args:
-        pdf_reader: Objeto PdfReader del que extraer el nombre
-        
-    Returns:
-        str: Nombre del grado o "Desconocido" si no se encuentra
-    """
+    """Extrae el nombre del grado de la primera página usando pypdf."""
     first_page = pdf_reader.pages[0]
     text = first_page.extract_text()
     
@@ -67,53 +48,21 @@ def extract_degree_name_from_pdf(pdf_reader):
 
 
 def extract_subject_codes_from_pdf(pdf_reader):
-    """
-    Extrae códigos de asignaturas de todas las páginas del PDF.
-    
-    Args:
-        pdf_reader: Objeto PdfReader del que extraer los códigos
-        
-    Returns:
-        list: Lista de códigos de asignatura únicos (sin duplicados)
-    """
-    subject_codes = set()
-    pattern = re.compile(r'\s-\s(\d{8})')  # Patrón para códigos de 8 dígitos
+    """Extrae los códigos de asignaturas recorriendo todas las páginas sin duplicados."""
+    subject_codes = set()  # Usamos un set para evitar duplicados
+    pattern = re.compile(r'\s-\s(\d{8})')  # Busca un espacio, guion, espacio seguido de 8 dígitos
 
     for page in pdf_reader.pages:
         text = page.extract_text()
         if text:
             matches = pattern.findall(text)
-            subject_codes.update(matches)
+            subject_codes.update(matches)  # Añade los códigos al set para evitar duplicados
 
-    return list(subject_codes)
+    return list(subject_codes)  # Convertimos el set a lista antes de devolverlo
 
 
-def load_mapping_file():
-    """Carga el archivo de mapeo de códigos."""
-    
-    mapping_path = os.path.join("archivo_mapeo", "asignaturasInfo.tsv")
-    if not os.path.exists(mapping_path):
-        print(f"Advertencia: No se encontró el archivo de mapeo en {mapping_path}")
-        return {}
-    
-    df = pd.read_csv(mapping_path, sep="\t")
-    df = df[['id', 'horarioID']].dropna()
-    df['id'] = df['id'].astype(str)
-    # Convertir a float primero, luego a int para eliminar decimales, y finalmente a string
-    df['horarioID'] = df['horarioID'].astype(float).astype(int).astype(str)
-    return dict(zip(df['id'], df['horarioID']))
-
-def process_pdf(pdf_path, mapping_dict):
-    """
-    Procesa un archivo PDF y extrae información de grados y asignaturas.
-    
-    Args:
-        pdf_path: Ruta al archivo PDF a procesar
-        mapping_dict: Diccionario de mapeo de códigos
-        
-    Returns:
-        dict: Datos estructurados del grado con sus asignaturas
-    """
+def process_pdf(pdf_path):
+    """Procesa el archivo PDF y extrae información relevante."""
     degree_code = os.path.splitext(os.path.basename(pdf_path))[0]
     
     with open(pdf_path, 'rb') as handler:
@@ -122,72 +71,58 @@ def process_pdf(pdf_path, mapping_dict):
         subject_codes = extract_subject_codes_from_pdf(reader)
         attachments = get_attachments(reader)
         
+        # Guardar archivos adjuntos
         save_attachments(attachments)
         
-    # Crear lista de asignaturas con mapeo de códigos ICS
-    subjects_list = []
-    for code in sorted(subject_codes):
-        subject_data = {"code": code}
-        if code in mapping_dict:
-            subject_data["code_ics"] = mapping_dict[code]  # Se mantiene como string
-        subjects_list.append(subject_data)
-    
-    return {
+    degree_data = {
         "code": degree_code,
         "name": degree_name,
-        "subjects": subjects_list
+        "subjects": [{"code": code} for code in sorted(subject_codes)]
     }
+    
+    return degree_data
 
 
 def save_attachments(attachments):
-    """
-    Guarda archivos adjuntos en el directorio 'archivos_adjuntos'.
-    
-    Args:
-        attachments: Diccionario de archivos adjuntos {nombre: contenido}
-    """
-    os.makedirs("archivos_adjuntos", exist_ok=True)
-    
+    """Guarda los archivos adjuntos en el directorio correspondiente."""
     for fName, fData in attachments.items():
         sanitized_name = fName.replace("/", "_")
         save_path = os.path.join("archivos_adjuntos", sanitized_name)
+        os.makedirs("archivos_adjuntos", exist_ok=True)
+        
         with open(save_path, 'wb') as outfile:
             outfile.write(fData)
 
 
-def extract_data_from_pdfs(mapping_dict):
-    """
-    Procesa todos los PDFs en 'archivos_pdf' y genera archivos JSON.
-    
-    Args:
-        mapping_dict: Diccionario de mapeo de códigos
-        
-    Returns:
-        list: Lista con datos de todos los grados procesados
-    """
+def extract_data_from_pdfs():
+    """Extrae los datos de los PDFs en el directorio 'archivos_pdf' y crea los archivos JSON correspondientes."""
     pdf_dir = "archivos_pdf"
+    
+    # Verificar si la carpeta existe
     if not os.path.exists(pdf_dir):
         print(f"Error: No se encontró la carpeta '{pdf_dir}'.")
         return []
     
+    # Listar archivos PDF en la carpeta especificada
     pdf_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith('.pdf')]
-    all_degree_data = []
-    os.makedirs("archivos_grados", exist_ok=True)
     
-    # Barra de progreso para procesamiento de PDFs
-    with tqdm(pdf_files, desc="Procesando PDFs", unit="archivo") as pbar:
-        for pdf_file in pbar:
-            pdf_path = os.path.join(pdf_dir, pdf_file)
-            degree_data = process_pdf(pdf_path, mapping_dict)
-            all_degree_data.append(degree_data)
-            
-            # Actualizar descripción de la barra de progreso
-            pbar.set_postfix(grado=degree_data['code'])
-            
-            # Guardar JSON individual para cada grado
-            json_filename = os.path.join("archivos_grados", f"{degree_data['code']}.json")
-            with open(json_filename, "w", encoding="utf-8") as json_file:
-                json.dump(degree_data, json_file, indent=4, ensure_ascii=False)
+    all_degree_data = []
+    
+    # Barra de progreso para procesar PDFs
+    print("\nProcesando archivos PDF:")
+    for pdf_file in tqdm(pdf_files, desc="PDFs procesados"):
+        # Construir la ruta completa al archivo PDF
+        pdf_path = os.path.join(pdf_dir, pdf_file)
+        degree_data = process_pdf(pdf_path)  # Pasar la ruta completa
+        
+        all_degree_data.append(degree_data)
+        
+        # Crear carpeta para almacenar los archivos JSON
+        os.makedirs("archivos_grados", exist_ok=True)
+        
+        json_filename = os.path.join("archivos_grados", f"{degree_data['code']}.json")
+        with open(json_filename, "w", encoding="utf-8") as json_file:
+            json.dump(degree_data, json_file, indent=4, ensure_ascii=False)
     
     return all_degree_data
 
@@ -198,19 +133,14 @@ def extract_data_from_pdfs(mapping_dict):
 
 def parse_ics_to_json(ics_content):
     """
-    Convierte contenido ICS a estructura JSON.
-    
-    Args:
-        ics_content: Cadena con contenido del archivo ICS
-        
-    Returns:
-        dict: Datos de cursos estructurados
+    Analiza el contenido del archivo ICS y lo convierte a una estructura JSON.
     """
     cal = Calendar.from_ical(ics_content)
+    
     courses = {}
 
     def format_datetime(dt):
-        """Formatea datetime a 'YYYY-MM-DD'."""
+        """Formatea un objeto datetime a una cadena 'YYYY-MM-DD'."""
         if isinstance(dt, (datetime, vDatetime)):
             if hasattr(dt, 'tzinfo') and dt.tzinfo is not None:
                 dt = dt.astimezone(dt.tzinfo).replace(tzinfo=None)
@@ -218,7 +148,7 @@ def parse_ics_to_json(ics_content):
         return str(dt)
     
     def format_time(dt):
-        """Formatea datetime a 'HH:MM'."""
+        """Formatea un objeto datetime a una cadena 'HH:MM'."""
         if isinstance(dt, (datetime, vDatetime)):
             if hasattr(dt, 'tzinfo') and dt.tzinfo is not None:
                 dt = dt.astimezone(dt.tzinfo).replace(tzinfo=None)
@@ -226,7 +156,6 @@ def parse_ics_to_json(ics_content):
         return str(dt)
     
     def create_event(date, start_time, end_time, location):
-        """Crea estructura de evento."""
         return {
             "date": date,
             "start_hour": start_time,
@@ -234,7 +163,6 @@ def parse_ics_to_json(ics_content):
             "location": location.strip()
         }
 
-    # Procesar cada evento en el calendario
     for component in cal.walk():
         if component.name == "VEVENT":
             location = component.get('location', 'No Location')
@@ -249,7 +177,7 @@ def parse_ics_to_json(ics_content):
             codigo = uid_parts[0].strip() if len(uid_parts) > 0 else 'Unknown'
             tipo_clase = uid_parts[1].strip() if len(uid_parts) > 1 else 'Unknown'
             
-            # Inicializar estructura del curso si no existe
+            # Inicializa la entrada de la asignatura si no existe
             if codigo not in courses:
                 courses[codigo] = {
                     "code": codigo,
@@ -257,13 +185,15 @@ def parse_ics_to_json(ics_content):
                     "classes": []
                 }
             
-            # Buscar o crear entrada para este tipo de clase
+            # Buscar si ya existe una entrada para este tipo de clase
             class_entry = next((c for c in courses[codigo]["classes"] if c["type"] == tipo_clase), None)
             if class_entry is None:
-                class_entry = {"type": tipo_clase, "events": []}
+                class_entry = {
+                    "type": tipo_clase,
+                    "events": []
+                }
                 courses[codigo]["classes"].append(class_entry)
             
-            # Añadir evento inicial
             initial_event = create_event(
                 format_datetime(dtstart),
                 format_time(dtstart),
@@ -271,10 +201,10 @@ def parse_ics_to_json(ics_content):
                 location
             )
             
+            # Añadir el evento solo si no existe
             if initial_event not in class_entry["events"]:
                 class_entry["events"].append(initial_event)
             
-            # Procesar eventos recurrentes
             rdates = component.get('rdate', [])
             if not isinstance(rdates, list):
                 rdates = [rdates]
@@ -304,98 +234,152 @@ def parse_ics_to_json(ics_content):
 
 
 def combine_ics_files(directory):
-    """
-    Combina múltiples archivos ICS en una única estructura.
-    
-    Args:
-        directory: Directorio que contiene archivos ICS
-        
-    Returns:
-        dict: Todos los cursos combinados de todos los archivos
-    """
+    """Combina todos los archivos ICS en una única estructura JSON."""
     all_courses = {}
+    
+    # Obtener lista de archivos ICS
     ics_files = [f for f in os.listdir(directory) if f.endswith('.ics')]
     
-    # Barra de progreso para procesamiento de ICS
-    with tqdm(ics_files, desc="Procesando ICS", unit="archivo") as pbar:
-        for file_name in pbar:
-            file_path = os.path.join(directory, file_name)
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    ics_content = f.read()
-                courses = parse_ics_to_json(ics_content)
-                
-                # Combinar cursos
-                for code, details in courses.items():
-                    if code not in all_courses:
-                        all_courses[code] = details
-                    else:
-                        # Combinar clases duplicadas
-                        for class_entry in details["classes"]:
-                            existing_class = next(
-                                (c for c in all_courses[code]["classes"] 
-                                 if c["type"] == class_entry["type"]), 
-                                None
-                            )
-                            if existing_class:
-                                # Añadir eventos nuevos
-                                for event in class_entry["events"]:
-                                    if event not in existing_class["events"]:
-                                        existing_class["events"].append(event)
-                            else:
-                                all_courses[code]["classes"].append(class_entry)
-                
-                pbar.set_postfix(archivo=file_name)
+    # Barra de progreso para procesar archivos ICS
+    print("\nProcesando archivos ICS:")
+    for file_name in tqdm(ics_files, desc="Archivos ICS procesados"):
+        file_path = os.path.join(directory, file_name)
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                ics_content = f.read()
+            courses = parse_ics_to_json(ics_content)
             
-            except Exception as e:
-                print(f"\nError al procesar {file_name}: {e}")
+            for code, details in courses.items():
+                if code not in all_courses:
+                    all_courses[code] = details
+                else:
+                    # Combinar las clases y eventos si el código ya existe
+                    for class_entry in details["classes"]:
+                        existing_class = next((c for c in all_courses[code]["classes"] if c["type"] == class_entry["type"]), None)
+                        if existing_class:
+                            for event in class_entry["events"]:
+                                if event not in existing_class["events"]:
+                                    existing_class["events"].append(event)
+                        else:
+                            all_courses[code]["classes"].append(class_entry)
+        
+        except FileNotFoundError:
+            print(f"\nArchivo no encontrado: {file_name}")
+        except Exception as e:
+            print(f"\nError al procesar el archivo {file_name}: {e}")
     
     return all_courses
 
 
 def save_json_for_each_subject(courses):
     """
-    Guarda un JSON por cada asignatura en 'archivos_asignaturas'.
-    
-    Args:
-        courses: Diccionario con todos los cursos procesados
+    Guarda un archivo JSON para cada asignatura en la carpeta 'archivos_asignaturas'.
     """
+    # Crear la carpeta 'archivos_asignaturas' si no existe
     os.makedirs('archivos_asignaturas', exist_ok=True)
+
+    subject_codes = []
     
-    # Barra de progreso para guardado de JSONs
-    with tqdm(courses.items(), desc="Guardando asignaturas", unit="asignatura") as pbar:
-        for code, details in pbar:
-            output_file = os.path.join('archivos_asignaturas', f'{code}.json')
-            with open(output_file, 'w', encoding='utf-8') as f:
-                json.dump(details, f, indent=4, ensure_ascii=False)
-            pbar.set_postfix(codigo=code)
+    # Barra de progreso para guardar archivos JSON
+    print("\nGuardando archivos JSON de asignaturas:")
+    for code, details in tqdm(courses.items(), desc="Archivos guardados"):
+        # Guardar solo archivos JSON de asignaturas en 'archivos_asignaturas'
+        output_file = os.path.join('archivos_asignaturas', f'{code}.json')
+        json_output = json.dumps(details, indent=4, ensure_ascii=False)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(json_output)
+        
+        subject_codes.append({"code": code})
+
+    # Crear la carpeta 'archivos_grados' si no existe
+    os.makedirs('archivos_grados', exist_ok=True)
 
 
+def create_id_to_horarioID_mapping():
+    """
+    Crea un mapeo estructurado entre id y horarioID a partir del archivo TSV.
+    El resultado es un JSON con name, last_update y un array de mappings.
+    Si un id aparece múltiples veces, se conserva el último horarioID no nulo.
+    """
+    # Definir rutas
+    tsv_path = os.path.join("archivos_mapeo", "asignaturasInfo.tsv")
+    output_path = os.path.join("archivos_mapeo", "mapeo.json")
+    
+    if not os.path.exists(tsv_path):
+        print(f"Error: No se encontró el archivo {tsv_path}")
+        return
+    
+    print(f"\nProcesando archivo TSV: asignaturasInfo.tsv")
+    
+    mappings = []
+    processed_ids = set()  # Para evitar duplicados
+    
+    with open(tsv_path, 'r', encoding='utf-8') as f:
+        # Leer cabecera
+        header = f.readline().strip().split('\t')
+        
+        try:
+            id_idx = header.index('id')
+            horarioID_idx = header.index('horarioID')
+        except ValueError as e:
+            print(f"Error: Columnas no encontradas: {e}")
+            return
+        
+        # Procesar líneas en orden inverso para quedarnos con la última aparición
+        lines = f.readlines()
+        for line in tqdm(reversed(lines), desc="Procesando líneas", total=len(lines)):
+            parts = line.strip().split('\t')
+            if len(parts) > max(id_idx, horarioID_idx):
+                id_val = parts[id_idx]
+                horarioID_val = parts[horarioID_idx]
+                
+                if id_val not in processed_ids and horarioID_val and horarioID_val.lower() != 'null':
+                    mappings.append({
+                        "code": id_val,
+                        "code_ics": horarioID_val
+                    })
+                    processed_ids.add(id_val)
+    
+    # Invertir para mantener el orden original (ya que procesamos en reverso)
+    mappings.reverse()
+    
+    # Crear estructura final
+    result = {
+        "name": "asignaturasInfo_mapping",
+        "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "mapping": mappings
+    }
+    
+    # Guardar el mapeo
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=4, ensure_ascii=False)
+    
+    print(f"\n✓ Mapeo estructurado guardado en: {output_path}")
+    return result
 # ================================
 # Función principal
 # ================================
 
 def main():
-    print("=== INICIO DEL PROCESO ===")
+    print("Iniciando procesamiento de archivos...")
     
-    # 1. Cargar mapeo de códigos
-    print("\nCargando mapeo de códigos...")
-    mapping_dict = load_mapping_file()
+    # Extraer y guardar los datos de los PDFs
+    extract_data_from_pdfs()
+    print("\n✓ Se han creado los archivos JSON para los grados")
     
-    # 2. Procesar PDFs
-    print("\nProcesando archivos PDF...")
-    extract_data_from_pdfs(mapping_dict)
-    
-    # 3. Procesar archivos ICS adjuntos
-    print("\nProcesando archivos ICS...")
+    # Combinar archivos ICS en una estructura JSON
     directory = './archivos_adjuntos'
-    if os.path.exists(directory):
-        combined_courses = combine_ics_files(directory)
-        save_json_for_each_subject(combined_courses)
-    else:
-        print(f"Directorio {directory} no encontrado. Omitiendo procesamiento ICS.")
+    combined_courses = combine_ics_files(directory)
     
-    print("\n=== PROCESO COMPLETADO ===")
+    # Guardar los JSON de las asignaturas
+    save_json_for_each_subject(combined_courses)
+    print("\n✓ Se han creado los archivos JSON para las asignaturas")
+
+    # Procesar el archivo TSV para crear el mapeo ID-horarioID
+    create_id_to_horarioID_mapping()
+    
+    print("\n✓!SCRIPT FINALIZADO CON ÉXITO!✓")
 
 
 if __name__ == "__main__":
