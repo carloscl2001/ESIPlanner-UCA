@@ -31,7 +31,7 @@ class ProfileCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDarkMode
-                  ? [Colors.grey.shade900, Colors.grey.shade900]
+                  ? [Colors.black, Colors.grey[900]!]
                   : [Colors.indigo.shade50, Colors.white],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
