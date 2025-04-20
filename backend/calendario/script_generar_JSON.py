@@ -346,8 +346,6 @@ def create_id_to_horarioID_mapping():
     
     # Crear estructura final
     result = {
-        "name": "asignaturasInfo_mapping",
-        "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "mapping": mappings
     }
     

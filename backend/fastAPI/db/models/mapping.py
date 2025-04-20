@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel
+from typing import List
 
 #Modelo para los tipos de clases
 class SubjectMap(BaseModel):

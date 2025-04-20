@@ -170,12 +170,18 @@ def full_clean_load():
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     
-                    # Manejo especial para mapeo.json (insertar con nueva estructura)
+                    # Manejo especial para mapeo.json (insertar con estructura simplificada)
                     if filename == 'mapeo.json':
+                        # Extraer el array de mapeo del objeto anidado
+                        if isinstance(data, dict) and 'mapping' in data:
+                            mapping_data = data['mapping']
+                        else:
+                            mapping_data = data  # Por si acaso ya viene el array directamente
+                        
                         mapping_doc = {
                             'name': 'asignaturasInfo_mapping',
                             'last_update': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            'mapping': data
+                            'mapping': mapping_data
                         }
                         result = db_client[collection].insert_one(mapping_doc)
                         inserted += 1
@@ -295,10 +301,16 @@ def process_custom_files(folder_path: str, collection_name: str):
                     
                     # Manejo especial para mapeo.json
                     if filename == 'mapeo.json':
+                        # Extraer el array de mapeo del objeto anidado
+                        if isinstance(data, dict) and 'mapping' in data:
+                            mapping_data = data['mapping']
+                        else:
+                            mapping_data = data  # Por si acaso ya viene el array directamente
+                        
                         result = db_client[collection_name].update_one(
                             {'name': 'asignaturasInfo_mapping'},
                             {'$set': {
-                                'mapping': data,
+                                'mapping': mapping_data,
                                 'last_update': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             }},
                             upsert=True
