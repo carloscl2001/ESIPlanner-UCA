@@ -3,38 +3,18 @@ import 'package:provider/provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../../../services/subject_service.dart';
 
-/// Lógica para la selección de asignaturas de un grado específico.
-/// Maneja:
-/// - Carga de asignaturas del grado
-/// - Selección/deselección de asignaturas
-/// - Estado de carga
-/// - Manejo de errores
 class SelectSubjectsDegreeLogic {
-  // Contexto necesario para acceder a características de Flutter como navegación, temas, etc.
   final BuildContext context;
-  
-  // Servicio para obtener datos de asignaturas y grados desde la fuente de datos
   final SubjectService subjectService;
-  
-  // Nombre del grado académico cuyas asignaturas se van a cargar
   final String degreeName;
-  
-  // Lista de códigos de asignaturas que deben venir preseleccionadas
   final List<String> initiallySelected;
-  
-  // Callback para notificar a la UI que debe actualizarse
   final VoidCallback refreshUI;
 
-  // Indica si los datos están siendo cargados
   bool isLoading = true;
-  
-  // Lista de todas las asignaturas disponibles para este grado
   List<Map<String, dynamic>> subjects = [];
-  
-  // Conjunto de códigos de asignaturas seleccionadas por el usuario
   Set<String> selectedSubjects = {};
+  Map<String, String> codeToIcs = {}; // Mapeo de código original a code_ics
 
-  /// Constructor que inicializa el estado con las asignaturas preseleccionadas
   SelectSubjectsDegreeLogic({
     required this.context,
     required this.subjectService,
@@ -45,10 +25,12 @@ class SelectSubjectsDegreeLogic {
     selectedSubjects = Set.from(initiallySelected);
   }
 
-  /// Carga las asignaturas correspondientes al grado especificado
-  /// Maneja estados de carga, éxito y error
   Future<void> loadSubjects() async {
     try {
+      // 1. Cargar el mapeo de códigos primero
+      await _loadCodeMappings();
+
+      // 2. Cargar los datos del grado
       final degreeData = await subjectService.getDegreeData(
         degreeName: degreeName,
       );
@@ -59,15 +41,20 @@ class SelectSubjectsDegreeLogic {
         List<Map<String, dynamic>> loadedSubjects = [];
 
         for (var subject in degreeData['subjects']) {
+          final originalCode = subject['code'];
+          final icsCode = codeToIcs[originalCode] ?? originalCode;
+          
+          // 3. Obtener datos usando el code_ics
           final subjectData = await subjectService.getSubjectData(
-            codeSubject: subject['code'],
+            codeSubject: icsCode, // Usamos el code_ics para la petición
           );
           
           if (!_isMounted()) return;
           
           loadedSubjects.add({
             'name': subjectData['name'] ?? 'Sin nombre',
-            'code': subject['code'],
+            'code': originalCode, // Mostramos el código original
+            'code_ics': icsCode, // Guardamos el ICS para referencias futuras
           });
         }
         
@@ -84,7 +71,26 @@ class SelectSubjectsDegreeLogic {
     }
   }
 
-  /// Muestra un mensaje de error al usuario usando SnackBar
+  Future<void> _loadCodeMappings() async {
+    try {
+      final mappings = await subjectService.getSubjectMapping();
+      codeToIcs = {
+        for (var mapping in mappings)
+          mapping['code'].toString(): mapping['code_ics'].toString()
+      };
+    } catch (e) {
+      debugPrint('Error cargando mapeo de códigos: $e');
+      // Si falla, codeToIcs quedará vacío y usaremos los códigos originales
+    }
+  }
+
+  // Método para obtener datos de una asignatura usando el code_ics correcto
+  Future<Map<String, dynamic>> getSubjectDetails(String originalCode) async {
+    final icsCode = codeToIcs[originalCode] ?? originalCode;
+    return await subjectService.getSubjectData(codeSubject: icsCode);
+  }
+
+  // ... (resto de métodos permanecen igual)
   void showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -94,24 +100,19 @@ class SelectSubjectsDegreeLogic {
     );
   }
 
-  /// Alterna la selección de una asignatura
-  /// [code]: Código de la asignatura a seleccionar/deseleccionar
   void toggleSelection(String code) {
     if (selectedSubjects.contains(code)) {
-      selectedSubjects.remove(code); // Deselecciona
+      selectedSubjects.remove(code);
     } else {
-      selectedSubjects.add(code); // Selecciona
+      selectedSubjects.add(code);
     }
     refreshUI();
   }
 
-  /// Verifica si el widget asociado aún está montado
-  /// Previene errores al actualizar estado después de desmontar
   bool _isMounted() {
     return context.mounted;
   }
 
-  /// Getter que determina si el tema actual es oscuro
   bool get isDarkMode {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     return themeProvider.themeMode == ThemeMode.dark;
