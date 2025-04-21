@@ -31,9 +31,9 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
     // Inicialización de la lógica con:
     // - Contexto actual
     // - Instancia del servicio
-    // - Nombre del grado (de los parámetros del widget)
-    // - Asignaturas preseleccionadas (de los parámetros del widget)
-    // - Función para refrescar la UI (setState)
+    // - Nombre del grado
+    // - Asignaturas preseleccionadas
+    // - Función para refrescar la UI
     logic = SelectSubjectsDegreeLogic(
       context: context,
       subjectService: SubjectService(),
@@ -49,29 +49,26 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.degreeName), // Muestra el nombre del grado como título
+        title: Text(widget.degreeName),
         actions: [
-          // Botón de guardar en la AppBar
           IconButton(
             icon: const Icon(Icons.save),
-            // Al presionar, regresa a la pantalla anterior con la lista de seleccionados
             onPressed: () {
-                final result = {
-                  'codes': logic.selectedSubjects.keys.toList(),
-                  'codes_ics': logic.selectedSubjects.values.toList(),
-                  'names': logic.subjects
-                    .where((subject) => logic.selectedSubjects.containsKey(subject['code']))
-                    .map((subject) => subject['name'] as String)
-                    .toList(), // Enviamos los nombres
-                  'degree': widget.degreeName,
-                };
+              final result = {
+                'codes': logic.selectedSubjects.toList(),
+                'names': logic.subjects
+                  .where((subject) => logic.selectedSubjects.contains(subject['code']))
+                  .map((subject) => subject['name'] as String)
+                  .toList(),
+                'degree': widget.degreeName,
+              };
               Navigator.pop(context, result);
             },
             tooltip: 'Guardar selecciones',
           ),
         ],
       ),
-      body: _buildBody(), // Construye el cuerpo principal de la pantalla
+      body: _buildBody(),
     );
   }
 
@@ -100,12 +97,11 @@ class _DegreeSubjectsScreenState extends State<DegreeSubjectsScreen> {
         // Tarjeta individual para cada asignatura
         return SelectSubjectsDegreeWdigets.buildSubjectCard(
           context: context,
-          name: subject['name'],      // Nombre de la asignatura
-          code: subject['code'],   
-          codeIcs: subject['code_ics'],   // Código identificador
-          isSelected: logic.selectedSubjects.containsKey(subject['code']), // Estado de selección
-          onTap: () => logic.toggleSelection(subject['code'], subject['code_ics']),// Acción al tocar
-          isDarkMode: logic.isDarkMode, // Estado del tema
+          name: subject['name'],
+          code: subject['code'],
+          isSelected: logic.selectedSubjects.contains(subject['code']),
+          onTap: () => logic.toggleSelection(subject['code']),
+          isDarkMode: logic.isDarkMode,
         );
       },
     );

@@ -13,13 +13,11 @@ import 'select_subjects_groups_widgets.dart';
 class SelectGroupsScreen extends StatefulWidget {
   final List<String> selectedSubjectCodes;
   final Map<String, String> subjectDegrees;
-  final Map<String, String> subjectIcsCodes; // Añade este parámetro
 
   const SelectGroupsScreen({
     super.key, 
     required this.selectedSubjectCodes,
     required this.subjectDegrees,
-    required this.subjectIcsCodes, // Añade este parámetro
   });
 
   @override
@@ -35,7 +33,6 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     logic = SelectGroupsLogic(
       selectedSubjectCodes: widget.selectedSubjectCodes,
       subjectDegrees: widget.subjectDegrees,
-      subjectIcsCodes: widget.subjectIcsCodes, // Pasa los códigos ICS
     );
   }
 

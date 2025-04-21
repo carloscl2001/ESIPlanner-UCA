@@ -18,8 +18,6 @@ class SubjectSelectionHomeLogic {
   Map<String, String> subjectDegrees = {};
   Map<String, bool> groupsSelected = {};
   Map<String, Map<String, String>> selectedGroupsMap = {};
-   // Añadimos un nuevo mapa para almacenar los code_ics
-  Map<String, String> subjectIcsCodes = {};
 
   SubjectSelectionHomeLogic({
     required this.refreshUI,
@@ -45,12 +43,10 @@ class SubjectSelectionHomeLogic {
     }
   }
 
-  // Modificamos updateSelections para cargar ambos códigos
   Future<void> updateSelections(Map<String, dynamic> selectionData) async {
     if (_isDisposed) return;
     
     final codes = List<String>.from(selectionData['codes'] ?? []);
-    final codesIcs = List<String>.from(selectionData['codes_ics'] ?? []);
     final names = List<String>.from(selectionData['names'] ?? []);
     final degree = selectionData['degree'] as String;
     
@@ -58,7 +54,6 @@ class SubjectSelectionHomeLogic {
     
     for (int i = 0; i < codes.length; i++) {
       final code = codes[i];
-      final codeIcs = i < codesIcs.length ? codesIcs[i] : '';
       final name = i < names.length ? names[i] : 'Cargando...';
       
       if (!groupsSelected.containsKey(code)) {
@@ -67,13 +62,11 @@ class SubjectSelectionHomeLogic {
       
       subjectNames[code] = name;
       subjectDegrees[code] = degree;
-      subjectIcsCodes[code] = codeIcs;
     }
     
     // Limpieza
     subjectNames.removeWhere((key, _) => !selectedSubjects.contains(key));
     subjectDegrees.removeWhere((key, _) => !selectedSubjects.contains(key));
-    subjectIcsCodes.removeWhere((key, _) => !selectedSubjects.contains(key));
     groupsSelected.removeWhere((key, _) => !selectedSubjects.contains(key));
     
     refreshUI();

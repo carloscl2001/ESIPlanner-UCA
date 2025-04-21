@@ -32,7 +32,7 @@ class SelectSubjectsDegreeLogic {
   List<Map<String, dynamic>> subjects = [];
   
   // Conjunto de códigos de asignaturas seleccionadas por el usuario
-  Map<String, String> selectedSubjects = {}; // key: code, value: code_ics
+  Set<String> selectedSubjects = {};
 
   /// Constructor que inicializa el estado con las asignaturas preseleccionadas
   SelectSubjectsDegreeLogic({
@@ -42,10 +42,7 @@ class SelectSubjectsDegreeLogic {
     required this.refreshUI,
     required this.initiallySelected,
   }) {
-    // Inicializamos con los códigos ICS vacíos (se llenarán al cargar)
-    for (var code in initiallySelected) {
-      selectedSubjects[code] = ''; // El code_ics se cargará después
-    }
+    selectedSubjects = Set.from(initiallySelected);
   }
 
   /// Carga las asignaturas correspondientes al grado especificado
@@ -63,7 +60,7 @@ class SelectSubjectsDegreeLogic {
 
         for (var subject in degreeData['subjects']) {
           final subjectData = await subjectService.getSubjectData(
-            codeSubject: subject['code_ics'],
+            codeSubject: subject['code'],
           );
           
           if (!_isMounted()) return;
@@ -71,13 +68,7 @@ class SelectSubjectsDegreeLogic {
           loadedSubjects.add({
             'name': subjectData['name'] ?? 'Sin nombre',
             'code': subject['code'],
-            'code_ics': subject['code_ics'], // Aseguramos tener el code_ics
           });
-
-          // Actualizamos el code_ics de las asignaturas pre-seleccionadas
-          if (selectedSubjects.containsKey(subject['code'])) {
-            selectedSubjects[subject['code']] = subject['code_ics'];
-          }
         }
         
         if (!_isMounted()) return;
@@ -105,11 +96,11 @@ class SelectSubjectsDegreeLogic {
 
   /// Alterna la selección de una asignatura
   /// [code]: Código de la asignatura a seleccionar/deseleccionar
-  void toggleSelection(String code, String codeIcs) {
-    if (selectedSubjects.containsKey(code)) {
+  void toggleSelection(String code) {
+    if (selectedSubjects.contains(code)) {
       selectedSubjects.remove(code); // Deselecciona
     } else {
-      selectedSubjects[code] = codeIcs; // Selecciona con su code_ics
+      selectedSubjects.add(code); // Selecciona
     }
     refreshUI();
   }

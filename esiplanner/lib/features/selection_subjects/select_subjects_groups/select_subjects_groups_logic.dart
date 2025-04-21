@@ -6,7 +6,6 @@ import '../../../services/subject_service.dart';
 class SelectGroupsLogic extends ChangeNotifier {
   // Lista de códigos de asignaturas seleccionadas
   final List<String> selectedSubjectCodes;
-  final Map<String, String> subjectIcsCodes; // Añade este campo
   
   // Mapa que relaciona códigos de asignatura con nombres de grados
   final Map<String, String> subjectDegrees;
@@ -33,7 +32,6 @@ class SelectGroupsLogic extends ChangeNotifier {
   SelectGroupsLogic({
     required this.selectedSubjectCodes,
     required this.subjectDegrees,
-    required this.subjectIcsCodes, // Añade este parámetro
   }) {
     subjectService = SubjectService();
     _init(); // Inicialización asíncrona
@@ -50,14 +48,11 @@ class SelectGroupsLogic extends ChangeNotifier {
       List<Map<String, dynamic>> loadedSubjects = [];
       
       for (var code in selectedSubjectCodes) {
-        // Usa el código ICS para obtener los datos
-        final codeIcs = subjectIcsCodes[code] ?? code;
-        final subjectData = await subjectService.getSubjectData(codeSubject: codeIcs);
+        final subjectData = await subjectService.getSubjectData(codeSubject: code);
         
         loadedSubjects.add({
           'name': subjectData['name'],
-          'code': code, // Mantenemos el código original para referencia
-          'code_ics': codeIcs, // Añadimos el código ICS
+          'code': code,
           'classes': subjectData['classes'] ?? [],
         });
       }
@@ -65,7 +60,7 @@ class SelectGroupsLogic extends ChangeNotifier {
       subjects = loadedSubjects;
       selectedGroups = {
         for (var subject in subjects) 
-          subject['code']: {} // Seguimos usando el código original como clave
+          subject['code']: {}
       };
       
       isLoading = false;

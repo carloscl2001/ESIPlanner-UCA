@@ -69,7 +69,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         builder: (context) => SelectGroupsScreen(
           selectedSubjectCodes: logic.selectedSubjects.toList(),
           subjectDegrees: logic.subjectDegrees,
-          subjectIcsCodes: logic.subjectIcsCodes, // Pasa los códigos ICS
         ),
       ),
     );
@@ -249,7 +248,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                 return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
                                   context: context,
                                   code: code,
-                                  icsCode: logic.subjectIcsCodes[code] ?? 'Cargando ICS...', // Añadimos ICS code
                                   name: logic.subjectNames[code] ?? 'Cargando...',
                                   degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
                                   hasGroupsSelected: logic.groupsSelected[code] ?? false,
@@ -259,7 +257,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                                         logic.selectedSubjects.remove(code);
                                         logic.subjectNames.remove(code);
                                         logic.subjectDegrees.remove(code);
-                                        logic.subjectIcsCodes.remove(code); // Limpiamos también el ICS code
                                         logic.groupsSelected.remove(code);
                                         logic.selectedGroupsMap.remove(code);
                                       });
