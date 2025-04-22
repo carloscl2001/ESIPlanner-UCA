@@ -13,14 +13,28 @@ class ViewSubjectsProfileLogic {
   bool isLoading = true;
   List<dynamic> userSubjects = [];
   String errorMessage = '';
+  Map<String, String> subjectCodeMapping = {};
 
   ViewSubjectsProfileLogic({
     required this.refreshUI,
     required this.showError,
   });
 
+  Map<String, String> _createSubjectMapping(List<Map<String, dynamic>> mappingList) {
+    final mapping = <String, String>{};
+    for (var item in mappingList) {
+      final code = item['code']?.toString();
+      final codeIcs = item['code_ics']?.toString();
+      if (code != null && codeIcs != null) {
+        mapping[code] = codeIcs;
+      }
+    }
+    return mapping;
+  }
+
   Future<void> loadUserSubjects(BuildContext context) async {
     try {
+      isLoading = true;
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final username = authProvider.username;
 
@@ -31,6 +45,10 @@ class ViewSubjectsProfileLogic {
         return;
       }
 
+      // Obtener el mapeo de asignaturas primero
+      final mappingList = await subjectService.getSubjectMapping();
+      subjectCodeMapping = _createSubjectMapping(mappingList);
+
       final response = await profileService.getUserSubjects(username: username);
 
       if (response['success'] == true) {
@@ -38,14 +56,20 @@ class ViewSubjectsProfileLogic {
 
         userSubjects = await Future.wait(
           subjects.map((subject) async {
+            final code = subject['code'];
+            
+            // Usar el mapping para obtener el code_ics correspondiente
+            final codeIcs = subjectCodeMapping[code] ?? code;
+            
             final subjectDetails = await subjectService.getSubjectData(
-              codeSubject: subject['code'],
+              codeSubject: codeIcs,
             );
 
             return {
-              'code': subject['code'],
+              'code': code,
+              'code_ics': codeIcs,
               'name': subjectDetails.isNotEmpty && subjectDetails.containsKey('name') 
-                  ? subjectDetails['name'] 
+                  ? subjectDetails['name']
                   : 'Información no disponible',
               'types': subject['types'],
             };
