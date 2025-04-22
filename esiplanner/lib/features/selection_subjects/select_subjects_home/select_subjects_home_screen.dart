@@ -1,12 +1,12 @@
-import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../services/subject_service.dart';
+import 'package:esiplanner/providers/theme_provider.dart';
+import 'package:esiplanner/services/subject_service.dart';
+import 'package:esiplanner/providers/auth_provider.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_subjects_groups/select_subjects_groups_screen.dart';
-import 'package:esiplanner/features/selection_subjects/select_subjects_home/select_subjects_home_widgets.dart';
 import 'select_subjects_home_logic.dart';
-import 'package:esiplanner/providers/auth_provider.dart';
+import 'select_subjects_home_widgets.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   const SubjectSelectionScreen({super.key});
@@ -89,19 +89,19 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Guía de selección de asignaturas'),
-        content: SingleChildScrollView(
+        title: const Text('Guía de selección'),
+        content: const SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInstructionStep(1, 'Selecciona un grado académico de la lista desplegable'),
-              _buildInstructionStep(2, 'Marca las asignaturas que deseas cursar'),
-              _buildInstructionStep(3, 'Asigna grupos específicos para cada asignatura'),
-              _buildInstructionStep(4, 'Confirma tu selección de asignaturas'),
-              const SizedBox(height: 16),
-              Text('* Repite los pasos 1 y 2 para asignaturas de otros grados', 
-                  style: Theme.of(context).textTheme.bodySmall),
+              Text('1. Añade asignaturas pulsando el botón +'),
+              SizedBox(height: 8),
+              Text('2. Selecciona un grado y las asignaturas'),
+              SizedBox(height: 8),
+              Text('3. Asigna grupos a cada asignatura'),
+              SizedBox(height: 8),
+              Text('4. Confirma tu selección final'),
             ],
           ),
         ),
@@ -110,27 +110,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Entendido'),
           ),
-        ],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInstructionStep(int step, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Text('$step', style: const TextStyle(color: Colors.white, fontSize: 12)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(text)),
         ],
       ),
     );
@@ -148,7 +127,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     );
 
     if (result != null && _isMounted) {
-      await logic.updateSelections(result); // Ahora es async
+      await logic.updateSelections(result);
       setState(() {});
     }
   }
@@ -158,24 +137,20 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     
     await showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (context) => AlertDialog(
         icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
-        title: const Text('¡Asignaturas confirmadas!'),
-        content: const Text('Tus asignaturas han sido guardadas exitosamente.'),
+        title: const Text('¡Confirmado!'),
+        content: const Text('Tus asignaturas han sido guardadas correctamente.'),
         actions: [
           FilledButton(
             onPressed: () {
-              Navigator.pop(context); // Cierra el diálogo
-              logic.resetSelection(); // Limpia la seleccion
-              if (_isMounted) Navigator.pop(context); // Navega hacia atrás
+              Navigator.pop(context);
+              logic.resetSelection();
+              if (_isMounted) Navigator.pop(context);
             },
             child: const Text('Continuar'),
           ),
         ],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
       ),
     );
   }
@@ -202,99 +177,102 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             tooltip: 'Instrucciones',
           ),
         ],
-        centerTitle: true,
-        elevation: 10,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: isDarkMode 
                 ? null
                 : LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
                     colors: [
                       Colors.indigo.shade900,
                       Colors.blue.shade900,
-                      Colors.blueAccent.shade400,
                     ],
                   ),
-            color: isDarkMode ? Colors.black : null,
           ),
         ),
       ),
       body: Column(
         children: [
-          SelectSubjectsHomeWidgets.buildDegreeDropdown(
-            context: context,
-            availableDegrees: logic.availableDegrees,
-            onDegreeSelected: _navigateToDegreeSubjects,
-            isDarkMode: isDarkMode,
-          ),
+          if (logic.selectedSubjects.isNotEmpty)
+            SelectSubjectsHomeWidgets.buildSectionTitle(
+              context,
+              'Asignaturas seleccionadas (${logic.selectedSubjects.length})',
+            ),
           Expanded(
             child: logic.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : logic.selectedSubjects.isEmpty
                     ? SelectSubjectsHomeWidgets.buildEmptySelectionCard(context)
-                    : Column(
-                        children: [
-                          SelectSubjectsHomeWidgets.buildSectionTitle(
-                            context,
-                            'Asignaturas seleccionadas (${logic.selectedSubjects.length})',
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: logic.selectedSubjects.length,
-                              itemBuilder: (context, index) {
-                                final code = logic.selectedSubjects.elementAt(index);
-                                return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
-                                  context: context,
-                                  code: code,
-                                  name: logic.subjectNames[code] ?? 'Cargando...',
-                                  degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
-                                  hasGroupsSelected: logic.groupsSelected[code] ?? false,
-                                  onDelete: () {
-                                    if (_isMounted) {
-                                      setState(() {
-                                        logic.selectedSubjects.remove(code);
-                                        logic.subjectNames.remove(code);
-                                        logic.subjectDegrees.remove(code);
-                                        logic.groupsSelected.remove(code);
-                                        logic.selectedGroupsMap.remove(code);
-                                      });
-                                    }
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          if (logic.groupsSelected.values.any((selected) => !selected))
-                            SelectSubjectsHomeWidgets.buildManageGroupsButton(
-                              context: context,
-                              onPressed: _navigateToGroupSelection,
-                              hasSelectedSubjects: logic.selectedSubjects.isNotEmpty,
-                              isDarkMode: isDarkMode,
-                            ),
-                          if (logic.groupsSelected.values.every((selected) => selected))
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.check_circle_outline),
-                                label: const Text('Confirmar Asignaturas'),
-                                onPressed: _confirmSelections,
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(double.infinity, 50),
-                                  backgroundColor: Colors.green,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                    : ListView.builder(
+                        itemCount: logic.selectedSubjects.length,
+                        itemBuilder: (context, index) {
+                          final code = logic.selectedSubjects.elementAt(index);
+                          return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
+                            context: context,
+                            code: code,
+                            name: logic.subjectNames[code] ?? 'Cargando...',
+                            degree: logic.subjectDegrees[code] ?? 'Grado no disponible',
+                            hasGroupsSelected: logic.groupsSelected[code] ?? false,
+                            onDelete: () {
+                              setState(() {
+                                logic.selectedSubjects.remove(code);
+                                logic.subjectNames.remove(code);
+                                logic.subjectDegrees.remove(code);
+                                logic.groupsSelected.remove(code);
+                                logic.selectedGroupsMap.remove(code);
+                              });
+                            },
+                          );
+                        },
                       ),
           ),
+          if (logic.selectedSubjects.isNotEmpty)
+            Column(
+              children: [
+                if (logic.groupsSelected.values.any((selected) => !selected))
+                  SelectSubjectsHomeWidgets.buildManageGroupsButton(
+                    context: context,
+                    onPressed: _navigateToGroupSelection,
+                    hasSelectedSubjects: true,
+                    isDarkMode: isDarkMode,
+                  ),
+                if (logic.groupsSelected.values.every((selected) => selected))
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('Confirmar Asignaturas'),
+                      onPressed: _confirmSelections,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            SelectSubjectsHomeWidgets.showAddSubjectsDialog(
+              context: context,
+              availableDegrees: logic.availableDegrees,
+              onDegreeSelected: _navigateToDegreeSubjects,
+              isDarkMode: isDarkMode,
+            );
+          },
+          child: const Icon(Icons.add),
+          backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+          foregroundColor: isDarkMode ? Colors.black : Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
