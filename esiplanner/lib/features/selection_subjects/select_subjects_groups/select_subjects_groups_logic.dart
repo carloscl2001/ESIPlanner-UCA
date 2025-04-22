@@ -46,11 +46,30 @@ class SelectGroupsLogic extends ChangeNotifier {
         final icsCode = codeToIcs[originalCode] ?? originalCode;
         final subjectData = await subjectService.getSubjectData(codeSubject: icsCode);
         
+        // Ordenamos los grupos por tipo y número
+        final classes = subjectData['classes'] ?? [];
+        classes.sort((a, b) {
+          final regExp = RegExp(r'([A-Z]+)(\d+)');
+          final matchA = regExp.firstMatch(a['type'])!;
+          final matchB = regExp.firstMatch(b['type'])!;
+
+          final letterA = matchA.group(1)!;
+          final letterB = matchB.group(1)!;
+          final numberA = int.parse(matchA.group(2)!);
+          final numberB = int.parse(matchB.group(2)!);
+
+          if (letterA != letterB) {
+            return letterA.compareTo(letterB);
+          } else {
+            return numberA.compareTo(numberB);
+          }
+        });
+        
         loadedSubjects.add({
           'name': subjectData['name'],
           'code': originalCode, // Mantener el código original para referencia
           'code_ics': icsCode,  // Guardar el código ICS usado
-          'classes': subjectData['classes'] ?? [],
+          'classes': classes,
         });
       }
 
