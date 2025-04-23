@@ -21,7 +21,7 @@ class SelectGroupsScreen extends StatefulWidget {
 class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   late SelectGroupsLogic logic;
   bool requireAllTypes = true;
-  bool oneGroupPerType = true;
+  bool oneGroupPerType = false;
 
   @override
   void initState() {

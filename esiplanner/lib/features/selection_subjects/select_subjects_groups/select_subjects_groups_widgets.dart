@@ -70,7 +70,7 @@ class SelectGroupsContent extends StatelessWidget {
   }
 }
 
-class SettingsDialog extends StatelessWidget {
+class SettingsDialog extends StatefulWidget {
   final bool requireAllTypes;
   final bool oneGroupPerType;
   final Function(bool, bool) onSettingsChanged;
@@ -83,28 +83,44 @@ class SettingsDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    bool tempRequireAll = requireAllTypes;
-    bool tempOnePerType = oneGroupPerType;
+  State<SettingsDialog> createState() => _SettingsDialogState();
+}
 
+class _SettingsDialogState extends State<SettingsDialog> {
+  late bool tempRequireAll;
+  late bool tempOnePerType;
+
+  @override
+  void initState() {
+    super.initState();
+    tempRequireAll = widget.requireAllTypes;
+    tempOnePerType = widget.oneGroupPerType;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Configurar restricciones'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SwitchListTile(
-            title: const Text('Requerir todos los tipos'),
+            title: const Text('Seleccionar todos los tipos de grupos'),
             value: tempRequireAll,
             onChanged: (value) {
-              tempRequireAll = value;
-              if (!value) tempOnePerType = false;
+              setState(() {
+                tempRequireAll = value;
+                if (!value) tempOnePerType = false;
+              });
             },
           ),
           SwitchListTile(
-            title: const Text('Solo un grupo por tipo'),
+            title: const Text('Seleccionar solo un grupo por tipo'),
             value: tempOnePerType,
             onChanged: !tempRequireAll ? null : (value) {
-              tempOnePerType = value;
+              setState(() {
+                tempOnePerType = value;
+              });
             },
           ),
         ],
@@ -116,7 +132,7 @@ class SettingsDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            onSettingsChanged(tempRequireAll, tempOnePerType);
+            widget.onSettingsChanged(tempRequireAll, tempOnePerType);
             Navigator.pop(context);
           },
           child: const Text('Aplicar'),
@@ -312,9 +328,17 @@ class SubjectGroupCard extends StatelessWidget {
                           selected: isSelected,
                           onSelected: (bool selected) {
                             if (selected) {
+                              if (oneGroupPerType) {
+                                final currentSelected = logic.selectedGroups[subject['code']]?[letter];
+                                if (currentSelected != null && currentSelected != group['type']) {
+                                  logic.selectGroup(subject['code'], letter, '');
+                                }
+                              }
                               logic.selectGroup(subject['code'], letter, group['type']);
-                            } else if (!oneGroupPerType) {
-                              logic.selectGroup(subject['code'], letter, '');
+                            } else {
+                              if (!oneGroupPerType) {
+                                logic.selectGroup(subject['code'], letter, '');
+                              }
                             }
                           },
                           selectedColor: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.indigo.shade100,

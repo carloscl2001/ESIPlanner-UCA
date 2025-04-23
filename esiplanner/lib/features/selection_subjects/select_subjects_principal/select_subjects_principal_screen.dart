@@ -257,7 +257,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         ],
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
+        padding: const EdgeInsets.only(bottom: 60.0),
         child: FloatingActionButton(
           onPressed: () {
             SelectSubjectsPrincipalWidgets.showAddSubjectsDialog(

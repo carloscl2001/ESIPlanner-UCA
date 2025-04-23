@@ -19,15 +19,22 @@ class SelectSubjectsPrincipalWidgets {
             itemCount: availableDegrees.length,
             itemBuilder: (context, index) {
               final degree = availableDegrees[index];
-              return ListTile(
-                leading: Icon(Icons.school_rounded,
-                    color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
-                title: Text(degree),
-                onTap: () {
-                  Navigator.pop(context);
-                  onDegreeSelected(degree);
-                  HapticFeedback.lightImpact();
-                },
+              return Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.school_rounded,
+                      color: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+                    ),
+                    title: Text(degree),
+                    onTap: () {
+                      Navigator.pop(context);
+                      onDegreeSelected(degree);
+                      HapticFeedback.lightImpact();
+                    },
+                  ),
+                  if (index < availableDegrees.length - 1) const Divider(height: 1),
+                ],
               );
             },
           ),
