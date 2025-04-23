@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SelectSubjectsHomeWidgets {
+class SelectSubjectsPrincipalWidgets {
   static void showAddSubjectsDialog({
     required BuildContext context,
     required List<String> availableDegrees,

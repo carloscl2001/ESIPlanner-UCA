@@ -5,8 +5,8 @@ import 'package:esiplanner/services/subject_service.dart';
 import 'package:esiplanner/providers/auth_provider.dart';
 import '../select_subjects_degree/select_subjects_degree_screen.dart';
 import '../select_subjects_groups/select_subjects_groups_screen.dart';
-import 'select_subjects_home_logic.dart';
-import 'select_subjects_home_widgets.dart';
+import 'select_subjects_principal_logic.dart';
+import 'select_subjects_principal_widgets.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   const SubjectSelectionScreen({super.key});
@@ -16,7 +16,7 @@ class SubjectSelectionScreen extends StatefulWidget {
 }
 
 class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
-  late SubjectSelectionHomeLogic logic;
+  late SubjectSelectionPrincipalLogic logic;
   bool _isMounted = false;
 
   @override
@@ -27,7 +27,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final subjectService = SubjectService();
 
-    logic = SubjectSelectionHomeLogic(
+    logic = SubjectSelectionPrincipalLogic(
       authProvider: authProvider,
       subjectService: subjectService,
       refreshUI: () {
@@ -193,7 +193,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       body: Column(
         children: [
           if (logic.selectedSubjects.isNotEmpty)
-            SelectSubjectsHomeWidgets.buildSectionTitle(
+            SelectSubjectsPrincipalWidgets.buildSectionTitle(
               context,
               'Asignaturas seleccionadas (${logic.selectedSubjects.length})',
             ),
@@ -201,12 +201,12 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             child: logic.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : logic.selectedSubjects.isEmpty
-                    ? SelectSubjectsHomeWidgets.buildEmptySelectionCard(context)
+                    ? SelectSubjectsPrincipalWidgets.buildEmptySelectionCard(context)
                     : ListView.builder(
                         itemCount: logic.selectedSubjects.length,
                         itemBuilder: (context, index) {
                           final code = logic.selectedSubjects.elementAt(index);
-                          return SelectSubjectsHomeWidgets.buildSelectedSubjectCard(
+                          return SelectSubjectsPrincipalWidgets.buildSelectedSubjectCard(
                             context: context,
                             code: code,
                             name: logic.subjectNames[code] ?? 'Cargando...',
@@ -229,7 +229,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             Column(
               children: [
                 if (logic.groupsSelected.values.any((selected) => !selected))
-                  SelectSubjectsHomeWidgets.buildManageGroupsButton(
+                  SelectSubjectsPrincipalWidgets.buildManageGroupsButton(
                     context: context,
                     onPressed: _navigateToGroupSelection,
                     hasSelectedSubjects: true,
@@ -260,7 +260,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         padding: const EdgeInsets.only(bottom: 50.0),
         child: FloatingActionButton(
           onPressed: () {
-            SelectSubjectsHomeWidgets.showAddSubjectsDialog(
+            SelectSubjectsPrincipalWidgets.showAddSubjectsDialog(
               context: context,
               availableDegrees: logic.availableDegrees,
               onDegreeSelected: _navigateToDegreeSubjects,

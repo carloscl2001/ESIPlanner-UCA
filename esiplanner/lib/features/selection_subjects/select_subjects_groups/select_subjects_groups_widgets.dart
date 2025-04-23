@@ -4,11 +4,17 @@ import 'select_subjects_groups_logic.dart';
 
 class SelectGroupsContent extends StatelessWidget {
   final bool isDarkMode;
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
 
   const SelectGroupsContent({
     super.key,
     required this.isDarkMode,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
   });
+
+  bool get strictMode => requireAllTypes || oneGroupPerType;
 
   @override
   Widget build(BuildContext context) {
@@ -24,35 +30,18 @@ class SelectGroupsContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
         ],
-        if (!logic.allSelectionsComplete)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            child: Card(
-              color: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.orange[50],
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Icon(Icons.warning, color: isDarkMode ? Colors.white: Colors.orange[800]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Debes seleccionar un grupo de cada tipo para cada asignatura',
-                        style: TextStyle(color: isDarkMode ? Colors.white : Colors.orange[800]),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        if (strictMode && !logic.allSelectionsComplete)
+          SelectionWarning(isDarkMode: isDarkMode),
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: logic.subjects.length,
             itemBuilder: (context, index) {
               final subject = logic.subjects[index];
-              final missingTypes = logic.getMissingTypesForSubject(subject['code']);
+              final missingTypes = requireAllTypes 
+                  ? logic.getMissingTypesForSubject(subject['code'])
+                  : [];
+              
               Map<String, List<Map<String, dynamic>>> groupedClasses = {};
     
               for (var group in subject['classes']) {
@@ -70,6 +59,8 @@ class SelectGroupsContent extends StatelessWidget {
                 missingTypes: missingTypes,
                 isDarkMode: isDarkMode,
                 subjectDegrees: logic.subjectDegrees,
+                requireAllTypes: requireAllTypes,
+                oneGroupPerType: oneGroupPerType,
               );
             },
           ),
@@ -79,12 +70,139 @@ class SelectGroupsContent extends StatelessWidget {
   }
 }
 
+class SettingsDialog extends StatelessWidget {
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
+  final Function(bool, bool) onSettingsChanged;
+
+  const SettingsDialog({
+    super.key,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
+    required this.onSettingsChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    bool tempRequireAll = requireAllTypes;
+    bool tempOnePerType = oneGroupPerType;
+
+    return AlertDialog(
+      title: const Text('Configurar restricciones'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile(
+            title: const Text('Requerir todos los tipos'),
+            value: tempRequireAll,
+            onChanged: (value) {
+              tempRequireAll = value;
+              if (!value) tempOnePerType = false;
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Solo un grupo por tipo'),
+            value: tempOnePerType,
+            onChanged: !tempRequireAll ? null : (value) {
+              tempOnePerType = value;
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () {
+            onSettingsChanged(tempRequireAll, tempOnePerType);
+            Navigator.pop(context);
+          },
+          child: const Text('Aplicar'),
+        ),
+      ],
+    );
+  }
+}
+
+class SaveButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final bool isDarkMode;
+
+  const SaveButton({
+    super.key,
+    required this.onPressed,
+    required this.isDarkMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          'GUARDAR SELECCIÓN',
+          style: TextStyle(
+            color: isDarkMode ? Colors.black : Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SelectionWarning extends StatelessWidget {
+  final bool isDarkMode;
+
+  const SelectionWarning({
+    super.key,
+    required this.isDarkMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Card(
+        color: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.orange[50],
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Icon(Icons.warning, color: isDarkMode ? Colors.white: Colors.orange[800]),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'No has completado todas las selecciones requeridas',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SubjectGroupCard extends StatelessWidget {
   final Map<String, dynamic> subject;
   final Map<String, List<Map<String, dynamic>>> groupedClasses;
-  final List<String> missingTypes;
+  final List<dynamic> missingTypes;
   final bool isDarkMode;
   final Map<String, String> subjectDegrees;
+  final bool requireAllTypes;
+  final bool oneGroupPerType;
 
   const SubjectGroupCard({
     super.key,
@@ -93,6 +211,8 @@ class SubjectGroupCard extends StatelessWidget {
     required this.missingTypes,
     required this.isDarkMode,
     required this.subjectDegrees,
+    required this.requireAllTypes,
+    required this.oneGroupPerType,
   });
 
   @override
@@ -143,13 +263,13 @@ class SubjectGroupCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               InfoRow(
-              icon: Icons.code_rounded,
-              text: 'Código ICS: ${subject['code_ics'] ?? 'N/A'}',
-              isDarkMode: isDarkMode,
-              isTitle: false,
-            ),
+                icon: Icons.code_rounded,
+                text: 'Código ICS: ${subject['code_ics'] ?? 'N/A'}',
+                isDarkMode: isDarkMode,
+                isTitle: false,
+              ),
               const SizedBox(height: 12),
-              if (missingTypes.isNotEmpty)
+              if (requireAllTypes && missingTypes.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
@@ -165,7 +285,7 @@ class SubjectGroupCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      logic.getGroupLabel(letter),
+                      '${logic.getGroupLabel(letter)}${requireAllTypes ? '' : ' (Opcional)'}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -193,6 +313,8 @@ class SubjectGroupCard extends StatelessWidget {
                           onSelected: (bool selected) {
                             if (selected) {
                               logic.selectGroup(subject['code'], letter, group['type']);
+                            } else if (!oneGroupPerType) {
+                              logic.selectGroup(subject['code'], letter, '');
                             }
                           },
                           selectedColor: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.indigo.shade100,

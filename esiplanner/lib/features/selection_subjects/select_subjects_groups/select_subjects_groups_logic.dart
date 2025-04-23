@@ -10,7 +10,7 @@ class SelectGroupsLogic extends ChangeNotifier {
   String errorMessage = '';
   List<Map<String, dynamic>> subjects = [];
   Map<String, Map<String, String>> selectedGroups = {};
-  Map<String, String> codeToIcs = {}; // Mapeo de código original a code_ics
+  Map<String, String> codeToIcs = {};
 
   SelectGroupsLogic({
     required this.selectedSubjectCodes,
@@ -42,11 +42,9 @@ class SelectGroupsLogic extends ChangeNotifier {
       List<Map<String, dynamic>> loadedSubjects = [];
       
       for (var originalCode in selectedSubjectCodes) {
-        // Usar code_ics si existe en el mapeo, sino usar el código original
         final icsCode = codeToIcs[originalCode] ?? originalCode;
         final subjectData = await subjectService.getSubjectData(codeSubject: icsCode);
         
-        // Ordenamos los grupos por tipo y número
         final classes = subjectData['classes'] ?? [];
         classes.sort((a, b) {
           final regExp = RegExp(r'([A-Z]+)(\d+)');
@@ -67,8 +65,8 @@ class SelectGroupsLogic extends ChangeNotifier {
         
         loadedSubjects.add({
           'name': subjectData['name'],
-          'code': originalCode, // Mantener el código original para referencia
-          'code_ics': icsCode,  // Guardar el código ICS usado
+          'code': originalCode,
+          'code_ics': icsCode,
           'classes': classes,
         });
       }
@@ -76,7 +74,7 @@ class SelectGroupsLogic extends ChangeNotifier {
       subjects = loadedSubjects;
       selectedGroups = {
         for (var subject in subjects) 
-          subject['code']: {} // Usar el código original como clave
+          subject['code']: {}
       };
       
       isLoading = false;
@@ -89,7 +87,6 @@ class SelectGroupsLogic extends ChangeNotifier {
     }
   }
 
-  // Método para obtener los datos de una asignatura usando el code_ics correcto
   Future<Map<String, dynamic>> getSubjectDetails(String originalCode) async {
     final icsCode = codeToIcs[originalCode] ?? originalCode;
     return await subjectService.getSubjectData(codeSubject: icsCode);
@@ -109,7 +106,11 @@ class SelectGroupsLogic extends ChangeNotifier {
   }
 
   void selectGroup(String subjectCode, String letter, String groupType) {
-    selectedGroups[subjectCode]?[letter] = groupType;
+    if (groupType.isEmpty) {
+      selectedGroups[subjectCode]?.remove(letter);
+    } else {
+      selectedGroups[subjectCode]?[letter] = groupType;
+    }
     notifyListeners();
   }
 

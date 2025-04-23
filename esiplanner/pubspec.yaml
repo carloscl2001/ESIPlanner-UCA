@@ -37,6 +37,8 @@ dependencies:
 
   google_fonts: ^4.0.3
 
+  flutter_native_splash: ^2.3.10
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -97,3 +99,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#ffffff"           # Fondo blanco (puedes cambiarlo)
+  image: assets/splash.jpg   # Ruta de tu logo
+  fullscreen: true           # Opción para que ocupe toda la pantalla
+  android: true
+  ios: true
+  web: true

@@ -4,12 +4,6 @@ import '../../../providers/theme_provider.dart';
 import 'select_subjects_groups_logic.dart';
 import 'select_subjects_groups_widgets.dart';
 
-/// Pantalla para seleccionar grupos/clases de asignaturas académicas.
-/// Permite:
-/// - Visualizar los grupos disponibles por asignatura
-/// - Seleccionar grupos específicos
-/// - Validar que todas las selecciones requeridas estén completas
-/// - Guardar la selección final
 class SelectGroupsScreen extends StatefulWidget {
   final List<String> selectedSubjectCodes;
   final Map<String, String> subjectDegrees;
@@ -26,6 +20,8 @@ class SelectGroupsScreen extends StatefulWidget {
 
 class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   late SelectGroupsLogic logic;
+  bool requireAllTypes = true;
+  bool oneGroupPerType = true;
 
   @override
   void initState() {
@@ -36,14 +32,12 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     );
   }
 
-  /// Guarda las selecciones si están completas, o muestra error
   Future<void> _saveSelections() async {
-    if (!logic.allSelectionsComplete) {
-      // Muestra mensaje si faltan selecciones
+    if ((requireAllTypes || oneGroupPerType) && !logic.allSelectionsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Selecciona un grupo de cada tipo para cada asignatura', 
+            'No has completado todas las selecciones requeridas', 
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.orange,
@@ -52,20 +46,33 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
       return;
     }
 
-    // Si todo está completo, regresa con los grupos seleccionados
     if (mounted) {
       Navigator.pop(context, logic.selectedGroups);
     }
   }
 
+  void _showSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => SettingsDialog(
+        requireAllTypes: requireAllTypes,
+        oneGroupPerType: oneGroupPerType,
+        onSettingsChanged: (allTypes, onePerType) {
+          setState(() {
+            requireAllTypes = allTypes;
+            oneGroupPerType = onePerType;
+          });
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Obtiene el tema actual
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return ChangeNotifierProvider.value(
-      // Provee la lógica a los widgets hijos
       value: logic,
       child: Consumer<SelectGroupsLogic>(
         builder: (context, logic, child) {
@@ -77,18 +84,30 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
               ),
               centerTitle: true,
               actions: [
-                // Botón para guardar las selecciones
                 IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: _saveSelections,
-                )
+                  icon: const Icon(Icons.settings),
+                  onPressed: _showSettingsDialog,
+                  tooltip: 'Configurar restricciones',
+                ),
               ],
             ),
-            body: logic.isLoading
-                ? const Center(child: CircularProgressIndicator()) // Indicador de carga
-                : SelectGroupsContent( // Contenido principal
-                    isDarkMode: isDarkMode,
-                  ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: logic.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SelectGroupsContent(
+                          isDarkMode: isDarkMode,
+                          requireAllTypes: requireAllTypes,
+                          oneGroupPerType: oneGroupPerType,
+                        ),
+                ),
+                SaveButton(
+                  onPressed: _saveSelections,
+                  isDarkMode: isDarkMode,
+                ),
+              ],
+            ),
           );
         }
       ),

@@ -4,7 +4,7 @@ import 'package:esiplanner/services/subject_service.dart';
 import 'package:esiplanner/services/profile_service.dart';
 import 'package:esiplanner/providers/auth_provider.dart';
 
-class SubjectSelectionHomeLogic {
+class SubjectSelectionPrincipalLogic {
   final VoidCallback refreshUI;
   final Function(String) showError;
   final SubjectService subjectService;
@@ -19,7 +19,7 @@ class SubjectSelectionHomeLogic {
   Map<String, bool> groupsSelected = {};
   Map<String, Map<String, String>> selectedGroupsMap = {};
 
-  SubjectSelectionHomeLogic({
+  SubjectSelectionPrincipalLogic({
     required this.refreshUI,
     required this.showError,
     required this.subjectService,
