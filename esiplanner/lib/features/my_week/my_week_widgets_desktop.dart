@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../shared/widgets/class_cards.dart';
 
-class SelectedDayRow extends StatelessWidget {
+class SelectedDayRowMobile extends StatelessWidget {
   final bool isDarkMode;
   final String selectedDay;
   final List<String> weekDaysFullName;
   final List<String> weekDaysShort;
   final String Function(int) getMonthName;
 
-  const SelectedDayRow({
+  const SelectedDayRowMobile({
     super.key,
     required this.isDarkMode,
     required this.selectedDay,
@@ -113,7 +113,7 @@ class SelectedDayRow extends StatelessWidget {
   }
 }
 
-class DayButtonRow extends StatelessWidget {
+class DayButtonRowMobile extends StatelessWidget {
   final List<String> weekDays;
   final List<String> weekDates;
   final bool isDarkMode;
@@ -122,7 +122,7 @@ class DayButtonRow extends StatelessWidget {
   final List<Map<String, dynamic>> subjects;
   final Function(String) onDaySelected;
 
-  const DayButtonRow({
+  const DayButtonRowMobile({
     super.key,
     required this.weekDays,
     required this.weekDates,
@@ -241,7 +241,7 @@ class DayButtonRow extends StatelessWidget {
   }
 }
 
-class EventListView extends StatelessWidget {
+class EventListViewMobile extends StatelessWidget {
   final PageController pageController;
   final List<String> weekDays;
   final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
@@ -250,7 +250,7 @@ class EventListView extends StatelessWidget {
   final String Function(String) getGroupLabel;
   final Function(int) onPageChanged;
 
-  const EventListView({
+  const EventListViewMobile({
     super.key,
     required this.pageController,
     required this.weekDays,
@@ -349,8 +349,8 @@ class EventListView extends StatelessWidget {
   }
 }
 
-class BuildEmptyCard extends StatelessWidget {
-  const BuildEmptyCard({super.key});
+class BuildEmptyCardMobile extends StatelessWidget {
+  const BuildEmptyCardMobile({super.key});
 
   @override
   Widget build(BuildContext context) {

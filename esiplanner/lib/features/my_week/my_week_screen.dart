@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
 import 'my_week_logic.dart';
-import 'my_week_widgets.dart';
+import 'my_week_widgets_mobile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_logic.subjects.isEmpty) {
-      return BuildEmptyCard();
+      return BuildEmptyCardMobile();
     }
 
     if (_logic.errorMessage.isNotEmpty) {
@@ -74,14 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Column(
       children: [
-        SelectedDayRow(
+        SelectedDayRowMobile(
           isDarkMode: isDarkMode,
           selectedDay: _logic.selectedDay!,
           weekDaysFullName: _logic.weekDaysFullName,
           weekDaysShort: _logic.weekDays, // Añade esta línea
           getMonthName: _logic.getMonthName,
         ),
-        DayButtonRow(
+        DayButtonRowMobile(
           weekDays: _logic.weekDays,
           weekDates: weekDates,
           isDarkMode: isDarkMode,
@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 8),
         Expanded(
-          child: EventListView(
+          child: EventListViewMobile(
             pageController: _pageController,
             weekDays: _logic.weekDays,
             getFilteredEvents: _logic.getFilteredEvents,
