@@ -1,7 +1,7 @@
 import 'dart:ui';
-
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../shared/widgets/class_cards.dart';
 
@@ -25,7 +25,6 @@ class SelectedDayRowDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     
-    // Encuentra el índice seguro
     final selectedDayLower = selectedDay.toLowerCase();
     final safeIndex = weekDaysShort.indexWhere(
       (day) => day.toLowerCase() == selectedDayLower.substring(0, 3),
@@ -242,6 +241,34 @@ class EventListViewDesktop extends StatelessWidget {
     required this.onPageChanged,
   });
 
+  // Función para generar colores únicos basados en el nombre de la asignatura
+  Color _getSubjectColor(String subjectName, bool isDarkMode) {
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
+      Colors.indigo,
+      Colors.amber,
+    ];
+    
+    final darkColors = [
+      Colors.blue.shade700,
+      Colors.green.shade700,
+      Colors.orange.shade700,
+      Colors.purple.shade700,
+      Colors.red.shade700,
+      Colors.teal.shade700,
+      Colors.indigo.shade700,
+      Colors.amber.shade700,
+    ];
+    
+    final index = subjectName.hashCode % colors.length;
+    return isDarkMode ? darkColors[index] : colors[index];
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
@@ -272,102 +299,280 @@ class EventListViewDesktop extends StatelessWidget {
                 final dayEvents = getFilteredEvents(day);
 
                 if (dayEvents.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.event_note,
-                          size: 60,
-                          color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'No classes scheduled',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Enjoy your free time!',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return _buildEmptyState(isDarkMode);
                 }
 
-                final groupedEvents = groupEventsByDay(dayEvents);
-                final sortedDates = groupedEvents.keys.toList()..sort();
-
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  itemCount: sortedDates.length,
-                  itemBuilder: (context, index) {
-                    final date = sortedDates[index];
-                    final events = groupedEvents[date]!..sort((a, b) {
-                      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-                      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-                      return timeA.compareTo(timeB);
-                    });
-
-                    final isOverlapping = List<bool>.filled(events.length, false);
-                    for (int i = 0; i < events.length - 1; i++) {
-                      final endTimeCurrent = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['end_hour']}');
-                      final startTimeNext = DateTime.parse('${events[i + 1]['event']['date']} ${events[i + 1]['event']['start_hour']}');
-
-                      if (endTimeCurrent.isAfter(startTimeNext)) {
-                        isOverlapping[i] = true;
-                        isOverlapping[i + 1] = true;
-                      }
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: Text(
-                            date,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                            ),
-                          ),
-                        ),
-                        ...events.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final eventData = entry.value;
-                          final event = eventData['event'];
-                          final classType = eventData['classType'];
-                          final subjectName = eventData['subjectName'];
-                      
-                          return ClassCards(
-                            subjectName: subjectName,
-                            classType: '$classType - ${getGroupLabel(classType[0])}',
-                            event: event,
-                            isOverlap: isOverlapping[index],
-                            isDesktop: true,
-                          );
-                        }),
-                        const SizedBox(height: 16),
-                      ],
-                    );
-                  },
-                );
+                return _buildDayViewVertical(dayEvents, isDarkMode);
               },
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.event_note,
+            size: 60,
+            color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'No classes scheduled',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Enjoy your free time!',
+            style: TextStyle(
+              fontSize: 16,
+              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayViewVertical(List<Map<String, dynamic>> events, bool isDarkMode) {
+    // Ordenar eventos por hora de inicio
+    events.sort((a, b) {
+      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+      return timeA.compareTo(timeB);
+    });
+
+    // Determinar el rango horario del día
+    DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
+    DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
+
+    // Ajustar para que comience 1 hora antes del primer evento
+    DateTime startTime = DateTime(
+      firstEventStart.year, 
+      firstEventStart.month, 
+      firstEventStart.day, 
+      firstEventStart.hour - 1
+    );
+
+    // Ajustar para que termine 1 hora después del último evento
+    DateTime endTime = DateTime(
+      lastEventEnd.year, 
+      lastEventEnd.month, 
+      lastEventEnd.day, 
+      lastEventEnd.hour + 1
+    );
+
+    // Calcular la duración total en medias horas
+    final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
+
+    // Identificar eventos solapados
+    final List<List<Map<String, dynamic>>> eventGroups = [];
+    List<Map<String, dynamic>> currentGroup = [];
+
+    for (int i = 0; i < events.length; i++) {
+      if (currentGroup.isEmpty) {
+        currentGroup.add(events[i]);
+      } else {
+        final lastEventEnd = DateTime.parse('${currentGroup.last['event']['date']} ${currentGroup.last['event']['end_hour']}');
+        final currentEventStart = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['start_hour']}');
+
+        if (currentEventStart.isBefore(lastEventEnd)) {
+          currentGroup.add(events[i]);
+        } else {
+          eventGroups.add(List.from(currentGroup));
+          currentGroup.clear();
+          currentGroup.add(events[i]);
+        }
+      }
+    }
+
+    if (currentGroup.isNotEmpty) {
+      eventGroups.add(List.from(currentGroup));
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              DateFormat('EEEE, d MMMM y').format(startTime),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Columna de horas con medias horas
+                SizedBox(
+                  width: 80,
+                  child: Column(
+                    children: List.generate(totalHalfHours + 1, (index) {
+                      final currentTime = startTime.add(Duration(minutes: 30 * index));
+                      final showLabel = index % 2 == 0 || index == totalHalfHours;
+                      
+                      return SizedBox(
+                        height: 40,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabel
+                            ? Text(
+                                DateFormat('HH:mm').format(currentTime),
+                                style: TextStyle(
+                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                                  fontWeight: index % 2 == 0 ? FontWeight.bold : FontWeight.normal,
+                                  fontSize: index % 2 == 0 ? 14 : 12,
+                                ),
+                              )
+                            : null,
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                // Línea vertical
+                Container(
+                  width: 1,
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                ),
+                // Contenedor principal de eventos
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Líneas horizontales para cada media hora
+                      Column(
+                        children: List.generate(totalHalfHours, (index) {
+                          final isFullHour = index % 2 == 0;
+                          return Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: isDarkMode 
+                                    ? Colors.grey.shade800 
+                                    : Colors.grey.shade300,
+                                  width: isFullHour ? 1.5 : 0.5,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                      // Eventos
+                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildEventWidgetsVertical(
+    List<List<Map<String, dynamic>>> eventGroups,
+    DateTime startTime,
+    bool isDarkMode,
+  ) {
+    return eventGroups.map((group) {
+      final firstEvent = group.first;
+      final lastEvent = group.last;
+      
+      final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
+      final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
+      
+      final startOffset = groupStart.difference(startTime).inMinutes;
+      final duration = groupEnd.difference(groupStart).inMinutes;
+      
+      final topPosition = (startOffset / 30) * 40;
+      final height = (duration / 30) * 40;
+      
+      return Positioned(
+        top: topPosition,
+        height: height,
+        left: 0,
+        right: 16,
+        child: Row(
+          children: group.asMap().entries.map((entry) {
+            final eventIndex = entry.key;
+            final eventData = entry.value;
+            final event = eventData['event'];
+            final classType = eventData['classType'];
+            final subjectName = eventData['subjectName'];
+            final subjectColor = _getSubjectColor(subjectName, isDarkMode);
+            
+            return Expanded(
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: subjectColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: subjectColor,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        subjectName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '${event['start_hour']} - ${event['end_hour']}',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        '$classType - ${getGroupLabel(classType[0])}',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    }).toList();
   }
 }
 
