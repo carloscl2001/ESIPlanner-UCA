@@ -101,9 +101,12 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 flutter_native_splash:
-  color: "#ffffff"           # Fondo blanco (puedes cambiarlo)
-  image: assets/splash.jpg   # Ruta de tu logo
+  color: "#ffffff"          # Fondo blanco (puedes cambiarlo)
+  image: assets/splash_mobile_big.jpg   # Ruta de tu logo
   fullscreen: true           # Opción para que ocupe toda la pantalla
   android: true
   ios: true
   web: true
+
+  android_gravity: center
+  ios_content_mode: center
