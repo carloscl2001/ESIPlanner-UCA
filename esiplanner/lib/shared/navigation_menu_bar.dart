@@ -130,7 +130,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         ],
       ),
       bottomNavigationBar: Container(
-        // height: 70,
+        height: 75,
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
