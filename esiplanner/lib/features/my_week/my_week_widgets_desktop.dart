@@ -499,11 +499,13 @@ class EventListViewDesktop extends StatelessWidget {
       final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
       final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
       
+      // Ajustamos el cálculo para que no haya solapamiento visual
       final startOffset = groupStart.difference(startTime).inMinutes;
       final duration = groupEnd.difference(groupStart).inMinutes;
       
-      final topPosition = (startOffset / 30) * sizeTramo ; // Ajustado a nueva altura
-      final height = (duration / 30) * sizeTramo ; // Ajustado a nueva altura
+      // Añadimos 1 minuto de margen visual entre eventos
+      final topPosition = (startOffset / 30) * sizeTramo + 2; // +1 pixel de margen superior
+      final height = (duration / 30) * sizeTramo - 6; // -2 pixels para margen (1 arriba y 1 abajo)
       
       return Positioned(
         top: topPosition,
@@ -521,7 +523,7 @@ class EventListViewDesktop extends StatelessWidget {
             
             return Expanded(
               child: Container(
-                margin: const EdgeInsets.all(2),
+                margin: const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1), // Margen ajustado
                 decoration: BoxDecoration(
                   color: subjectColor.withOpacity(isDarkMode ? 0.3 : 0.2),
                   borderRadius: BorderRadius.circular(8),
@@ -543,7 +545,6 @@ class EventListViewDesktop extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nombre de la asignatura
                       Text(
                         subjectName,
                         style: TextStyle(
@@ -555,7 +556,6 @@ class EventListViewDesktop extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
-                      // Tipo de clase
                       Text(
                         '$classType - ${getGroupLabel(classType[0])}',
                         style: TextStyle(
@@ -564,7 +564,6 @@ class EventListViewDesktop extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      // Horario
                       Text(
                         '${event['start_hour']} - ${event['end_hour']}',
                         style: TextStyle(
@@ -573,7 +572,6 @@ class EventListViewDesktop extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      // Ubicación
                       Text(
                         location,
                         style: TextStyle(
