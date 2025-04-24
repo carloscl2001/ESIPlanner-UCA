@@ -3,7 +3,6 @@ import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../shared/widgets/class_cards.dart';
 
 class SelectedDayRowDesktop extends StatelessWidget {
   final bool isDarkMode;
