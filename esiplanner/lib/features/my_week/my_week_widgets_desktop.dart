@@ -63,11 +63,11 @@ class SelectedDayRowDesktop extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    weekDaysFullName[safeIndex].toUpperCase(),
+                    weekDaysFullName[safeIndex],
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: 24,
+                      fontSize: 20,
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -89,15 +89,6 @@ class SelectedDayRowDesktop extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDarkMode 
-                        ? Colors.yellow.shade700.withOpacity(0.3)
-                        : Colors.blue.shade900.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Text(
                 'Hoy',
@@ -153,8 +144,8 @@ class DayButtonRowDesktop extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              width: 100,
-              height: 120,
+              width: 80,
+              height: 100,
               margin: const EdgeInsets.symmetric(horizontal: 8), // Más espacio entre botones
               decoration: BoxDecoration(
                 color: isSelected
@@ -181,7 +172,6 @@ class DayButtonRowDesktop extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  const SizedBox(height: 8),
                   Text(
                     date,
                     style: TextStyle(
@@ -189,14 +179,14 @@ class DayButtonRowDesktop extends StatelessWidget {
                           ? (isDarkMode ? Colors.black : Colors.white)
                           : (isDarkMode ? Colors.white : Colors.black),
                       fontWeight: FontWeight.bold,
-                      fontSize: 32,
+                      fontSize: 24,
                     ),
                   ),
                   if (hasEvents)
                     Container(
                       margin: const EdgeInsets.only(top: 8),
-                      width: 8,
-                      height: 8,
+                      width: 6,
+                      height: 6,
                       decoration: BoxDecoration(
                         color: isSelected
                             ? (isDarkMode ? Colors.black : Colors.white)
@@ -276,7 +266,7 @@ class EventListViewDesktop extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: isDarkMode ? Colors.grey.shade900.withOpacity(0.6) : Colors.grey.shade100,
@@ -399,7 +389,7 @@ class EventListViewDesktop extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 40, left: 10, bottom: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
