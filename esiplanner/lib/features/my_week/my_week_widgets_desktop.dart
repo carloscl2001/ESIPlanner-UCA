@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+
 class SelectedDayRowDesktop extends StatelessWidget {
   final bool isDarkMode;
   final String selectedDay;
@@ -41,14 +42,6 @@ class SelectedDayRowDesktop extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 24),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-            width: 1.5,
-          ),
-        ),
-      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -107,7 +100,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                 ],
               ),
               child: Text(
-                'TODAY',
+                'Hoy',
                 style: TextStyle(
                   color: isDarkMode ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
@@ -162,6 +155,7 @@ class DayButtonRowDesktop extends StatelessWidget {
               curve: Curves.easeInOut,
               width: 100,
               height: 120,
+              margin: const EdgeInsets.symmetric(horizontal: 8), // Más espacio entre botones
               decoration: BoxDecoration(
                 color: isSelected
                     ? (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900)
@@ -228,8 +222,9 @@ class EventListViewDesktop extends StatelessWidget {
   final Map<String, List<Map<String, dynamic>>> Function(List<Map<String, dynamic>>) groupEventsByDay;
   final String Function(String) getGroupLabel;
   final Function(int) onPageChanged;
+  final double sizeTramo = 65;
 
-  const EventListViewDesktop({
+  EventListViewDesktop({
     super.key,
     required this.pageController,
     required this.weekDays,
@@ -240,32 +235,39 @@ class EventListViewDesktop extends StatelessWidget {
     required this.onPageChanged,
   });
 
-  // Función para generar colores únicos basados en el nombre de la asignatura
+  // Mapa para mantener colores consistentes por asignatura
+  final Map<String, Color> _subjectColors = {};
+
   Color _getSubjectColor(String subjectName, bool isDarkMode) {
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.indigo,
-      Colors.amber,
-    ];
+    if (_subjectColors.containsKey(subjectName)) {
+      return _subjectColors[subjectName]!;
+    }
     
-    final darkColors = [
-      Colors.blue.shade700,
-      Colors.green.shade700,
-      Colors.orange.shade700,
-      Colors.purple.shade700,
-      Colors.red.shade700,
-      Colors.teal.shade700,
-      Colors.indigo.shade700,
-      Colors.amber.shade700,
-    ];
+    final colors = isDarkMode 
+      ? [
+          Colors.blue.shade700,
+          Colors.green.shade700,
+          Colors.orange.shade700,
+          Colors.purple.shade700,
+          Colors.red.shade700,
+          Colors.teal.shade700,
+          Colors.indigo.shade700,
+          Colors.amber.shade700,
+        ]
+      : [
+          Colors.blue,
+          Colors.green,
+          Colors.orange,
+          Colors.purple,
+          Colors.red,
+          Colors.teal,
+          Colors.indigo,
+          Colors.amber,
+        ];
     
-    final index = subjectName.hashCode % colors.length;
-    return isDarkMode ? darkColors[index] : colors[index];
+    final color = colors[_subjectColors.length % colors.length];
+    _subjectColors[subjectName] = color;
+    return color;
   }
 
   @override
@@ -343,37 +345,32 @@ class EventListViewDesktop extends StatelessWidget {
   }
 
   Widget _buildDayViewVertical(List<Map<String, dynamic>> events, bool isDarkMode) {
-    // Ordenar eventos por hora de inicio
     events.sort((a, b) {
       final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
       final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
       return timeA.compareTo(timeB);
     });
 
-    // Determinar el rango horario del día
     DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
     DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
 
-    // Ajustar para que comience 1 hora antes del primer evento
     DateTime startTime = DateTime(
       firstEventStart.year, 
       firstEventStart.month, 
       firstEventStart.day, 
-      firstEventStart.hour - 1
-    );
+      firstEventStart.hour,
+      (firstEventStart.minute ~/ 30) * 30 // Redondea a la media hora anterior
+    ).subtract(const Duration(minutes: 30)); // Resta media hora adicional
 
-    // Ajustar para que termine 1 hora después del último evento
     DateTime endTime = DateTime(
       lastEventEnd.year, 
       lastEventEnd.month, 
       lastEventEnd.day, 
-      lastEventEnd.hour + 1
-    );
+      lastEventEnd.hour,
+      ((lastEventEnd.minute + 29) ~/ 30) * 30 // Redondea a la media hora siguiente
+    ).add(const Duration(minutes: 30)); // Suma media hora adicional
 
-    // Calcular la duración total en medias horas
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
-
-    // Identificar eventos solapados
     final List<List<Map<String, dynamic>>> eventGroups = [];
     List<Map<String, dynamic>> currentGroup = [];
 
@@ -402,32 +399,31 @@ class EventListViewDesktop extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(top: 40, left: 10, bottom: 40),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Columna de horas con medias horas
+                // Columna de horas - MODIFICADO para mostrar cada 30 minutos
                 SizedBox(
                   width: 80,
                   child: Column(
                     children: List.generate(totalHalfHours + 1, (index) {
                       final currentTime = startTime.add(Duration(minutes: 30 * index));
-                      final showLabel = index % 2 == 0 || index == totalHalfHours;
-                      
                       return SizedBox(
-                        height: 40,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: showLabel
-                            ? Text(
-                                DateFormat('HH:mm').format(currentTime),
-                                style: TextStyle(
-                                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                                  fontWeight: index % 2 == 0 ? FontWeight.bold : FontWeight.normal,
-                                  fontSize: index % 2 == 0 ? 14 : 12,
-                                ),
-                              )
-                            : null,
+                        height: sizeTramo,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Transform.translate(
+                            offset: const Offset(0, -35),
+                            child: Text(
+                              DateFormat('HH:mm').format(currentTime),
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
                         ),
                       );
                     }),
@@ -442,24 +438,41 @@ class EventListViewDesktop extends StatelessWidget {
                 Expanded(
                   child: Stack(
                     children: [
-                      // Líneas horizontales para cada media hora
+                      // Líneas horizontales - MODIFICADO para incluir el primer tramo
                       Column(
-                        children: List.generate(totalHalfHours, (index) {
-                          final isFullHour = index % 2 == 0;
-                          return Container(
-                            height: 40,
+                        children: [
+                          // Primera línea (borde superior)
+                          Container(
+                            height: sizeTramo,
                             decoration: BoxDecoration(
                               border: Border(
+                                top: BorderSide(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 1.5,
+                                ),
                                 bottom: BorderSide(
-                                  color: isDarkMode 
-                                    ? Colors.grey.shade800 
-                                    : Colors.grey.shade300,
-                                  width: isFullHour ? 1.5 : 0.5,
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 1.5,
                                 ),
                               ),
                             ),
-                          );
-                        }),
+                          ),
+                          // Resto de líneas
+                          ...List.generate(totalHalfHours - 1, (index) {
+                            final isFullHour = (index + 1) % 2 == 0;
+                            return Container(
+                              height: sizeTramo,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                    width: isFullHour ? 1.5 : 0.5,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                       // Eventos
                       ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode),
@@ -489,8 +502,8 @@ class EventListViewDesktop extends StatelessWidget {
       final startOffset = groupStart.difference(startTime).inMinutes;
       final duration = groupEnd.difference(groupStart).inMinutes;
       
-      final topPosition = (startOffset / 30) * 40;
-      final height = (duration / 30) * 40;
+      final topPosition = (startOffset / 30) * sizeTramo ; // Ajustado a nueva altura
+      final height = (duration / 30) * sizeTramo ; // Ajustado a nueva altura
       
       return Positioned(
         top: topPosition,
@@ -499,11 +512,11 @@ class EventListViewDesktop extends StatelessWidget {
         right: 16,
         child: Row(
           children: group.asMap().entries.map((entry) {
-            final eventIndex = entry.key;
             final eventData = entry.value;
             final event = eventData['event'];
             final classType = eventData['classType'];
             final subjectName = eventData['subjectName'];
+            final location = event['location'] ?? 'No especificado';
             final subjectColor = _getSubjectColor(subjectName, isDarkMode);
             
             return Expanded(
@@ -525,10 +538,12 @@ class EventListViewDesktop extends StatelessWidget {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(left: 20, right: 8, top: 8, bottom: 8),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Nombre de la asignatura
                       Text(
                         subjectName,
                         style: TextStyle(
@@ -539,19 +554,34 @@ class EventListViewDesktop extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        '${event['start_hour']} - ${event['end_hour']}',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black87,
-                          fontSize: 12,
-                        ),
-                      ),
+                      const SizedBox(height: 4),
+                      // Tipo de clase
                       Text(
                         '$classType - ${getGroupLabel(classType[0])}',
                         style: TextStyle(
                           color: isDarkMode ? Colors.white70 : Colors.black87,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Horario
+                      Text(
+                        '${event['start_hour']} - ${event['end_hour']}',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Ubicación
+                      Text(
+                        location,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
