@@ -75,28 +75,35 @@ class _HomeScreenState extends State<HomeScreen> {
           return Column(
             children: [
               if (isDesktop) ...[
-                SelectedDayRowDesktop(
-                  isDarkMode: isDarkMode,
-                  selectedDay: _logic.selectedDay!,
-                  weekDaysFullName: _logic.weekDaysFullName,
-                  weekDaysShort: _logic.weekDays,
-                  getMonthName: _logic.getMonthName,
-                ),
-                DayButtonRowDesktop(
-                  weekDays: _logic.weekDays,
-                  weekDates: _logic.getWeekDates(),
-                  isDarkMode: isDarkMode,
-                  selectedDay: _logic.selectedDay!,
-                  getFilteredEvents: _logic.getFilteredEvents,
-                  subjects: _logic.subjects,
-                  onDaySelected: (day) {
-                    final index = _logic.weekDays.indexOf(day);
-                    _pageController.animateToPage(
-                      index,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                    );
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Esto separa los widgets a los extremos
+                  children: [
+                    Expanded( // Hace que SelectedDayRowDesktop ocupe todo el espacio disponible
+                      child: SelectedDayRowDesktop(
+                        isDarkMode: isDarkMode,
+                        selectedDay: _logic.selectedDay!,
+                        weekDaysFullName: _logic.weekDaysFullName,
+                        weekDaysShort: _logic.weekDays,
+                        getMonthName: _logic.getMonthName,
+                      ),
+                    ),
+                    DayButtonRowDesktop(
+                      weekDays: _logic.weekDays,
+                      weekDates: _logic.getWeekDates(),
+                      isDarkMode: isDarkMode,
+                      selectedDay: _logic.selectedDay!,
+                      getFilteredEvents: _logic.getFilteredEvents,
+                      subjects: _logic.subjects,
+                      onDaySelected: (day) {
+                        final index = _logic.weekDays.indexOf(day);
+                        _pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: EventListViewDesktop(
