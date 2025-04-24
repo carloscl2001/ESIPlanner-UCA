@@ -24,7 +24,7 @@ class SelectedDayRowMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final isDesktop = MediaQuery.of(context).size.width > 600;
+
     
     // Encuentra el índice seguro
     final selectedDayLower = selectedDay.toLowerCase();
@@ -44,10 +44,10 @@ class SelectedDayRowMobile extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: isDesktop ? 80 : 14, 
-        right: isDesktop ? 70 : 8, 
-        top: isDesktop ? 16 : 8, 
-        bottom: isDesktop ? 16 : 8
+        left: 14, 
+        right: 8, 
+        top: 8, 
+        bottom: 8
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -59,10 +59,10 @@ class SelectedDayRowMobile extends StatelessWidget {
                 style: TextStyle(
                   color: isDarkMode ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: isDesktop ? 72 : 55,
+                  fontSize: 55,
                 ),
               ),
-              SizedBox(width: isDesktop ? 24 : 16),
+              SizedBox(width: 16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -71,7 +71,7 @@ class SelectedDayRowMobile extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: isDesktop ? 28 : 20,
+                      fontSize:  20,
                     ),
                   ),
                   Text(
@@ -79,7 +79,7 @@ class SelectedDayRowMobile extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.bold,
-                      fontSize: isDesktop ? 28 : 20,
+                      fontSize:  20,
                     ),
                   ),
                 ],
@@ -91,8 +91,8 @@ class SelectedDayRowMobile extends StatelessWidget {
               margin: const EdgeInsets.only(right: 8),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(
-                horizontal: isDesktop ? 24 : 16, 
-                vertical: isDesktop ? 12 : 8
+                horizontal: 16, 
+                vertical: 8
               ),
               decoration: BoxDecoration(
                 color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
@@ -103,7 +103,7 @@ class SelectedDayRowMobile extends StatelessWidget {
                 style: TextStyle(
                   color: isDarkMode ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: isDesktop ? 24 : 20,
+                  fontSize: 20,
                 ),
               ),
             ),
@@ -135,12 +135,11 @@ class DayButtonRowMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 600;
     
     return LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: isDesktop ? 50 : 8),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: weekDays.asMap().entries.map((entry) {
               final index = entry.key;
@@ -152,10 +151,10 @@ class DayButtonRowMobile extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => onDaySelected(day),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: isDesktop ? 28 : 6),
+                    margin: EdgeInsets.symmetric(horizontal: 6),
                     padding: EdgeInsets.symmetric(
-                      vertical: isDesktop ? 8 : 10, 
-                      horizontal: isDesktop ? 0 : 10
+                      vertical: 10, 
+                      horizontal: 10
                     ),
                     decoration: BoxDecoration(
                       color: selectedDay == day
@@ -198,7 +197,7 @@ class DayButtonRowMobile extends StatelessWidget {
                                     ? (isDarkMode ? Colors.black : Colors.white)
                                     : Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: isDesktop ? 24 : 20,
+                                fontSize: 20,
                               ),
                             ),
                             Text(
@@ -208,18 +207,18 @@ class DayButtonRowMobile extends StatelessWidget {
                                     ? (isDarkMode ? Colors.black : Colors.white)
                                     : (isDarkMode ? Colors.white : Colors.black),
                                 fontWeight: FontWeight.bold,
-                                fontSize: isDesktop ? 32 : 26,
+                                fontSize: 26,
                               ),
                             ),
-                            SizedBox(height: isDesktop ? 8 : 4),
+                            SizedBox(height: 4),
                           ],
                         ),
                         if (hasEvents)
                           Positioned(
-                            bottom: isDesktop ? 0 : 0,
+                            bottom: 0,
                             child: Container(
-                              width: isDesktop ? 8 : 6,
-                              height: isDesktop ? 8 : 6,
+                              width: 6,
+                              height: 6,
                               decoration: BoxDecoration(
                                 color: selectedDay == day
                                     ? (isDarkMode ? Colors.black : Colors.white)

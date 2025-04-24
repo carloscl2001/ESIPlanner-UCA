@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 1024;
+          final isDesktop = constraints.maxWidth > 1024; // Define el ancho mínimo para considerar que es un dispositivo de escritorio
 
           if (_logic.isLoading) {
             return const Center(

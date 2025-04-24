@@ -41,7 +41,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                    selectedDate.day == now.day;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 24),
+        padding: const EdgeInsets.only(left: 70, top: 24, bottom: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
