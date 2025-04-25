@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadData() async {
+    await Future.delayed(const Duration(milliseconds: 1));
     await _logic.loadSubjects();
     if (mounted) {
       setState(() {});
