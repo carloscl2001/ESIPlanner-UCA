@@ -270,7 +270,7 @@ class EventListViewDesktop extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: isDarkMode ? Colors.grey.shade900.withOpacity(0.6) : Colors.grey.shade100,
+          color: isDarkMode ? Colors.grey.shade900.withValues(alpha: 0.6) : Colors.grey.shade100,
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -455,7 +455,7 @@ class EventListViewDesktop extends StatelessWidget {
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: isDarkMode ? Colors.black : Colors.grey.shade300,
+                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                                     width: 2.5,
                                   ),
                                 ),
@@ -515,7 +515,7 @@ class EventListViewDesktop extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1), // Margen ajustado
                 decoration: BoxDecoration(
-                  color: subjectColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+                  color: subjectColor.withValues(alpha: (isDarkMode ? 0.3 : 0.2)),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: subjectColor,
@@ -523,7 +523,7 @@ class EventListViewDesktop extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
