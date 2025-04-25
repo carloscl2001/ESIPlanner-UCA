@@ -218,12 +218,12 @@ class HomeLogic {
 
   String getGroupLabel(String letter) {
     switch (letter) {
-      case 'A': return 'Clase de teoría';
-      case 'B': return 'Clase de problemas';
-      case 'C': return 'Clase de prácticas informáticas';
-      case 'D': return 'Clase de laboratorio';
+      case 'A': return 'Teoría';
+      case 'B': return 'Problemas';
+      case 'C': return 'Prácticas informáticas';
+      case 'D': return 'Laboratorio';
       case 'E': return 'Salida de campo';
-      case 'X': return 'Clase de teória-práctica';
+      case 'X': return 'Tteória-práctica';
       default: return 'Clase de teória-práctica';
     }
   }
