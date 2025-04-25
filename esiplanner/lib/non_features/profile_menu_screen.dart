@@ -6,46 +6,59 @@ class ProfileMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isDesktop = screenWidth > 1024;
+
     return Scaffold(
-      body: SingleChildScrollView( // <-- Esto hace que toda la pantalla sea scrollable
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  padding: const EdgeInsets.all(16),
-                  shrinkWrap: true, // Importante para usar dentro de Column
-                  physics: const NeverScrollableScrollPhysics(), // Desactiva el scroll interno
-                  children: const [
-                    ProfileCard( 
-                      text: 'Mi perfil',
-                      icon: Icons.person_pin,
-                      route: '/viewProfile',
+      body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: screenHeight, // Toma toda la altura disponible
+          child: SizedBox(
+            height: screenHeight, // Forza el centrado vertical
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center, // Centrado vertical
+                children: [
+                  SizedBox(
+                    width: isDesktop ? screenWidth * 0.85 : 800,
+                    child: GridView.count(
+                      crossAxisCount: isDesktop ? 4 : 2,
+                      mainAxisSpacing: 25,
+                      crossAxisSpacing: 25,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 40 : 20,
+                      ),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      childAspectRatio: 1.0,
+                      children: const [
+                        ProfileCard(
+                          text: 'Mi perfil',
+                          icon: Icons.person_pin,
+                          route: '/viewProfile',
+                        ),
+                        ProfileCard(
+                          text: 'Cambiar mi contraseña',
+                          icon: Icons.password_rounded,
+                          route: '/editPassWord',
+                        ),
+                        ProfileCard(
+                          text: 'Mis asignaturas',
+                          icon: Icons.book_rounded,
+                          route: '/viewSubjects',
+                        ),
+                        ProfileCard(
+                          text: 'Seleccionar asignaturas',
+                          icon: Icons.edit_note_rounded,
+                          route: '/selectionSubjects',
+                        ),
+                      ],
                     ),
-                    ProfileCard(
-                      text: 'Cambiar mi contraseña',
-                      icon: Icons.password_rounded,
-                      route: '/editPassWord',
-                    ),
-                    ProfileCard(
-                      text: 'Mis asignaturas',
-                      icon: Icons.book_rounded,
-                      route: '/viewSubjects',
-                    ),
-                    ProfileCard(
-                      text: 'Seleccionar asignaturas',
-                      icon: Icons.edit_note_rounded,
-                      route: '/selectionSubjects',
-                    ),
-                    // Puedes añadir más tarjetas aquí
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
