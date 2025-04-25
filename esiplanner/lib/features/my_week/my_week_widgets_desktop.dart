@@ -76,6 +76,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                     '${getMonthName(selectedDate.month)} ${selectedDate.year}',
                     style: TextStyle(
                       color: Colors.grey,
+                      fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),

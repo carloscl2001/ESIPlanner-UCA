@@ -263,7 +263,6 @@ class EventListViewMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
-    final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
@@ -286,7 +285,7 @@ class EventListViewMobile extends StatelessWidget {
               child: Text(
                 'No hay clases',
                 style: TextStyle(
-                  fontSize: isDesktop ? 32 : 24,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
@@ -299,8 +298,8 @@ class EventListViewMobile extends StatelessWidget {
 
           return ListView.builder(
             padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? 24 : 16,
-              vertical: isDesktop ? 8 : 0
+              horizontal: 16,
+              vertical: 0
             ),
             itemCount: sortedDates.length,
             itemBuilder: (context, index) {
@@ -336,7 +335,6 @@ class EventListViewMobile extends StatelessWidget {
                     classType: '$classType - ${getGroupLabel(classType[0])}',
                     event: event,
                     isOverlap: isOverlapping[index],
-                    isDesktop: isDesktop,
                   );
                 }).toList(),
               );
