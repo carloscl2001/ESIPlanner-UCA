@@ -15,12 +15,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late HomeLogic _logic;
   late PageController _pageController;
+  int _currentPage = 0; // Variable para trackear la página actual
 
   @override
   void initState() {
     super.initState();
     _logic = HomeLogic(context);
-    _pageController = PageController(initialPage: _logic.weekDays.indexOf(_logic.selectedDay!));
+    _currentPage = _logic.weekDays.indexOf(_logic.selectedDay!);
+    _pageController = PageController(initialPage: _currentPage);
     _loadData();
   }
 
@@ -29,6 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPage = index;
+      _logic.updateSelectedDay(_logic.weekDays[index]);
+    });
   }
 
   @override
@@ -45,7 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 1024; // Define el ancho mínimo para considerar que es un dispositivo de escritorio
+          final isDesktop = constraints.maxWidth > 1024;
+
+          // Asegurarse de que el PageController está en la página correcta después de reconstruir
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_pageController.hasClients && _pageController.page?.round() != _currentPage) {
+              _pageController.jumpToPage(_currentPage);
+            }
+          });
 
           if (_logic.isLoading) {
             return const Center(
@@ -76,9 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               if (isDesktop) ...[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Esto separa los widgets a los extremos
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded( // Hace que SelectedDayRowDesktop ocupe todo el espacio disponible
+                    Expanded(
                       child: SelectedDayRowDesktop(
                         isDarkMode: isDarkMode,
                         selectedDay: _logic.selectedDay!,
@@ -113,11 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     subjects: _logic.subjects,
                     groupEventsByDay: _logic.groupEventsByDay,
                     getGroupLabel: _logic.getGroupLabel,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _logic.updateSelectedDay(_logic.weekDays[index]);
-                      });
-                    },
+                    onPageChanged: _onPageChanged,
                   ),
                 ),
               ] else ...[
@@ -153,11 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     subjects: _logic.subjects,
                     groupEventsByDay: _logic.groupEventsByDay,
                     getGroupLabel: _logic.getGroupLabel,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _logic.updateSelectedDay(_logic.weekDays[index]);
-                      });
-                    },
+                    onPageChanged: _onPageChanged,
                   ),
                 ),
               ],
