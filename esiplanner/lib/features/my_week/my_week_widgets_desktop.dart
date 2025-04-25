@@ -405,7 +405,7 @@ class EventListViewDesktop extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Transform.translate(
-                            offset: const Offset(0, -35),
+                            offset: const Offset(-35, -35),
                             child: Text(
                               DateFormat('HH:mm').format(currentTime),
                               style: TextStyle(
