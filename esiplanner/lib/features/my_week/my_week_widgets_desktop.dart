@@ -387,11 +387,11 @@ class EventListViewDesktop extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15, right: 10, top: 50, bottom: 0),
+        child: Column(
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Columna de horas - MODIFICADO para mostrar cada 30 minutos
@@ -439,25 +439,24 @@ class EventListViewDesktop extends StatelessWidget {
                               border: Border(
                                 top: BorderSide(
                                   color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 1.5,
+                                  width: 2.5,
                                 ),
                                 bottom: BorderSide(
                                   color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 1.5,
+                                  width: 2.5,
                                 ),
                               ),
                             ),
                           ),
                           // Resto de líneas
                           ...List.generate(totalHalfHours - 1, (index) {
-                            final isFullHour = (index + 1) % 2 == 0;
                             return Container(
                               height: sizeTramo,
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                    width: isFullHour ? 1.5 : 0.5,
+                                    color: isDarkMode ? Colors.black : Colors.grey.shade300,
+                                    width: 2.5,
                                   ),
                                 ),
                               ),
@@ -472,8 +471,8 @@ class EventListViewDesktop extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
