@@ -44,25 +44,24 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Opción de cambiar modo oscuro
-              ListTile(
-                leading: Icon(
-                  isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
-                  color: isDarkMode ? Colors.white : Colors.yellow.shade700,
-                ),
+              SwitchListTile(
                 title: Text(
                   isDarkMode ? 'Modo Oscuro' : 'Modo Claro',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                trailing: Switch(
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    themeProvider.toggleTheme(value);
-                    Navigator.pop(context); // Cerrar el menú después del cambio
-                  },
-                  activeColor: Colors.yellow.shade700,
-                  inactiveThumbColor: Colors.indigo.shade700,
+                secondary: Icon(
+                  isDarkMode ? Icons.nightlight_round : Icons.wb_sunny,
+                  color: isDarkMode ? Colors.white : Colors.yellow.shade700,
                 ),
+                value: isDarkMode,
+                onChanged: (value) {
+                  themeProvider.toggleTheme(value);
+                  Navigator.pop(context); // Cerrar el menú después del cambio
+                },
+                activeColor: Colors.yellow.shade700,
+                inactiveThumbColor: Colors.indigo.shade700,
               ),
+
 
               const Divider(),
 
@@ -190,16 +189,12 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           ],
         ),
       ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child:
-            <Widget>[
-              const HomeScreen(),
-              const TimetablePrincipalScreen(),
-              //const AgendaScreen(),
-              const ProfileMenuScreen(),
-            ][currentPageIndex],
-      ),
+      body: <Widget>[
+        const HomeScreen(),
+        const TimetablePrincipalScreen(),
+        //const AgendaScreen(),
+        const ProfileMenuScreen(),
+      ][currentPageIndex],
     );
   }
 }
