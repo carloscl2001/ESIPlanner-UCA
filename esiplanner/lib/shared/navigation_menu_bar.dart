@@ -189,12 +189,22 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
           ],
         ),
       ),
-      body: <Widget>[
-        const HomeScreen(),
-        const TimetablePrincipalScreen(),
-        //const AgendaScreen(),
-        const ProfileMenuScreen(),
-      ][currentPageIndex],
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300), // Duración de la animación
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          // Puedes personalizar la animación aquí
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: <Widget>[
+          const HomeScreen(),
+          const TimetablePrincipalScreen(),
+          //const AgendaScreen(),
+          const ProfileMenuScreen(),
+        ][currentPageIndex],
+      ),
     );
   }
 }
