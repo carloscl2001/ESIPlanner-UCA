@@ -377,7 +377,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
@@ -502,7 +502,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 5, right: 10, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 1, right: 20, top: 50, bottom: 0),
         child: Column(
           children: [
             Row(

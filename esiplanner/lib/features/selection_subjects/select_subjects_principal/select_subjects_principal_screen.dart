@@ -267,9 +267,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
               isDarkMode: isDarkMode,
             );
           },
-          child: const Icon(Icons.add),
           backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
           foregroundColor: isDarkMode ? Colors.black : Colors.white,
+          child: const Icon(Icons.add),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

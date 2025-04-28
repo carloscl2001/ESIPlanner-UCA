@@ -52,8 +52,9 @@ class EventCard extends StatelessWidget {
                 color: isDarkMode ? Colors.white : Colors.black,
                 fontSize: 16,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              // Estas son las líneas clave que cambiamos:
+              maxLines: 2, // Permite hasta 2 líneas
+              overflow: TextOverflow.visible, // Muestra el texto completo
             ),
             const SizedBox(height: 4),
             Text(
