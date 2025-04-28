@@ -169,6 +169,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPageChanged: _onPageChanged,
                   ),
                 ),
+                Expanded(
+                  child: EventListViewMobileGoogle(
+                    pageController: _pageController,
+                    weekDays: _logic.weekDays,
+                    getFilteredEvents: _logic.getFilteredEvents,
+                    subjects: _logic.subjects,
+                    groupEventsByDay: _logic.groupEventsByDay,
+                    getGroupLabel: _logic.getGroupLabel,
+                    onPageChanged: _onPageChanged,
+                  ),
+                ),
               ],
             ],
           );

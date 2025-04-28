@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../shared/widgets/class_cards.dart';
 
@@ -346,55 +347,438 @@ class EventListViewMobile extends StatelessWidget {
   }
 }
 
+class EventListViewMobileGoogle extends StatelessWidget {
+  final PageController pageController;
+  final List<String> weekDays;
+  final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
+  final List<Map<String, dynamic>> subjects;
+  final Map<String, List<Map<String, dynamic>>> Function(List<Map<String, dynamic>>) groupEventsByDay;
+  final String Function(String) getGroupLabel;
+  final Function(int) onPageChanged;
+  final double sizeTramo = 65;
+
+  EventListViewMobileGoogle({
+    super.key,
+    required this.pageController,
+    required this.weekDays,
+    required this.getFilteredEvents,
+    required this.subjects,
+    required this.groupEventsByDay,
+    required this.getGroupLabel,
+    required this.onPageChanged,
+  });
+
+  // Mapa para mantener colores consistentes por asignatura
+  final Map<String, Color> _subjectColors = {};
+
+  Color _getSubjectColor(String subjectName, bool isDarkMode) {
+    if (_subjectColors.containsKey(subjectName)) {
+      return _subjectColors[subjectName]!;
+    }
+    
+    final colors = isDarkMode 
+      ? [
+          Colors.blue.shade700,
+          Colors.green.shade700,
+          Colors.orange.shade700,
+          Colors.purple.shade700,
+          Colors.red.shade700,
+          Colors.teal.shade700,
+          Colors.indigo.shade700,
+          Colors.amber.shade700,
+        ]
+      : [
+          Colors.blue,
+          Colors.green,
+          Colors.orange,
+          Colors.purple,
+          Colors.red,
+          Colors.teal,
+          Colors.indigo,
+          Colors.amber,
+        ];
+    
+    final color = colors[_subjectColors.length % colors.length];
+    _subjectColors[subjectName] = color;
+    return color;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 2),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: isDarkMode ? Colors.grey.shade900.withValues(alpha: 0.6) : Colors.grey.shade100,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+              },
+            ),
+            child: PageView.builder(
+              controller: pageController,
+              onPageChanged: onPageChanged,
+              physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+              itemCount: weekDays.length,
+              itemBuilder: (context, index) {
+                final day = weekDays[index];
+                final dayEvents = getFilteredEvents(day);
+
+                if (dayEvents.isEmpty) {
+                  return _buildEmptyState(isDarkMode);
+                }
+
+                return _buildDayViewVertical(dayEvents, isDarkMode);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.event_note,
+            size: 60,
+            color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'No tienes clases',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Disfruta de tu tiempo libre!',
+            style: TextStyle(
+              fontSize: 16,
+              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayViewVertical(List<Map<String, dynamic>> events, bool isDarkMode) {
+    events.sort((a, b) {
+      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+      return timeA.compareTo(timeB);
+    });
+
+    DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
+    DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
+
+    DateTime startTime = DateTime(
+      firstEventStart.year, 
+      firstEventStart.month, 
+      firstEventStart.day, 
+      firstEventStart.hour,
+      (firstEventStart.minute ~/ 30) * 30 // Redondea a la media hora anterior
+    ).subtract(const Duration(minutes: 30)); // Resta media hora adicional
+
+    DateTime endTime = DateTime(
+      lastEventEnd.year, 
+      lastEventEnd.month, 
+      lastEventEnd.day, 
+      lastEventEnd.hour,
+      ((lastEventEnd.minute + 29) ~/ 30) * 30 // Redondea a la media hora siguiente
+    ).add(const Duration(minutes: 30)); // Suma media hora adicional
+
+    final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
+    final List<List<Map<String, dynamic>>> eventGroups = [];
+    List<Map<String, dynamic>> currentGroup = [];
+
+    for (int i = 0; i < events.length; i++) {
+      if (currentGroup.isEmpty) {
+        currentGroup.add(events[i]);
+      } else {
+        final lastEventEnd = DateTime.parse('${currentGroup.last['event']['date']} ${currentGroup.last['event']['end_hour']}');
+        final currentEventStart = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['start_hour']}');
+
+        if (currentEventStart.isBefore(lastEventEnd)) {
+          currentGroup.add(events[i]);
+        } else {
+          eventGroups.add(List.from(currentGroup));
+          currentGroup.clear();
+          currentGroup.add(events[i]);
+        }
+      }
+    }
+
+    if (currentGroup.isNotEmpty) {
+      eventGroups.add(List.from(currentGroup));
+    }
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15, right: 10, top: 50, bottom: 0),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Columna de horas - MODIFICADO para mostrar cada 30 minutos
+                SizedBox(
+                  width: 80,
+                  child: Column(
+                    children: List.generate(totalHalfHours + 1, (index) {
+                      final currentTime = startTime.add(Duration(minutes: 30 * index));
+                      return SizedBox(
+                        height: sizeTramo,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Transform.translate(
+                            offset: const Offset(-35, -35),
+                            child: Text(
+                              DateFormat('HH:mm').format(currentTime),
+                              style: TextStyle(
+                                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                // Línea vertical
+                Container(
+                  width: 1,
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                ),
+                // Contenedor principal de eventos
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Líneas horizontales - MODIFICADO para incluir el primer tramo
+                      Column(
+                        children: [
+                          // Primera línea (borde superior)
+                          Container(
+                            height: sizeTramo,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 2.5,
+                                ),
+                                bottom: BorderSide(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 2.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Resto de líneas
+                          ...List.generate(totalHalfHours - 1, (index) {
+                            return Container(
+                              height: sizeTramo,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                    width: 2.5,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                      // Eventos
+                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildEventWidgetsVertical(
+    List<List<Map<String, dynamic>>> eventGroups,
+    DateTime startTime,
+    bool isDarkMode,
+  ) {
+    return eventGroups.map((group) {
+      final firstEvent = group.first;
+      final lastEvent = group.last;
+      
+      final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
+      final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
+      
+      // Ajustamos el cálculo para que no haya solapamiento visual
+      final startOffset = groupStart.difference(startTime).inMinutes;
+      final duration = groupEnd.difference(groupStart).inMinutes;
+      
+      // Añadimos 1 minuto de margen visual entre eventos
+      final topPosition = (startOffset / 30) * sizeTramo + 2; // +1 pixel de margen superior
+      final height = (duration / 30) * sizeTramo - 6; // -2 pixels para margen (1 arriba y 1 abajo)
+      
+      return Positioned(
+        top: topPosition,
+        height: height,
+        left: 0,
+        right: 16,
+        child: Row(
+          children: group.asMap().entries.map((entry) {
+            final eventData = entry.value;
+            final event = eventData['event'];
+            final classType = eventData['classType'];
+            final subjectName = eventData['subjectName'];
+            final location = event['location'] ?? 'No especificado';
+            final subjectColor = _getSubjectColor(subjectName, isDarkMode);
+            
+            return Expanded(
+              child: Container(
+                margin: const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1), // Margen ajustado
+                decoration: BoxDecoration(
+                  color: subjectColor.withValues(alpha: (isDarkMode ? 0.3 : 0.2)),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: subjectColor,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 8, top: 8, bottom: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        subjectName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                          fontSize: 16,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$classType - ${getGroupLabel(classType[0])}',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${event['start_hour']} - ${event['end_hour']}',
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        location,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white70 : Colors.black87,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    }).toList();
+  }
+}
+
 class BuildEmptyCardMobile extends StatelessWidget {
   const BuildEmptyCardMobile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.of(context).size.width > 600;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white70 : Colors.black54;
     
     return Center(
-      child: Card(
-        margin: EdgeInsets.all(isDesktop ? 24 : 16),
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(isDesktop ? 32.0 : 24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.person,
-                    size: isDesktop ? 96 : 64,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                  Icon(
-                    Icons.arrow_right_rounded, 
-                    size: isDesktop ? 96 : 64, 
-                    color: Theme.of(context).disabledColor
-                  ),
-                  Icon(
-                    Icons.edit_note_rounded,
-                    size: isDesktop ? 96 : 64,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                ],
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        margin: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.school_outlined,
+              size: 120,
+              color: textColor,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Planifica tu horario',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: textColor,
               ),
-              SizedBox(height: isDesktop ? 24 : 16),
-              Text(
-                'Selecciona asignaturas en perfil',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).disabledColor,
-                ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                'Selecciona tus asignaturas en la sección de perfil para comenzar a visualizar tu horario semanal',
                 textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: textColor,
+                  height: 1.5,
+                ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/selectionSubjects');
+              },
+              icon: const Icon(Icons.edit_note_rounded),
+              label: const Text('Seleccionar asignaturas'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+            ),
+          ],
         ),
       ),
     );

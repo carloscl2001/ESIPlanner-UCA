@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:esiplanner/providers/theme_provider.dart';
+import 'package:esiplanner/shared/event_card.dart';
+import 'package:esiplanner/shared/subject_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -41,7 +43,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                    selectedDate.day == now.day;
 
     return Container(
-        padding: const EdgeInsets.only(left: 70, top: 24, bottom: 24),
+      padding: const EdgeInsets.only(left: 70, top: 12, bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -240,51 +242,17 @@ class EventListViewDesktop extends StatelessWidget {
     required this.onPageChanged,
   });
 
-  // Mapa para mantener colores consistentes por asignatura
-  final Map<String, Color> _subjectColors = {};
-
-  Color _getSubjectColor(String subjectName, bool isDarkMode) {
-    if (_subjectColors.containsKey(subjectName)) {
-      return _subjectColors[subjectName]!;
-    }
-    
-    final colors = isDarkMode 
-      ? [
-          Colors.blue.shade700,
-          Colors.green.shade700,
-          Colors.orange.shade700,
-          Colors.purple.shade700,
-          Colors.red.shade700,
-          Colors.teal.shade700,
-          Colors.indigo.shade700,
-          Colors.amber.shade700,
-        ]
-      : [
-          Colors.blue,
-          Colors.green,
-          Colors.orange,
-          Colors.purple,
-          Colors.red,
-          Colors.teal,
-          Colors.indigo,
-          Colors.amber,
-        ];
-    
-    final color = colors[_subjectColors.length % colors.length];
-    _subjectColors[subjectName] = color;
-    return color;
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    final subjectColors = SubjectColors(isDarkMode);
 
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: isDarkMode ? Colors.grey.shade900.withValues(alpha: 0.6) : Colors.grey.shade100,
+          color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.grey.shade100, // 0.6 opacity equivalent
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -308,7 +276,7 @@ class EventListViewDesktop extends StatelessWidget {
                   return _buildEmptyState(isDarkMode);
                 }
 
-                return _buildDayViewVertical(dayEvents, isDarkMode);
+                return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
               },
             ),
           ),
@@ -349,7 +317,11 @@ class EventListViewDesktop extends StatelessWidget {
     );
   }
 
-  Widget _buildDayViewVertical(List<Map<String, dynamic>> events, bool isDarkMode) {
+  Widget _buildDayViewVertical(
+    List<Map<String, dynamic>> events, 
+    bool isDarkMode,
+    SubjectColors subjectColors,
+  ) {
     events.sort((a, b) {
       final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
       final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
@@ -364,16 +336,16 @@ class EventListViewDesktop extends StatelessWidget {
       firstEventStart.month, 
       firstEventStart.day, 
       firstEventStart.hour,
-      (firstEventStart.minute ~/ 30) * 30 // Redondea a la media hora anterior
-    ).subtract(const Duration(minutes: 30)); // Resta media hora adicional
+      (firstEventStart.minute ~/ 30) * 30
+    ).subtract(const Duration(minutes: 30));
 
     DateTime endTime = DateTime(
       lastEventEnd.year, 
       lastEventEnd.month, 
       lastEventEnd.day, 
       lastEventEnd.hour,
-      ((lastEventEnd.minute + 29) ~/ 30) * 30 // Redondea a la media hora siguiente
-    ).add(const Duration(minutes: 30)); // Suma media hora adicional
+      ((lastEventEnd.minute + 29) ~/ 30) * 30
+    ).add(const Duration(minutes: 30));
 
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
     final List<List<Map<String, dynamic>>> eventGroups = [];
@@ -408,7 +380,6 @@ class EventListViewDesktop extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Columna de horas - MODIFICADO para mostrar cada 30 minutos
                 SizedBox(
                   width: 80,
                   child: Column(
@@ -434,19 +405,15 @@ class EventListViewDesktop extends StatelessWidget {
                     }),
                   ),
                 ),
-                // Línea vertical
                 Container(
                   width: 1,
                   color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                 ),
-                // Contenedor principal de eventos
                 Expanded(
                   child: Stack(
                     children: [
-                      // Líneas horizontales - MODIFICADO para incluir el primer tramo
                       Column(
                         children: [
-                          // Primera línea (borde superior)
                           Container(
                             height: sizeTramo,
                             decoration: BoxDecoration(
@@ -462,7 +429,6 @@ class EventListViewDesktop extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Resto de líneas
                           ...List.generate(totalHalfHours - 1, (index) {
                             return Container(
                               height: sizeTramo,
@@ -478,8 +444,7 @@ class EventListViewDesktop extends StatelessWidget {
                           }),
                         ],
                       ),
-                      // Eventos
-                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode),
+                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode, subjectColors),
                     ],
                   ),
                 ),
@@ -495,6 +460,7 @@ class EventListViewDesktop extends StatelessWidget {
     List<List<Map<String, dynamic>>> eventGroups,
     DateTime startTime,
     bool isDarkMode,
+    SubjectColors subjectColors,
   ) {
     return eventGroups.map((group) {
       final firstEvent = group.first;
@@ -503,13 +469,11 @@ class EventListViewDesktop extends StatelessWidget {
       final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
       final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
       
-      // Ajustamos el cálculo para que no haya solapamiento visual
       final startOffset = groupStart.difference(startTime).inMinutes;
       final duration = groupEnd.difference(groupStart).inMinutes;
       
-      // Añadimos 1 minuto de margen visual entre eventos
-      final topPosition = (startOffset / 30) * sizeTramo + 2; // +1 pixel de margen superior
-      final height = (duration / 30) * sizeTramo - 6; // -2 pixels para margen (1 arriba y 1 abajo)
+      final topPosition = (startOffset / 30) * sizeTramo + 2;
+      final height = (duration / 30) * sizeTramo - 6;
       
       return Positioned(
         top: topPosition,
@@ -517,77 +481,16 @@ class EventListViewDesktop extends StatelessWidget {
         left: 0,
         right: 16,
         child: Row(
-          children: group.asMap().entries.map((entry) {
-            final eventData = entry.value;
-            final event = eventData['event'];
-            final classType = eventData['classType'];
+          children: group.map((eventData) {
             final subjectName = eventData['subjectName'];
-            final location = event['location'] ?? 'No especificado';
-            final subjectColor = _getSubjectColor(subjectName, isDarkMode);
+            final subjectColor = subjectColors.getSubjectColor(subjectName);
             
             return Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1), // Margen ajustado
-                decoration: BoxDecoration(
-                  color: subjectColor.withValues(alpha: (isDarkMode ? 0.3 : 0.2)),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: subjectColor,
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 8, top: 8, bottom: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        subjectName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : Colors.black,
-                          fontSize: 16,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$classType - ${getGroupLabel(classType[0])}',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black87,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${event['start_hour']} - ${event['end_hour']}',
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black87,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        location,
-                        style: TextStyle(
-                          color: isDarkMode ? Colors.white70 : Colors.black87,
-                          fontSize: 14,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
+              child: EventCard(
+                eventData: eventData,
+                getGroupLabel: getGroupLabel,
+                subjectColor: subjectColor,
+                isDarkMode: isDarkMode,
               ),
             );
           }).toList(),
@@ -602,82 +505,55 @@ class BuildEmptyCardDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white70 : Colors.black54;
     
     return Center(
-      child: SizedBox(
-        width: 500,
-        child: Card(
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          color: isDarkMode ? Colors.grey.shade900 : Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(40.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 80,
-                      color: Theme.of(context).disabledColor,
-                    ),
-                    Icon(
-                      Icons.arrow_right_rounded, 
-                      size: 80, 
-                      color: Theme.of(context).disabledColor
-                    ),
-                    Icon(
-                      Icons.edit_note_rounded,
-                      size: 80,
-                      color: Theme.of(context).disabledColor,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  'Select Subjects in Profile',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Theme.of(context).disabledColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Add your subjects to see your schedule here',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).disabledColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to profile
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Go to Profile',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        margin: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.school_outlined,
+              size: 120,
+              color: textColor,
             ),
-          ),
+            const SizedBox(height: 24),
+            Text(
+              'Planifica tu horario',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                'Selecciona tus asignaturas en la sección de perfil para comenzar a visualizar tu horario semanal',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: textColor,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () {
+                // Navegar a la sección de perfil
+              },
+              icon: const Icon(Icons.person),
+              label: const Text('Ir a Perfil'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+            ),
+          ],
         ),
       ),
     );
