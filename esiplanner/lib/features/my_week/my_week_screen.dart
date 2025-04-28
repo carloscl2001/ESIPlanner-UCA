@@ -15,7 +15,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late HomeLogic _logic;
   late PageController _pageController;
-  int _currentPage = 0; // Variable para trackear la página actual
+  int _currentPage = 0;
+  bool _showGoogleView = false;
+  bool _isDesktop = false; // Nueva variable de estado para almacenar si es desktop
 
   @override
   void initState() {
@@ -41,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _toggleView() {
+    setState(() {
+      _showGoogleView = !_showGoogleView;
+    });
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -55,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth > 1024;
+          _isDesktop = constraints.maxWidth > 1024; // Actualizamos el estado
 
           // Asegurarse de que el PageController está en la página correcta después de reconstruir
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -71,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (_logic.subjects.isEmpty) {
-            return isDesktop 
+            return _isDesktop 
               ? const BuildEmptyCardDesktop() 
               : const BuildEmptyCardMobile();
           }
@@ -91,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return Column(
             children: [
-              if (isDesktop) ...[
+              if (_isDesktop) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -159,32 +167,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: EventListViewMobile(
-                    pageController: _pageController,
-                    weekDays: _logic.weekDays,
-                    getFilteredEvents: _logic.getFilteredEvents,
-                    subjects: _logic.subjects,
-                    groupEventsByDay: _logic.groupEventsByDay,
-                    getGroupLabel: _logic.getGroupLabel,
-                    onPageChanged: _onPageChanged,
-                  ),
-                ),
-                Expanded(
-                  child: EventListViewMobileGoogle(
-                    pageController: _pageController,
-                    weekDays: _logic.weekDays,
-                    getFilteredEvents: _logic.getFilteredEvents,
-                    subjects: _logic.subjects,
-                    groupEventsByDay: _logic.groupEventsByDay,
-                    getGroupLabel: _logic.getGroupLabel,
-                    onPageChanged: _onPageChanged,
-                  ),
+                  child: _showGoogleView
+                      ? EventListViewMobileGoogle(
+                          pageController: _pageController,
+                          weekDays: _logic.weekDays,
+                          getFilteredEvents: _logic.getFilteredEvents,
+                          subjects: _logic.subjects,
+                          groupEventsByDay: _logic.groupEventsByDay,
+                          getGroupLabel: _logic.getGroupLabel,
+                          onPageChanged: _onPageChanged,
+                        )
+                      : EventListViewMobile(
+                          pageController: _pageController,
+                          weekDays: _logic.weekDays,
+                          getFilteredEvents: _logic.getFilteredEvents,
+                          subjects: _logic.subjects,
+                          groupEventsByDay: _logic.groupEventsByDay,
+                          getGroupLabel: _logic.getGroupLabel,
+                          onPageChanged: _onPageChanged,
+                        ),
                 ),
               ],
             ],
           );
         },
       ),
+      floatingActionButton: !_isDesktop
+          ? FloatingActionButton(
+              onPressed: _toggleView,
+              child: Icon(
+                _showGoogleView ? Icons.list : Icons.calendar_view_day,
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+              tooltip: _showGoogleView ? 'Ver vista normal' : 'Ver vista Google',
+            )
+          : null,
     );
   }
 }

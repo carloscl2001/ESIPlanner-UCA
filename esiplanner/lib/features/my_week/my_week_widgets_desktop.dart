@@ -5,7 +5,6 @@ import 'package:esiplanner/shared/subject_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../app_colors.dart';
 
 class SelectedDayRowDesktop extends StatelessWidget {
   final bool isDarkMode;
@@ -231,7 +230,7 @@ class EventListViewDesktop extends StatelessWidget {
   final Function(int) onPageChanged;
   final double sizeTramo = 65;
 
-  EventListViewDesktop({
+  const EventListViewDesktop({
     super.key,
     required this.pageController,
     required this.weekDays,
