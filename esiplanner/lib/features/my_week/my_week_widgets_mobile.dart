@@ -502,7 +502,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 10, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 5, right: 10, top: 50, bottom: 0),
         child: Column(
           children: [
             Row(
