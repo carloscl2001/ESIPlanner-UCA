@@ -142,23 +142,37 @@ class DayButtonRowDesktop extends StatelessWidget {
     
           return GestureDetector(
             onTap: () => onDaySelected(day),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
+            child: Container(
               width: 80,
               height: 100,
               margin: const EdgeInsets.symmetric(horizontal: 8), // Más espacio entre botones
               decoration: BoxDecoration(
-                color: isSelected
+                color: selectedDay == day
                     ? (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900)
-                    : Colors.transparent,
+                    : null,
+                gradient: selectedDay != day
+                    ? (isDarkMode
+                        ? LinearGradient(
+                            colors: [Colors.black, Colors.black],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : LinearGradient(
+                            colors: [Colors.white, Colors.white],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ))
+                    : null,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected 
-                      ? Colors.transparent
-                      : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300),
-                  width: 1.5,
-                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: !isDarkMode
+                        ? Colors.black.withAlpha(115)
+                        : Colors.grey.withAlpha(115),
+                    blurRadius: 8.0,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -315,7 +329,7 @@ class EventListViewDesktop extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No classes scheduled',
+            'No tienes clases',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -324,7 +338,7 @@ class EventListViewDesktop extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Enjoy your free time!',
+            'Disfruta de tu tiempo libre!',
             style: TextStyle(
               fontSize: 16,
               color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
