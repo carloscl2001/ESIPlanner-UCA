@@ -193,15 +193,12 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
       floatingActionButton: !_isDesktop
-          ? FloatingActionButton(
-              onPressed: _toggleView,
-              tooltip: _showGoogleView ? 'Ver vista normal' : 'Ver vista Google',
-              child: Icon(
-                _showGoogleView ? Icons.list : Icons.calendar_view_day,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
-            )
-          : null,
+        ? ViewToggleFab(
+            isDarkMode: isDarkMode,
+            showGoogleView: _showGoogleView,
+            onPressed: _toggleView,
+          )
+        : null,
     );
   }
 }

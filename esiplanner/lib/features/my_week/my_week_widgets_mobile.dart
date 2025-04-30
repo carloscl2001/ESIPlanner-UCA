@@ -395,7 +395,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
     final subjectColors = SubjectColors(isDarkMode);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
       ),
@@ -517,7 +517,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 5, right: 5, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 50, bottom: 0),
         child: Column(
           children: [
             Row(
@@ -619,7 +619,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
         top: topPosition,
         height: height,
         left: 0,
-        right: 16,
+        right: 4,
         child: Row(
           children: group.map((eventData) {
             final subjectName = eventData['subjectName'];
@@ -695,6 +695,31 @@ class BuildEmptyCardMobile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ViewToggleFab extends StatelessWidget {
+  final bool isDarkMode;
+  final bool showGoogleView;
+  final VoidCallback onPressed;
+
+  const ViewToggleFab({
+    super.key,
+    required this.isDarkMode,
+    required this.showGoogleView,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      tooltip: showGoogleView ? 'Ver vista normal' : 'Ver vista Google',
+      child: Icon(
+        showGoogleView ? Icons.list : Icons.calendar_view_day,
+        color: isDarkMode ? Colors.white : Colors.black,
       ),
     );
   }

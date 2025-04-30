@@ -389,7 +389,7 @@ class EventListViewDesktop extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Transform.translate(
-                            offset: const Offset(-35, -35),
+                            offset: const Offset(-30, -33),
                             child: Text(
                               DateFormat('HH:mm').format(currentTime),
                               style: TextStyle(
@@ -478,7 +478,7 @@ class EventListViewDesktop extends StatelessWidget {
         top: topPosition,
         height: height,
         left: 0,
-        right: 16,
+        right: 10,
         child: Row(
           children: group.map((eventData) {
             final subjectName = eventData['subjectName'];
