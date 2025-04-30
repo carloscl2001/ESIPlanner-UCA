@@ -502,36 +502,33 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 1, right: 20, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 5, right: 5, top: 50, bottom: 0),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 80,
-                  child: Column(
-                    children: List.generate(totalHalfHours + 1, (index) {
-                      final currentTime = startTime.add(Duration(minutes: 30 * index));
-                      return SizedBox(
-                        height: sizeTramo,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Transform.translate(
-                            offset: const Offset(-35, -35),
-                            child: Text(
-                              DateFormat('HH:mm').format(currentTime),
-                              style: TextStyle(
-                                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                Column(
+                  children: List.generate(totalHalfHours + 1, (index) {
+                    final currentTime = startTime.add(Duration(minutes: 30 * index));
+                    return SizedBox(
+                      height: sizeTramo,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Transform.translate(
+                          offset: const Offset(-5, -35),
+                          child: Text(
+                            DateFormat('HH:mm').format(currentTime),
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      );
-                    }),
-                  ),
+                      ),
+                    );
+                  }),
                 ),
                 Container(
                   width: 1,
