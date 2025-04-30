@@ -290,7 +290,7 @@ class EventListViewDesktop extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.event_note,
+            Icons.event_busy_rounded,
             size: 60,
             color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
           ),

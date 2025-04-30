@@ -133,13 +133,32 @@ class EventListMobile extends StatelessWidget {
 
     if (groupedByDate.isEmpty) {
       return Center(
-        child: Text(
-          'No hay clases',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.event_busy_rounded,
+              size: 60,
+              color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'No tienes clases',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Disfruta de tu tiempo libre!',
+              style: TextStyle(
+                fontSize: 16,
+                color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+              ),
+            ),
+          ],
         ),
       );
     }
