@@ -111,7 +111,7 @@ class WeekSelectorDesktop extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = isDarkMode ? Colors.grey[800]! : Colors.grey[600]!;
+    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.grey;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
