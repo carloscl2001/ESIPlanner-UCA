@@ -45,7 +45,7 @@ class EventCard extends StatelessWidget {
                   children: [
                     Icon(Icons.school_rounded,  color: subjectColor, size: 16),
                     const SizedBox(width: 8),
-                    Text('$classType - ${getGroupLabel(classType[0])}'),
+                    Text('$classType - ${getGroupLabel(classType[0])}', style: const TextStyle(fontWeight: FontWeight.normal)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -53,15 +53,15 @@ class EventCard extends StatelessWidget {
                   children: [
                     Icon(Icons.schedule_outlined, color: subjectColor, size: 16),
                     const SizedBox(width: 8),
-                    Text('$startTime - $endTime'),
+                    Text('$startTime - $endTime', style: const TextStyle(fontWeight: FontWeight.normal)),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.location_on_rounded, color: subjectColor, size: 16),
+                    Icon(Icons.location_on, color: subjectColor, size: 16),
                     const SizedBox(width: 8),
-                    Text('$location'),
+                    Text('$location', style: const TextStyle(fontWeight: FontWeight.normal)),
                   ],
                 ),
               ],
@@ -179,7 +179,7 @@ class EventCard extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(Icons.location_on_rounded, size: 14, color: subjectColor),
+                  Icon(Icons.location_on, size: 14, color: subjectColor),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

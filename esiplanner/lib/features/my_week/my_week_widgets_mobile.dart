@@ -375,38 +375,34 @@ class EventListViewMobileGoogle extends StatelessWidget {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
     final subjectColors = SubjectColors(isDarkMode);
 
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-              },
-            ),
-            child: PageView.builder(
-              controller: pageController,
-              onPageChanged: onPageChanged,
-              physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
-              itemCount: weekDays.length,
-              itemBuilder: (context, index) {
-                final day = weekDays[index];
-                final dayEvents = getFilteredEvents(day);
-
-                if (dayEvents.isEmpty) {
-                  return _buildEmptyState(isDarkMode);
-                }
-
-                return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
-              },
-            ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
+      ),
+      child: ClipRRect(
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+            },
+          ),
+          child: PageView.builder(
+            controller: pageController,
+            onPageChanged: onPageChanged,
+            physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              final day = weekDays[index];
+              final dayEvents = getFilteredEvents(day);
+    
+              if (dayEvents.isEmpty) {
+                return _buildEmptyState(isDarkMode);
+              }
+    
+              return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
+            },
           ),
         ),
       ),
