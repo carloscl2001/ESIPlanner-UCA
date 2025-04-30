@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:esiplanner/providers/theme_provider.dart';
-import 'package:esiplanner/shared/event_card.dart';
-import 'package:esiplanner/shared/subject_colors.dart';
+import 'package:esiplanner/shared/widgets/event_card.dart';
+import 'package:esiplanner/utils.dart/subject_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

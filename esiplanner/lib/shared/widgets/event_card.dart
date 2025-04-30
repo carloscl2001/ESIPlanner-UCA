@@ -1,4 +1,4 @@
-import 'package:esiplanner/shared/subject_colors.dart';
+import 'package:esiplanner/utils.dart/subject_colors.dart';
 import 'package:flutter/material.dart';
 
 class EventCard extends StatelessWidget {
