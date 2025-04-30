@@ -110,9 +110,6 @@ class _TimetableWeekScreenState extends State<TimetableWeekScreen> {
 class WeeklyViewMobileGoogle extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
-  final double dayColumnWidth = 250.0; // Antes era 100.0
-  final double timeColumnWidth = 60.0;
-  final double hourSlotHeight = 65.0;
   final TimeOfDay startHour = const TimeOfDay(hour: 8, minute: 0); // 8:00 AM
   final TimeOfDay endHour = const TimeOfDay(hour: 22, minute: 0); // 10:00 PM
 
@@ -122,45 +119,61 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
     required this.isDarkMode,
   });
 
-
   @override
   Widget build(BuildContext context) {
-    final weekDays = logic.weekDays;
-    final weekDates = logic.getWeekDays();
-    final eventsByDate = logic.groupEventsByDate();
-    final subjectColors = SubjectColors(isDarkMode);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calcula dimensiones basadas en las constraints
+        final timeColumnWidth = 60.0;
+        final hourSlotHeight = 65.0;
+        final dayColumnWidth = (constraints.maxWidth - timeColumnWidth)/5;
 
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
-      ),
-      child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-          },
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, // Scroll vertical principal
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // Scroll horizontal para días
-            child: Column(
-              children: [
-                // Header de días
-                _buildDaysHeader(weekDays, weekDates),
-                // Contenido principal (horas + eventos)
-                _buildTimeAndEventsContent(weekDays, weekDates, eventsByDate, subjectColors),
-              ],
+        final weekDays = logic.weekDays;
+        final weekDates = logic.getWeekDays();
+        final eventsByDate = logic.groupEventsByDate();
+        final subjectColors = SubjectColors(isDarkMode);
+
+        return Container(
+          margin: const EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
+          ),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+              },
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  _buildDaysHeader(weekDays, weekDates, timeColumnWidth, dayColumnWidth),
+                  _buildTimeAndEventsContent(
+                    weekDays: weekDays,
+                    weekDates: weekDates,
+                    eventsByDate: eventsByDate,
+                    subjectColors: subjectColors,
+                    timeColumnWidth: timeColumnWidth,
+                    dayColumnWidth: dayColumnWidth,
+                    hourSlotHeight: hourSlotHeight,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildDaysHeader(List<String> weekDays, List<DateTime> weekDates) {
+  Widget _buildDaysHeader(
+    List<String> weekDays,
+    List<DateTime> weekDates,
+    double timeColumnWidth,
+    double dayColumnWidth,
+  ) {
     return Container(
       height: 40,
       color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
@@ -214,40 +227,45 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
       ),
     );
   }
-  
+
   bool _isToday(DateTime date) {
     final now = DateTime.now();
     return date.year == now.year && date.month == now.month && date.day == now.day;
-  } 
+  }
 
-  
-
-  Widget _buildTimeAndEventsContent(
-    List<String> weekDays,
-    List<DateTime> weekDates,
-    Map<String, List<Map<String, dynamic>>> eventsByDate,
-    SubjectColors subjectColors,
-  ) {
+  Widget _buildTimeAndEventsContent({
+    required List<String> weekDays,
+    required List<DateTime> weekDates,
+    required Map<String, List<Map<String, dynamic>>> eventsByDate,
+    required SubjectColors subjectColors,
+    required double timeColumnWidth,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+  }) {
     final totalSlots = _calculateTotalTimeSlots();
     
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Columna de horas
-        _buildTimeColumn(totalSlots),
-        // Columnas de días
+        _buildTimeColumn(totalSlots, timeColumnWidth, hourSlotHeight),
         ...List.generate(weekDays.length, (index) {
           final dateKey = DateFormat('yyyy-MM-dd').format(weekDates[index]);
           final dayEvents = eventsByDate[dateKey] ?? [];
           dayEvents.sort(logic.sortEventsByTime);
           
-          return _buildDayColumn(dayEvents, subjectColors);
+          return _buildDayColumn(
+            events: dayEvents,
+            subjectColors: subjectColors,
+            totalSlots: totalSlots,
+            dayColumnWidth: dayColumnWidth,
+            hourSlotHeight: hourSlotHeight,
+          );
         }),
       ],
     );
   }
 
-  Widget _buildTimeColumn(int totalSlots) {
+  Widget _buildTimeColumn(int totalSlots, double timeColumnWidth, double hourSlotHeight) {
     return Container(
       width: timeColumnWidth,
       child: Column(
@@ -271,11 +289,13 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
     );
   }
 
-  Widget _buildDayColumn(
-    List<Map<String, dynamic>> events,
-    SubjectColors subjectColors,
-  ) {
-    final totalSlots = _calculateTotalTimeSlots();
+  Widget _buildDayColumn({
+    required List<Map<String, dynamic>> events,
+    required SubjectColors subjectColors,
+    required int totalSlots,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+  }) {
     final overlappingInfo = logic.calculateOverlappingEvents(events);
 
     return Container(
@@ -299,45 +319,107 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
             }),
           ),
           // Eventos
-          ..._buildEventsForDay(events, overlappingInfo, subjectColors),
+          ..._buildEventsForDay(
+            events: events,
+            overlappingInfo: overlappingInfo,
+            subjectColors: subjectColors,
+            dayColumnWidth: dayColumnWidth,
+            hourSlotHeight: hourSlotHeight,
+          ),
         ],
       ),
     );
   }
 
+  List<Widget> _buildEventsForDay({
+    required List<Map<String, dynamic>> events,
+    required List<bool> overlappingInfo,
+    required SubjectColors subjectColors,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+  }) {
+    // Primero agrupamos los eventos solapados
+    final List<List<Map<String, dynamic>>> eventGroups = [];
+    List<Map<String, dynamic>> currentGroup = [];
 
-  List<Widget> _buildEventsForDay(
-    List<Map<String, dynamic>> events,
-    List<bool> overlappingInfo,
-    SubjectColors subjectColors,
-  ) {
-    return List.generate(events.length, (index) {
-      final eventData = events[index];
+    for (int i = 0; i < events.length; i++) {
+      if (i > 0) {
+        final prevEvent = events[i-1];
+        final currentEvent = events[i];
+        
+        final prevEnd = DateTime.parse('${prevEvent['event']['date']} ${prevEvent['event']['end_hour']}');
+        final currentStart = DateTime.parse('${currentEvent['event']['date']} ${currentEvent['event']['start_hour']}');
+        
+        if (currentStart.isBefore(prevEnd)) {
+          // Hay solapamiento
+          if (currentGroup.isEmpty) {
+            currentGroup.add(prevEvent);
+          }
+          currentGroup.add(currentEvent);
+        } else {
+          if (currentGroup.isNotEmpty) {
+            eventGroups.add(List.from(currentGroup));
+            currentGroup.clear();
+          }
+        }
+      }
+    }
+
+    if (currentGroup.isNotEmpty) {
+      eventGroups.add(List.from(currentGroup));
+    }
+
+    // Construimos los widgets
+    final List<Widget> widgets = [];
+    
+    for (int i = 0; i < events.length; i++) {
+      final eventData = events[i];
       final event = eventData['event'];
-      final isOverlapping = index < overlappingInfo.length ? overlappingInfo[index] : false;
       final subjectName = eventData['subjectName'];
       final subjectColor = subjectColors.getSubjectColor(subjectName);
       
       final startTime = DateTime.parse('${event['date']} ${event['start_hour']}');
       final endTime = DateTime.parse('${event['date']} ${event['end_hour']}');
       
-      final topPosition = _calculateEventTopPosition(startTime);
-      final height = _calculateEventHeight(startTime, endTime);
+      final topPosition = _calculateEventTopPosition(startTime, hourSlotHeight);
+      final height = _calculateEventHeight(startTime, endTime, hourSlotHeight);
       
-      return Positioned(
-        top: topPosition + 40, // 40 for header
-        left: isOverlapping ? dayColumnWidth / 2 : 2,
-        right: 2,
-        height: height - 4, // small margin
-        child: EventCard(
-          eventData: eventData,
-          getGroupLabel: logic.getGroupLabel,
-          subjectColor: subjectColor,
-          isDarkMode: isDarkMode,
-          isCompact: isOverlapping,
+      // Buscamos si este evento está en algún grupo de solapamiento
+      int? groupIndex;
+      int positionInGroup = 0;
+      for (int g = 0; g < eventGroups.length; g++) {
+        if (eventGroups[g].contains(eventData)) {
+          groupIndex = g;
+          positionInGroup = eventGroups[g].indexOf(eventData);
+          break;
+        }
+      }
+      
+      final isOverlapping = groupIndex != null;
+      final totalOverlapping = isOverlapping ? eventGroups[groupIndex!].length : 1;
+      
+      widgets.add(
+        Positioned(
+          top: topPosition + 40, // 40 for header
+          left: isOverlapping 
+              ? (dayColumnWidth / totalOverlapping) * positionInGroup + 2
+              : 2,
+          width: isOverlapping 
+              ? (dayColumnWidth / totalOverlapping) - 4
+              : dayColumnWidth - 4,
+          height: height - 4, // small margin
+          child: EventCard(
+            eventData: eventData,
+            getGroupLabel: logic.getGroupLabel,
+            subjectColor: subjectColor,
+            isDarkMode: isDarkMode,
+            isCompact: isOverlapping,
+          ),
         ),
       );
-    });
+    }
+    
+    return widgets;
   }
 
   int _calculateTotalTimeSlots() {
@@ -351,14 +433,14 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
     return DateTime(2023, 1, 1, minutes ~/ 60, minutes % 60);
   }
 
-  double _calculateEventTopPosition(DateTime eventStart) {
+  double _calculateEventTopPosition(DateTime eventStart, double hourSlotHeight) {
     final startMinutes = startHour.hour * 60 + startHour.minute;
     final eventMinutes = eventStart.hour * 60 + eventStart.minute;
     final slotIndex = (eventMinutes - startMinutes) ~/ 30;
     return slotIndex * hourSlotHeight;
   }
 
-  double _calculateEventHeight(DateTime eventStart, DateTime eventEnd) {
+  double _calculateEventHeight(DateTime eventStart, DateTime eventEnd, double hourSlotHeight) {
     final durationMinutes = eventEnd.difference(eventStart).inMinutes;
     return (durationMinutes / 30) * hourSlotHeight;
   }
