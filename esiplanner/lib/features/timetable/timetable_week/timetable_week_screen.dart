@@ -23,6 +23,7 @@ class TimetableWeekScreen extends StatefulWidget {
 
 class _TimetableWeekScreenState extends State<TimetableWeekScreen> {
   bool _showGoogleView = false;
+  final bool _isDesktop = false; // Nueva variable de estado para almacenar si es desktop
 
   void _toggleView() {
     setState(() {
@@ -90,18 +91,13 @@ class _TimetableWeekScreenState extends State<TimetableWeekScreen> {
           );
         },
       ),
-      floatingActionButton: Builder(
-        builder: (context) {
-          final isDesktop = MediaQuery.of(context).size.width > 1024;
-          return !isDesktop
-              ? ViewToggleFab(
-                  isDarkMode: widget.isDarkMode,
-                  showGoogleView: _showGoogleView,
-                  onPressed: _toggleView,
-                )
-              : const SizedBox.shrink(); // Devuelve un Widget en lugar de null
-        },
-      ),
+      floatingActionButton: !_isDesktop
+        ? ViewToggleFab(
+            isDarkMode: widget.isDarkMode,
+            showGoogleView: _showGoogleView,
+            onPressed: _toggleView,
+          )
+        : null, // Devuelve un Widget en lugar de null
     );
   }
 }
