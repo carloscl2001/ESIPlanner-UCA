@@ -1,6 +1,10 @@
+import 'dart:ui';
+
+import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:esiplanner/shared/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'timetable_week_logic.dart';
 import '../../../shared/widgets/class_cards.dart';
 import '../../../utils.dart/subject_colors.dart';
@@ -215,32 +219,63 @@ class EventListMobile extends StatelessWidget {
   }
 }
 
-class EventListMobileGoogle extends StatelessWidget {
-  final TimetableWeekLogic logic;
-  final bool isDarkMode;
-  final double sizeTramo = 65;
+class EventListViewMobileGoogle extends StatelessWidget {
+  final PageController pageController;
+  final List<String> weekDays;
+  final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
+  final List<Map<String, dynamic>> subjects;
+  final Map<String, List<Map<String, dynamic>>> Function(List<Map<String, dynamic>>) groupEventsByDay;
+  final String Function(String) getGroupLabel;
+  final Function(int) onPageChanged;
+  final double sizeTramo = 250;
 
-  const EventListMobileGoogle({
+  const EventListViewMobileGoogle({
     super.key,
-    required this.logic,
-    required this.isDarkMode,
+    required this.pageController,
+    required this.weekDays,
+    required this.getFilteredEvents,
+    required this.subjects,
+    required this.groupEventsByDay,
+    required this.getGroupLabel,
+    required this.onPageChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
     final subjectColors = SubjectColors(isDarkMode);
-    final events = logic.events;
-
-    if (events.isEmpty) {
-      return _buildEmptyState(isDarkMode);
-    }
 
     return Container(
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
+        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
       ),
-      child: _buildDayViewVertical(events, isDarkMode, subjectColors)
+      child: ClipRRect(
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+            },
+          ),
+          child: PageView.builder(
+            controller: pageController,
+            onPageChanged: onPageChanged,
+            physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              final day = weekDays[index];
+              final dayEvents = getFilteredEvents(day);
+    
+              if (dayEvents.isEmpty) {
+                return _buildEmptyState(isDarkMode);
+              }
+    
+              return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -444,7 +479,7 @@ class EventListMobileGoogle extends StatelessWidget {
             return Expanded(
               child: EventCard(
                 eventData: eventData,
-                getGroupLabel: logic.getGroupLabel,
+                getGroupLabel: getGroupLabel,
                 subjectColor: subjectColor,
                 isDarkMode: isDarkMode,
               ),
@@ -455,6 +490,7 @@ class EventListMobileGoogle extends StatelessWidget {
     }).toList();
   }
 }
+
 
 class ViewToggleFab extends StatelessWidget {
   final bool isDarkMode;
@@ -480,3 +516,4 @@ class ViewToggleFab extends StatelessWidget {
     );
   }
 }
+
