@@ -89,11 +89,34 @@ class SelectGroupsLogic extends ChangeNotifier {
     }
   }
 
-  void updateRestrictions(bool requireAll, bool onePerType) {
+  void updateRestrictions(bool requireAll, bool onePerType, {bool forceClean = false}) {
+    if ((onePerType && !oneGroupPerType) || forceClean) {
+      _cleanMultipleSelections();
+    }
+    
     requireAllTypes = requireAll;
     oneGroupPerType = onePerType;
     notifyListeners();
   }
+
+  void _cleanMultipleSelections() {
+    for (final subjectCode in selectedGroups.keys) {
+      final Map<String, String> cleanedSelections = {};
+      final typesSeen = <String>{};
+      
+      selectedGroups[subjectCode]?.forEach((groupType, _) {
+        final letter = groupType[0];
+        if (!typesSeen.contains(letter)) {
+          cleanedSelections[groupType] = groupType;
+          typesSeen.add(letter);
+        }
+      });
+      
+      selectedGroups[subjectCode] = cleanedSelections;
+    }
+    notifyListeners();
+  }
+
 
   void selectGroup(String subjectCode, String groupTypeFull, String groupTypeToSet) {
     // groupTypeFull viene como "C1", "C2", etc.
@@ -130,11 +153,7 @@ class SelectGroupsLogic extends ChangeNotifier {
     return selectedGroups[subjectCode]?.containsKey(groupType) ?? false;
   }
 
-  void toggleGroupSelection(
-    String subjectCode, 
-    String groupType,
-    bool oneGroupPerType,
-  ) {
+  void toggleGroupSelection(String subjectCode, String groupType) {
     final currentSelections = Map<String, String>.from(
       selectedGroups[subjectCode] ?? {}
     );
@@ -146,8 +165,7 @@ class SelectGroupsLogic extends ChangeNotifier {
       currentSelections.remove(groupType);
     } else {
       if (oneGroupPerType) {
-        // Eliminar otros grupos del mismo tipo
-        currentSelections.removeWhere((key, value) => key[0] == letter);
+        currentSelections.removeWhere((key, _) => key[0] == letter);
       }
       currentSelections[groupType] = groupType;
     }

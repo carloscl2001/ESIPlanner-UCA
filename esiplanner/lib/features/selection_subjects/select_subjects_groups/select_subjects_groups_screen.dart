@@ -55,8 +55,8 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
       builder: (context) => SettingsDialog(
         requireAllTypes: logic.requireAllTypes,
         oneGroupPerType: logic.oneGroupPerType,
-        onSettingsChanged: (allTypes, onePerType) {
-          logic.updateRestrictions(allTypes, onePerType);
+        onSettingsChanged: (allTypes, onePerType, {forceClean = false}) {
+          logic.updateRestrictions(allTypes, onePerType, forceClean: forceClean);
         },
       ),
     );

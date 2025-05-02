@@ -71,7 +71,7 @@ class SelectGroupsContent extends StatelessWidget {
 class SettingsDialog extends StatefulWidget {
   final bool requireAllTypes;
   final bool oneGroupPerType;
-  final Function(bool, bool) onSettingsChanged;
+  final Function(bool, bool, {bool forceClean}) onSettingsChanged;
 
   const SettingsDialog({
     super.key,
@@ -104,7 +104,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
         children: [
           SwitchListTile(
             title: const Text('Seleccionar todos los tipos de grupos'),
-            subtitle: const Text('Requiere seleccionar al menos un grupo de cada tipo'),
             value: tempRequireAll,
             onChanged: (value) {
               setState(() {
@@ -115,13 +114,12 @@ class _SettingsDialogState extends State<SettingsDialog> {
           ),
           SwitchListTile(
             title: const Text('Seleccionar solo un grupo por tipo'),
-            subtitle: const Text('Permite solo un grupo seleccionado por cada tipo (A, B, C, etc.)'),
             value: tempOnePerType,
-            onChanged: tempRequireAll ? (value) {
+            onChanged: !tempRequireAll ? null : (value) {
               setState(() {
                 tempOnePerType = value;
               });
-            } : null,
+            },
           ),
         ],
       ),
@@ -132,7 +130,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
         ),
         TextButton(
           onPressed: () {
-            widget.onSettingsChanged(tempRequireAll, tempOnePerType);
+            final wasDisabled = !widget.oneGroupPerType;
+            final enablingNow = tempOnePerType;
+            
+            widget.onSettingsChanged(
+              tempRequireAll, 
+              tempOnePerType,
+              forceClean: wasDisabled && enablingNow,
+            );
             Navigator.pop(context);
           },
           child: const Text('Aplicar'),
@@ -318,46 +323,42 @@ class SubjectGroupCard extends StatelessWidget {
                         final isSelected = logic.isGroupSelected(subject['code'], groupType);
                         
                         return GestureDetector(
-                          onTap: () {
-                            logic.toggleGroupSelection(
-                              subject['code'], 
-                              groupType,
-                              oneGroupPerType,
-                            );
-                          },
+                          onTap: () => logic.toggleGroupSelection(subject['code'], groupType),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12, 
-                              vertical: 8,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? (isDarkMode 
-                                      ? Colors.yellow.shade700 
-                                      : Colors.indigo.shade100)
-                                  : (isDarkMode 
-                                      ? Colors.grey.shade800 
-                                      : Colors.white),
+                                  ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade100)
+                                  : (isDarkMode ? Colors.grey.shade800 : Colors.white),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: isDarkMode 
-                                    ? Colors.grey.shade200 
-                                    : Colors.indigo.shade300,
+                                color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
                               ),
                             ),
-                            child: Text(
-                              groupType,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: isSelected
-                                    ? (isDarkMode 
-                                        ? Colors.black 
-                                        : Colors.indigo)
-                                    : (isDarkMode 
-                                        ? Colors.yellow.shade700 
-                                        : Colors.indigo),
-                                fontWeight: FontWeight.w500,
-                              ),
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Text(
+                                  groupType,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: isSelected
+                                        ? (isDarkMode ? Colors.black : Colors.indigo)
+                                        : (isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (isSelected && logic.oneGroupPerType)
+                                  Positioned(
+                                    right: -8,
+                                    top: -8,
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      size: 16,
+                                      color: isDarkMode ? Colors.black : Colors.indigo,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         );
