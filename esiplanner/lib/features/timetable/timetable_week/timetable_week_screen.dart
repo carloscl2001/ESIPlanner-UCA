@@ -199,7 +199,7 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
               width: dayColumnWidth,
               decoration: BoxDecoration(
                 color: isToday
-                    ? (isDarkMode ? Colors.blue.shade900.withOpacity(0.2) : Colors.blue.shade50)
+                    ? (isDarkMode ? Colors.blue.shade900.withValues(alpha: 0.2) : Colors.blue.shade50)
                     : null,
               ),
               child: Column(
@@ -222,7 +222,7 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -266,7 +266,7 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
   }
 
   Widget _buildTimeColumn(int totalSlots, double timeColumnWidth, double hourSlotHeight) {
-    return Container(
+    return SizedBox(
       width: timeColumnWidth,
       child: Column(
         children: List.generate(totalSlots, (index) {
@@ -298,7 +298,7 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
   }) {
     final overlappingInfo = logic.calculateOverlappingEvents(events);
 
-    return Container(
+    return SizedBox(
       width: dayColumnWidth,
       child: Stack(
         children: [
@@ -396,7 +396,7 @@ class WeeklyViewMobileGoogle extends StatelessWidget {
       }
       
       final isOverlapping = groupIndex != null;
-      final totalOverlapping = isOverlapping ? eventGroups[groupIndex!].length : 1;
+      final totalOverlapping = isOverlapping ? eventGroups[groupIndex].length : 1;
       
       widgets.add(
         Positioned(

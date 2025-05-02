@@ -20,8 +20,6 @@ class SelectGroupsScreen extends StatefulWidget {
 
 class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   late SelectGroupsLogic logic;
-  bool requireAllTypes = true;
-  bool oneGroupPerType = false;
 
   @override
   void initState() {
@@ -33,7 +31,7 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
   }
 
   Future<void> _saveSelections() async {
-    if ((requireAllTypes || oneGroupPerType) && !logic.allSelectionsComplete) {
+    if (logic.requireAllTypes && !logic.allSelectionsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -55,13 +53,10 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
     showDialog(
       context: context,
       builder: (context) => SettingsDialog(
-        requireAllTypes: requireAllTypes,
-        oneGroupPerType: oneGroupPerType,
+        requireAllTypes: logic.requireAllTypes,
+        oneGroupPerType: logic.oneGroupPerType,
         onSettingsChanged: (allTypes, onePerType) {
-          setState(() {
-            requireAllTypes = allTypes;
-            oneGroupPerType = onePerType;
-          });
+          logic.updateRestrictions(allTypes, onePerType);
         },
       ),
     );
@@ -98,8 +93,8 @@ class _SelectGroupsScreenState extends State<SelectGroupsScreen> {
                       ? const Center(child: CircularProgressIndicator())
                       : SelectGroupsContent(
                           isDarkMode: isDarkMode,
-                          requireAllTypes: requireAllTypes,
-                          oneGroupPerType: oneGroupPerType,
+                          requireAllTypes: logic.requireAllTypes,
+                          oneGroupPerType: logic.oneGroupPerType,
                         ),
                 ),
                 SaveButton(

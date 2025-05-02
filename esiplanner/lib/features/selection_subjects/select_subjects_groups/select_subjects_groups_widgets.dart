@@ -14,8 +14,6 @@ class SelectGroupsContent extends StatelessWidget {
     required this.oneGroupPerType,
   });
 
-  bool get strictMode => requireAllTypes || oneGroupPerType;
-
   @override
   Widget build(BuildContext context) {
     final logic = Provider.of<SelectGroupsLogic>(context, listen: true);
@@ -30,7 +28,7 @@ class SelectGroupsContent extends StatelessWidget {
           ),
           const SizedBox(height: 20),
         ],
-        if (strictMode && !logic.allSelectionsComplete)
+        if (requireAllTypes && !logic.allSelectionsComplete)
           SelectionWarning(isDarkMode: isDarkMode),
         Expanded(
           child: ListView.builder(
@@ -38,9 +36,9 @@ class SelectGroupsContent extends StatelessWidget {
             itemCount: logic.subjects.length,
             itemBuilder: (context, index) {
               final subject = logic.subjects[index];
-              final missingTypes = requireAllTypes 
-                  ? logic.getMissingTypesForSubject(subject['code'])
-                  : [];
+               final missingTypes = requireAllTypes 
+                  ? logic.getMissingTypesForSubject(subject['code']).cast<String>()
+                  : <String>[];
               
               Map<String, List<Map<String, dynamic>>> groupedClasses = {};
     
@@ -106,6 +104,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
         children: [
           SwitchListTile(
             title: const Text('Seleccionar todos los tipos de grupos'),
+            subtitle: const Text('Requiere seleccionar al menos un grupo de cada tipo'),
             value: tempRequireAll,
             onChanged: (value) {
               setState(() {
@@ -116,12 +115,13 @@ class _SettingsDialogState extends State<SettingsDialog> {
           ),
           SwitchListTile(
             title: const Text('Seleccionar solo un grupo por tipo'),
+            subtitle: const Text('Permite solo un grupo seleccionado por cada tipo (A, B, C, etc.)'),
             value: tempOnePerType,
-            onChanged: !tempRequireAll ? null : (value) {
+            onChanged: tempRequireAll ? (value) {
               setState(() {
                 tempOnePerType = value;
               });
-            },
+            } : null,
           ),
         ],
       ),
@@ -191,7 +191,7 @@ class SelectionWarning extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Card(
-        color: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.orange[50],
+        color: isDarkMode ? Colors.yellow.shade700.withAlpha(229) : Colors.orange[50],
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -211,10 +211,11 @@ class SelectionWarning extends StatelessWidget {
   }
 }
 
+
 class SubjectGroupCard extends StatelessWidget {
   final Map<String, dynamic> subject;
   final Map<String, List<Map<String, dynamic>>> groupedClasses;
-  final List<dynamic> missingTypes;
+  final List<String> missingTypes;
   final bool isDarkMode;
   final Map<String, String> subjectDegrees;
   final bool requireAllTypes;
@@ -313,40 +314,50 @@ class SubjectGroupCard extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: groupedClasses[letter]!.map<Widget>((group) {
-                        final isSelected = logic.selectedGroups[subject['code']]?[letter] == group['type'];
-                        return ChoiceChip(
-                          label: Text(
-                            group['type'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: isSelected 
-                                ? (isDarkMode ? Colors.black : Colors.indigo)
-                                : (isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          selected: isSelected,
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              if (oneGroupPerType) {
-                                final currentSelected = logic.selectedGroups[subject['code']]?[letter];
-                                if (currentSelected != null && currentSelected != group['type']) {
-                                  logic.selectGroup(subject['code'], letter, '');
-                                }
-                              }
-                              logic.selectGroup(subject['code'], letter, group['type']);
-                            } else {
-                              if (!oneGroupPerType) {
-                                logic.selectGroup(subject['code'], letter, '');
-                              }
-                            }
+                        final groupType = group['type'] as String;
+                        final isSelected = logic.isGroupSelected(subject['code'], groupType);
+                        
+                        return GestureDetector(
+                          onTap: () {
+                            logic.toggleGroupSelection(
+                              subject['code'], 
+                              groupType,
+                              oneGroupPerType,
+                            );
                           },
-                          selectedColor: isDarkMode ? Colors.yellow.shade700.withValues(alpha: 0.9) : Colors.indigo.shade100,
-                          backgroundColor: isDarkMode ? Colors.grey.shade800 : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12, 
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? (isDarkMode 
+                                      ? Colors.yellow.shade700 
+                                      : Colors.indigo.shade100)
+                                  : (isDarkMode 
+                                      ? Colors.grey.shade800 
+                                      : Colors.white),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDarkMode 
+                                    ? Colors.grey.shade200 
+                                    : Colors.indigo.shade300,
+                              ),
+                            ),
+                            child: Text(
+                              groupType,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected
+                                    ? (isDarkMode 
+                                        ? Colors.black 
+                                        : Colors.indigo)
+                                    : (isDarkMode 
+                                        ? Colors.yellow.shade700 
+                                        : Colors.indigo),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         );
@@ -355,7 +366,7 @@ class SubjectGroupCard extends StatelessWidget {
                     const SizedBox(height: 10),
                   ],
                 );
-              })
+              }),
             ],
           ),
         ),
@@ -384,9 +395,10 @@ class InfoRow extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: isTitle ? 24 : 24,
+          size: isTitle ? 24 : 20,
           color: isDarkMode 
-              ? Colors.yellow.shade700 : Colors.indigo.shade700,
+              ? Colors.yellow.shade700 
+              : Colors.indigo.shade700,
         ),
         const SizedBox(width: 8),
         Expanded(
