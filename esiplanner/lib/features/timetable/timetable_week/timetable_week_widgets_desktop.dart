@@ -1,248 +1,345 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'timetable_week_logic.dart';
-import '../../../shared/widgets/class_cards.dart';
+import '../../../utils.dart/subject_colors.dart';
+import '../../../shared/widgets/event_card.dart';
 
-class WeekHeaderDesktop extends StatelessWidget {
+class WeeklyViewMobileGoogle extends StatelessWidget {
   final TimetableWeekLogic logic;
   final bool isDarkMode;
+  final TimeOfDay startHour = const TimeOfDay(hour: 8, minute: 0); // 8:00 AM
+  final TimeOfDay endHour = const TimeOfDay(hour: 22, minute: 0); // 10:00 PM
 
-  const WeekHeaderDesktop({super.key, required this.logic, required this.isDarkMode});
+  const WeeklyViewMobileGoogle({
+    super.key,
+    required this.logic,
+    required this.isDarkMode,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final headerInfo = logic.getWeekHeaderInfo();
-    final showTwoMonths = headerInfo['startMonth'] != headerInfo['endMonth'];
-    final showTwoYears = headerInfo['startYear'] != headerInfo['endYear'];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final timeColumnWidth = 60.0;
+        final hourSlotHeight = 60.0;
+        final dayColumnWidth = (constraints.maxWidth - timeColumnWidth) / 5;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 0, top: 10.0, left: 30.0, right: 30.0),
+        final weekDays = logic.weekDays;
+        final weekDates = logic.getWeekDays();
+        final eventsByDate = logic.groupEventsByDate();
+        final subjectColors = SubjectColors(isDarkMode);
+
+        return Container(
+          margin: const EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
+          ),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+              },
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  _buildDaysHeader(weekDays, weekDates, timeColumnWidth, dayColumnWidth),
+                  _buildTimeAndEventsContent(
+                    weekDays: weekDays,
+                    weekDates: weekDates,
+                    eventsByDate: eventsByDate,
+                    subjectColors: subjectColors,
+                    timeColumnWidth: timeColumnWidth,
+                    dayColumnWidth: dayColumnWidth,
+                    hourSlotHeight: hourSlotHeight,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDaysHeader(
+    List<String> weekDays,
+    List<DateTime> weekDates,
+    double timeColumnWidth,
+    double dayColumnWidth,
+  ) {
+    return Container(
+      height: 50,
+      color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade100,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.black : Colors.grey,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: isDarkMode 
-                      ? Colors.grey.withValues(alpha: 0.4) 
-                      : Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 4.0,
-                  offset: const Offset(0, 0),
+          SizedBox(
+            width: timeColumnWidth,
+            child: Center(
+              child: Text(
+                'Hora',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: Text(
-              showTwoMonths 
-                  ? '${headerInfo['startMonth']} - ${headerInfo['endMonth']}'
-                  : headerInfo['startMonth']!,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.white,
               ),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.black : Colors.grey,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: isDarkMode 
-                      ? Colors.grey.withValues(alpha: 0.4) 
-                      : Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 4.0,
-                  offset: const Offset(0, 0),
+          ...weekDays.asMap().entries.map((entry) {
+            final index = entry.key;
+            final day = entry.value;
+            final isToday = _isToday(weekDates[index]);
+            return Container(
+              width: dayColumnWidth,
+              decoration: BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                    width: 1,
+                  ),
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            child: Text(
-              showTwoYears
-                  ? '${headerInfo['startYear']} - ${headerInfo['endYear']}'
-                  : headerInfo['startYear']!,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.white,
+                color: isToday
+                    ? (isDarkMode ? Colors.blue.shade900.withOpacity(0.2) : Colors.blue.shade50)
+                    : null,
               ),
-            ),
-          ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    day,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('d').format(weekDates[index]),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
   }
-}
 
-class EventListDesktop extends StatelessWidget {
-  final TimetableWeekLogic logic;
-  final bool isDarkMode;
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
 
-  const EventListDesktop({super.key, required this.logic, required this.isDarkMode});
+  Widget _buildTimeAndEventsContent({
+    required List<String> weekDays,
+    required List<DateTime> weekDates,
+    required Map<String, List<Map<String, dynamic>>> eventsByDate,
+    required SubjectColors subjectColors,
+    required double timeColumnWidth,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+  }) {
+    final totalSlots = _calculateTotalTimeSlots();
+    
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildTimeColumn(totalSlots, timeColumnWidth, hourSlotHeight),
+        ...List.generate(weekDays.length, (index) {
+          final dateKey = DateFormat('yyyy-MM-dd').format(weekDates[index]);
+          final dayEvents = eventsByDate[dateKey] ?? [];
+          dayEvents.sort(logic.sortEventsByTime);
+          
+          return _buildDayColumn(
+            events: dayEvents,
+            subjectColors: subjectColors,
+            totalSlots: totalSlots,
+            dayColumnWidth: dayColumnWidth,
+            hourSlotHeight: hourSlotHeight,
+            isToday: _isToday(weekDates[index]),
+          );
+        }),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    final weekDays = logic.getWeekDays();
-    final groupedByDate = logic.groupEventsByDate();
-
-    if (groupedByDate.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.event_busy_rounded,
-              size: 60,
-              color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'No tienes clases esta semana',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Disfruta de tu tiempo libre!',
-              style: TextStyle(
-                fontSize: 16,
-                color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-              ),
-            ),
-          ],
+  Widget _buildTimeColumn(int totalSlots, double timeColumnWidth, double hourSlotHeight) {
+    return Container(
+      width: timeColumnWidth,
+      decoration: BoxDecoration(
+        border: Border(
+          right: BorderSide(
+            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+            width: 1,
+          ),
         ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(5, (index) {
-          final day = weekDays[index];
-          final dateKey = DateFormat('yyyy-MM-dd').format(day);
-          final events = groupedByDate[dateKey] ?? [];
-          events.sort(logic.sortEventsByTime);
-          final isOverlapping = logic.calculateOverlappingEvents(events);
-
-          return Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-              decoration: BoxDecoration(
-                color: isDarkMode ? Colors.grey[900] : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDarkMode 
-                        ? Colors.grey.withValues(alpha: 0.4) 
-                        : Colors.black.withValues(alpha: 0.7),
-                    blurRadius: 8.0,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Header with day name and number
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 60.0, vertical: 12.0),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.black : Colors.blue.shade900,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                           '${DateFormat('EEEE', 'es_ES').format(day)[0].toUpperCase()}${DateFormat('EEEE', 'es_ES').format(day).substring(1)}',
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          DateFormat('d', 'es_ES').format(day),
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (events.isEmpty)...[
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.event_busy_rounded,
-                            size: 60,
-                            color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'No tienes clases',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Disfruta de tu tiempo libre!',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ]
-                  else
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(10),
-                        itemCount: events.length,
-                        itemBuilder: (context, idx) {
-                          final eventData = events[idx];
-                          final event = eventData['event'];
-                          final classType = eventData['classType'];
-                          final subjectName = eventData['subjectName'];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 0.0),
-                            child: ClassCards(
-                              subjectName: subjectName,
-                              classType: '$classType - ${logic.getGroupLabel(classType[0])}',
-                              event: event,
-                              isOverlap: isOverlapping[idx],
-                              isDesktop: true,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                ],
+      ),
+      child: Column(
+        children: List.generate(totalSlots, (index) {
+          final currentTime = _getTimeForSlot(index);
+          return SizedBox(
+            height: hourSlotHeight,
+            child: Center(
+              child: Text(
+                DateFormat('HH:mm').format(currentTime),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
             ),
           );
         }),
       ),
     );
+  }
+
+  Widget _buildDayColumn({
+    required List<Map<String, dynamic>> events,
+    required SubjectColors subjectColors,
+    required int totalSlots,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+    required bool isToday,
+  }) {
+    final overlappingInfo = logic.calculateOverlappingEvents(events);
+
+    return Container(
+      width: dayColumnWidth,
+      decoration: BoxDecoration(
+        border: Border(
+          right: BorderSide(
+            color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+            width: 1,
+          ),
+        ),
+        color: isToday 
+            ? (isDarkMode ? Colors.blue.shade900.withOpacity(0.1) : Colors.blue.shade50)
+            : null,
+      ),
+      child: Stack(
+        children: [
+          // Hour lines
+          Column(
+            children: List.generate(totalSlots, (index) {
+              return Container(
+                height: hourSlotHeight,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                      width: 1,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+          // Events
+          ..._buildEventsForDay(
+            events: events,
+            overlappingInfo: overlappingInfo,
+            subjectColors: subjectColors,
+            dayColumnWidth: dayColumnWidth,
+            hourSlotHeight: hourSlotHeight,
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildEventsForDay({
+    required List<Map<String, dynamic>> events,
+    required List<bool> overlappingInfo,
+    required SubjectColors subjectColors,
+    required double dayColumnWidth,
+    required double hourSlotHeight,
+  }) {
+    final List<Widget> widgets = [];
+    
+    for (int i = 0; i < events.length; i++) {
+      final eventData = events[i];
+      final event = eventData['event'];
+      final subjectName = eventData['subjectName'];
+      final subjectColor = subjectColors.getSubjectColor(subjectName);
+      
+      final startTime = DateTime.parse('${event['date']} ${event['start_hour']}');
+      final endTime = DateTime.parse('${event['date']} ${event['end_hour']}');
+      
+      final topPosition = _calculateEventTopPosition(startTime, hourSlotHeight);
+      final height = _calculateEventHeight(startTime, endTime, hourSlotHeight);
+      
+      // Calculate width based on overlapping
+      double left = 2;
+      double width = dayColumnWidth - 4;
+      
+      if (overlappingInfo[i]) {
+        // Find all overlapping events
+        final overlappingEvents = [eventData];
+        for (int j = i + 1; j < events.length; j++) {
+          final nextEvent = events[j];
+          final nextStart = DateTime.parse('${nextEvent['event']['date']} ${nextEvent['event']['start_hour']}');
+          if (nextStart.isBefore(endTime)) {
+            overlappingEvents.add(nextEvent);
+          } else {
+            break;
+          }
+        }
+        
+        final overlapCount = overlappingEvents.length;
+        final overlapIndex = overlappingEvents.indexOf(eventData);
+        
+        width = (dayColumnWidth - 4) / overlapCount;
+        left = 2 + (width * overlapIndex);
+      }
+      
+      widgets.add(
+        Positioned(
+          top: topPosition + 50, // 50 for header
+          left: left,
+          width: width,
+          height: height - 2, // small margin
+          child: EventCard(
+            eventData: eventData,
+            getGroupLabel: logic.getGroupLabel,
+            subjectColor: subjectColor,
+            isDarkMode: isDarkMode,
+          ),
+        ),
+      );
+    }
+    
+    return widgets;
+  }
+
+  int _calculateTotalTimeSlots() {
+    final startMinutes = startHour.hour * 60 + startHour.minute;
+    final endMinutes = endHour.hour * 60 + endHour.minute;
+    return (endMinutes - startMinutes) ~/ 30;
+  }
+
+  DateTime _getTimeForSlot(int slotIndex) {
+    final minutes = startHour.hour * 60 + startHour.minute + (slotIndex * 30);
+    return DateTime(2023, 1, 1, minutes ~/ 60, minutes % 60);
+  }
+
+  double _calculateEventTopPosition(DateTime eventStart, double hourSlotHeight) {
+    final startMinutes = startHour.hour * 60 + startHour.minute;
+    final eventMinutes = eventStart.hour * 60 + eventStart.minute;
+    final slotIndex = (eventMinutes - startMinutes) ~/ 30;
+    return slotIndex * hourSlotHeight;
+  }
+
+  double _calculateEventHeight(DateTime eventStart, DateTime eventEnd, double hourSlotHeight) {
+    final durationMinutes = eventEnd.difference(eventStart).inMinutes;
+    return (durationMinutes / 30) * hourSlotHeight;
   }
 }

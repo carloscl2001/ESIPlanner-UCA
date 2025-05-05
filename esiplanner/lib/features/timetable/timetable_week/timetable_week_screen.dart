@@ -73,10 +73,17 @@ class _TimetableWeekScreenState extends State<TimetableWeekScreen> {
           return Column(
             children: [
               if (isDesktop) ...[
-                WeekHeaderDesktop(logic: logic, isDarkMode: widget.isDarkMode),
                 Expanded(
-                  child: EventListDesktop(logic: logic, isDarkMode: widget.isDarkMode),
-                ),
+                  child: _showGoogleView
+                      ? WeeklyViewMobileGoogle(
+                          logic: logic,
+                          isDarkMode: widget.isDarkMode,
+                        )
+                      : EventListMobile(
+                          logic: logic,
+                          isDarkMode: widget.isDarkMode,
+                        ),
+                )
               ] else ...[
                 WeekHeaderMobile(logic: logic, isDarkMode: widget.isDarkMode),
                 WeekDaysHeaderMobile(logic: logic, isDarkMode: widget.isDarkMode),
