@@ -102,14 +102,18 @@ class SelectGroupsLogic extends ChangeNotifier {
   void _cleanMultipleSelections() {
     for (final subjectCode in selectedGroups.keys) {
       final Map<String, String> cleanedSelections = {};
-      final typesSeen = <String>{};
+      final groupsByType = <String, List<String>>{};
       
-      selectedGroups[subjectCode]?.forEach((groupType, _) {
+      // Agrupar por tipo (C, D, etc.)
+      selectedGroups[subjectCode]?.keys.forEach((groupType) {
         final letter = groupType[0];
-        if (!typesSeen.contains(letter)) {
-          cleanedSelections[groupType] = groupType;
-          typesSeen.add(letter);
-        }
+        groupsByType.putIfAbsent(letter, () => []).add(groupType);
+      });
+      
+      // Ordenar y conservar el primero de cada tipo
+      groupsByType.forEach((letter, groups) {
+        groups.sort(); // Orden alfabético (C1, C2, C3)
+        cleanedSelections[groups.first] = groups.first;
       });
       
       selectedGroups[subjectCode] = cleanedSelections;

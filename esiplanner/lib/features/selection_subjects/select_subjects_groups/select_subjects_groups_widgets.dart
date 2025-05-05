@@ -335,31 +335,22 @@ class SubjectGroupCard extends StatelessWidget {
                                 color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
                               ),
                             ),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Text(
-                                  groupType,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: isSelected
-                                        ? (isDarkMode ? Colors.black : Colors.indigo)
-                                        : (isDarkMode ? Colors.yellow.shade700 : Colors.indigo),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                if (isSelected && logic.oneGroupPerType)
-                                  Positioned(
-                                    right: -8,
-                                    top: -8,
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      size: 16,
-                                      color: isDarkMode ? Colors.black : Colors.indigo,
+                            child:
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(groupType),
+                                  if (isSelected && logic.oneGroupPerType)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4),
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 14,
+                                        color: isDarkMode ? Colors.black : Colors.indigo,
+                                      ),
                                     ),
-                                  ),
-                              ],
-                            ),
+                                ],
+                              ),
                           ),
                         );
                       }).toList(),
