@@ -159,11 +159,11 @@ class SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(bottom: 60.0),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
-          onPressed: onPressed,
+          onPressed:  onPressed,
           icon: const Icon(Icons.group),
           label: const Text('Guardar selección'),
           style: ElevatedButton.styleFrom(
