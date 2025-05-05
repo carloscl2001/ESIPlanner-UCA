@@ -217,26 +217,15 @@ class AddSubjectFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Align(
-        alignment: Alignment.bottomRight,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: FloatingActionButton(
-            onPressed: onPressed,
-            backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-            foregroundColor: isDarkMode ? Colors.black : Colors.white,
-            child: const Icon(Icons.add),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            // Efecto hover personalizado
-            hoverElevation: 1, // Aumenta la sombra al hacer hover
-            hoverColor: isDarkMode 
-                ? Colors.yellow.shade600 // Color más claro en hover
-                : Colors.indigo.shade400,
-          ),
-        ),
+      padding: const EdgeInsets.only(bottom: 60.0),
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+        foregroundColor: isDarkMode ? Colors.black : Colors.white,
+        child: const Icon(Icons.add), // Aumenta la sombra al hacer hover
+          hoverColor: isDarkMode 
+              ? Colors.yellow.shade800 // Color más claro en hover
+              : Colors.indigo.shade400,
       ),
     );
   }
