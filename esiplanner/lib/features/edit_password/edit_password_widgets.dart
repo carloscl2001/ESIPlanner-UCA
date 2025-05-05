@@ -16,8 +16,8 @@ class EditPasswordForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width > 1024;
-    final cardWidth = isDesktop ? 500.0 : double.infinity;
-    final padding = isDesktop ? 32.0 : 24.0;
+    final cardWidth = isDesktop ? 600.0 : double.infinity;
+    final padding = isDesktop ? 24.0 : 24.0;
     final titleFontSize = isDesktop ? 28.0 : 24.0;
     final spacing = 24.0;
 
@@ -111,7 +111,7 @@ class PasswordField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Nueva Contraseña',
         labelStyle: TextStyle(
-          fontSize: isDesktop ? 18.0 : 16.0,
+          fontSize: isDesktop ? 16.0 : 16.0,
         ),
         prefixIcon: Icon(
           Icons.lock,

@@ -121,8 +121,8 @@ class ProfileField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: isDesktop ? 10.0 : 8.0),
-      padding: EdgeInsets.all(isDesktop ? 20.0 : 16.0),
+      margin: EdgeInsets.symmetric(vertical: isDesktop ? 10 : 8.0),
+      padding: EdgeInsets.all(isDesktop ? 18.0 : 16.0),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -146,7 +146,7 @@ class ProfileField extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                fontSize: isDesktop ? 17.0 : 16.0,
+                fontSize: isDesktop ? 16.0 : 16.0,
                 fontWeight: FontWeight.bold,
                 color: isDarkMode ? Colors.white : Colors.black,
               ),
