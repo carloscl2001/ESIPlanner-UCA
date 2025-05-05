@@ -108,14 +108,13 @@ class _SettingsDialogState extends State<SettingsDialog> {
             onChanged: (value) {
               setState(() {
                 tempRequireAll = value;
-                if (!value) tempOnePerType = false;
               });
             },
           ),
           SwitchListTile(
             title: const Text('Seleccionar solo un grupo por tipo'),
             value: tempOnePerType,
-            onChanged: !tempRequireAll ? null : (value) {
+            onChanged: (value) {
               setState(() {
                 tempOnePerType = value;
               });
@@ -161,27 +160,27 @@ class SaveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          'GUARDAR SELECCIÓN',
-          style: TextStyle(
-            color: isDarkMode ? Colors.black : Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: const Icon(Icons.group),
+          label: const Text('Guardar selección'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
+            foregroundColor: isDarkMode ? Colors.black : Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+
 
 class SelectionWarning extends StatelessWidget {
   final bool isDarkMode;
