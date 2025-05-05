@@ -159,13 +159,14 @@ class SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-       padding: const EdgeInsets.only(bottom: 60.0),
+      padding: const EdgeInsets.all(16.0),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
-          onPressed:  onPressed,
-          icon: const Icon(Icons.group),
-          label: const Text('Guardar selección'),
+          onPressed: onPressed,
+          icon: const Icon(Icons.save_rounded),
+          label: const Text('Guardar selecciones'),
+          iconAlignment: IconAlignment.end,
           style: ElevatedButton.styleFrom(
             backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
             foregroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -315,52 +316,52 @@ class SubjectGroupCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Wrap(
-  spacing: 8,
-  runSpacing: 8,
-  children: groupedClasses[letter]!.map<Widget>((group) {
-    final groupType = group['type'] as String;
-    final isSelected = logic.isGroupSelected(subject['code'], groupType);
-    
-    return GestureDetector(
-      onTap: () => logic.toggleGroupSelection(subject['code'], groupType),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade100)
-              : (isDarkMode ? Colors.grey.shade800 : Colors.white),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text( // ← Widget modificado
-              groupType,
-              style: TextStyle(
-                color: isSelected 
-                    ? (isDarkMode ? Colors.black :  Colors.indigo)
-                    : (isDarkMode ? Colors.white : Colors.indigo),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (isSelected && logic.oneGroupPerType)
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Icon(
-                  Icons.check,
-                  size: 14,
-                  color: isDarkMode ? Colors.black : Colors.indigo,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }).toList(),
-),
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: groupedClasses[letter]!.map<Widget>((group) {
+                        final groupType = group['type'] as String;
+                        final isSelected = logic.isGroupSelected(subject['code'], groupType);
+                        
+                        return GestureDetector(
+                          onTap: () => logic.toggleGroupSelection(subject['code'], groupType),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? (isDarkMode ? Colors.yellow.shade700 : Colors.indigo.shade100)
+                                  : (isDarkMode ? Colors.grey.shade800 : Colors.white),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDarkMode ? Colors.grey.shade200 : Colors.indigo.shade300,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text( // ← Widget modificado
+                                  groupType,
+                                  style: TextStyle(
+                                    color: isSelected 
+                                        ? (isDarkMode ? Colors.black :  Colors.indigo)
+                                        : (isDarkMode ? Colors.white : Colors.indigo),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (isSelected && logic.oneGroupPerType)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    child: Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: isDarkMode ? Colors.black : Colors.indigo,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                     const SizedBox(height: 10),
                   ],
                 );

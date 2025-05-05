@@ -178,6 +178,7 @@ class SelectSubjectsPrincipalWidgets {
           onPressed: hasSelectedSubjects ? onPressed : null,
           icon: const Icon(Icons.group),
           label: const Text('Asignar grupos'),
+           iconAlignment: IconAlignment.end,
           style: ElevatedButton.styleFrom(
             backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
             foregroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -222,10 +223,10 @@ class AddSubjectFAB extends StatelessWidget {
         onPressed: onPressed,
         backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
         foregroundColor: isDarkMode ? Colors.black : Colors.white,
-        child: const Icon(Icons.add), // Aumenta la sombra al hacer hover
-          hoverColor: isDarkMode 
-              ? Colors.yellow.shade800 // Color más claro en hover
-              : Colors.indigo.shade400,
+        hoverColor: isDarkMode 
+            ? Colors.yellow.shade800 // Color más claro en hover
+            : Colors.indigo.shade400,
+        child: const Icon(Icons.add), // ← child debe ser el último parámetro
       ),
     );
   }
