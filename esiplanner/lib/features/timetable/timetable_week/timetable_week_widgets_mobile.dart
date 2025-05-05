@@ -1,7 +1,13 @@
+import 'dart:ui';
+
+import 'package:esiplanner/providers/theme_provider.dart';
+import 'package:esiplanner/shared/widgets/event_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'timetable_week_logic.dart';
 import '../../../shared/widgets/class_cards.dart';
+import '../../../utils.dart/subject_colors.dart';
 
 class WeekHeaderMobile extends StatelessWidget {
   final TimetableWeekLogic logic;
@@ -132,35 +138,7 @@ class EventListMobile extends StatelessWidget {
     final sortedDates = groupedByDate.keys.toList()..sort();
 
     if (groupedByDate.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.event_busy_rounded,
-              size: 60,
-              color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'No tienes clases',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Disfruta de tu tiempo libre!',
-              style: TextStyle(
-                fontSize: 16,
-                color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-              ),
-            ),
-          ],
-        ),
-      );
+      return _buildEmptyState(isDarkMode);
     }
 
     return ListView.builder(
@@ -207,4 +185,335 @@ class EventListMobile extends StatelessWidget {
       },
     );
   }
+
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.event_busy_rounded,
+            size: 60,
+            color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'No tienes clases',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Disfruta de tu tiempo libre!',
+            style: TextStyle(
+              fontSize: 16,
+              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+class EventListViewMobileGoogle extends StatelessWidget {
+  final PageController pageController;
+  final List<String> weekDays;
+  final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
+  final List<Map<String, dynamic>> subjects;
+  final Map<String, List<Map<String, dynamic>>> Function(List<Map<String, dynamic>>) groupEventsByDay;
+  final String Function(String) getGroupLabel;
+  final Function(int) onPageChanged;
+  final double sizeTramo = 250;
+
+  const EventListViewMobileGoogle({
+    super.key,
+    required this.pageController,
+    required this.weekDays,
+    required this.getFilteredEvents,
+    required this.subjects,
+    required this.groupEventsByDay,
+    required this.getGroupLabel,
+    required this.onPageChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    final subjectColors = SubjectColors(isDarkMode);
+
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
+      ),
+      child: ClipRRect(
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+            },
+          ),
+          child: PageView.builder(
+            controller: pageController,
+            onPageChanged: onPageChanged,
+            physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              final day = weekDays[index];
+              final dayEvents = getFilteredEvents(day);
+    
+              if (dayEvents.isEmpty) {
+                return _buildEmptyState(isDarkMode);
+              }
+    
+              return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDarkMode) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.event_busy_rounded,
+            size: 60,
+            color: isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'No tienes clases',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Disfruta de tu tiempo libre!',
+            style: TextStyle(
+              fontSize: 16,
+              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDayViewVertical(
+    List<Map<String, dynamic>> events, 
+    bool isDarkMode,
+    SubjectColors subjectColors,
+  ) {
+    events.sort((a, b) {
+      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
+      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
+      return timeA.compareTo(timeB);
+    });
+
+    DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
+    DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
+
+    DateTime startTime = DateTime(
+      firstEventStart.year, 
+      firstEventStart.month, 
+      firstEventStart.day, 
+      firstEventStart.hour,
+      (firstEventStart.minute ~/ 30) * 30
+    ).subtract(const Duration(minutes: 30));
+
+    DateTime endTime = DateTime(
+      lastEventEnd.year, 
+      lastEventEnd.month, 
+      lastEventEnd.day, 
+      lastEventEnd.hour,
+      ((lastEventEnd.minute + 29) ~/ 30) * 30
+    ).add(const Duration(minutes: 30));
+
+    final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
+    final List<List<Map<String, dynamic>>> eventGroups = [];
+    List<Map<String, dynamic>> currentGroup = [];
+
+    for (int i = 0; i < events.length; i++) {
+      if (currentGroup.isEmpty) {
+        currentGroup.add(events[i]);
+      } else {
+        final lastEventEnd = DateTime.parse('${currentGroup.last['event']['date']} ${currentGroup.last['event']['end_hour']}');
+        final currentEventStart = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['start_hour']}');
+
+        if (currentEventStart.isBefore(lastEventEnd)) {
+          currentGroup.add(events[i]);
+        } else {
+          eventGroups.add(List.from(currentGroup));
+          currentGroup.clear();
+          currentGroup.add(events[i]);
+        }
+      }
+    }
+
+    if (currentGroup.isNotEmpty) {
+      eventGroups.add(List.from(currentGroup));
+    }
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 50, bottom: 0),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: List.generate(totalHalfHours + 1, (index) {
+                    final currentTime = startTime.add(Duration(minutes: 30 * index));
+                    return SizedBox(
+                      height: sizeTramo,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Transform.translate(
+                          offset: const Offset(-5, -35),
+                          child: Text(
+                            DateFormat('HH:mm').format(currentTime),
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                Container(
+                  width: 1,
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            height: sizeTramo,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 2.5,
+                                ),
+                                bottom: BorderSide(
+                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                  width: 2.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                          ...List.generate(totalHalfHours - 1, (index) {
+                            return Container(
+                              height: sizeTramo,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                    width: 2.5,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode, subjectColors),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildEventWidgetsVertical(
+    List<List<Map<String, dynamic>>> eventGroups,
+    DateTime startTime,
+    bool isDarkMode,
+    SubjectColors subjectColors,
+  ) {
+    return eventGroups.map((group) {
+      final firstEvent = group.first;
+      final lastEvent = group.last;
+      
+      final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
+      final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
+      
+      final startOffset = groupStart.difference(startTime).inMinutes;
+      final duration = groupEnd.difference(groupStart).inMinutes;
+      
+      final topPosition = (startOffset / 30) * sizeTramo + 2;
+      final height = (duration / 30) * sizeTramo - 6;
+      
+      return Positioned(
+        top: topPosition,
+        height: height,
+        left: 0,
+        right: 4,
+        child: Row(
+          children: group.map((eventData) {
+            final subjectName = eventData['subjectName'];
+            final subjectColor = subjectColors.getSubjectColor(subjectName);
+            
+            return Expanded(
+              child: EventCard(
+                eventData: eventData,
+                getGroupLabel: getGroupLabel,
+                subjectColor: subjectColor,
+                isDarkMode: isDarkMode,
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    }).toList();
+  }
+}
+
+
+class ViewToggleFab extends StatelessWidget {
+  final bool isDarkMode;
+  final bool showGoogleView;
+  final VoidCallback onPressed;
+
+  const ViewToggleFab({
+    super.key,
+    required this.isDarkMode,
+    required this.showGoogleView,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      tooltip: showGoogleView ? 'Ver vista normal' : 'Ver vista Google',
+      child: Icon(
+        showGoogleView ? Icons.list : Icons.calendar_view_day,
+        color: isDarkMode ? Colors.white : Colors.black,
+      ),
+    );
+  }
+}
+

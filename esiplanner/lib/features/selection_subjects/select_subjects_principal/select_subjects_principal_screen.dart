@@ -256,21 +256,16 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            SelectSubjectsPrincipalWidgets.showAddSubjectsDialog(
-              context: context,
-              availableDegrees: logic.availableDegrees,
-              onDegreeSelected: _navigateToDegreeSubjects,
-              isDarkMode: isDarkMode,
-            );
-          },
-          backgroundColor: isDarkMode ? Colors.yellow.shade700 : Colors.indigo,
-          foregroundColor: isDarkMode ? Colors.black : Colors.white,
-          child: const Icon(Icons.add),
-        ),
+      floatingActionButton: AddSubjectFAB(
+        onPressed: () {
+          SelectSubjectsPrincipalWidgets.showAddSubjectsDialog(
+            context: context,
+            availableDegrees: logic.availableDegrees,
+            onDegreeSelected: _navigateToDegreeSubjects,
+            isDarkMode: isDarkMode,
+          );
+        },
+        isDarkMode: isDarkMode,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
