@@ -42,7 +42,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                    selectedDate.day == now.day;
 
     return Container(
-      padding: const EdgeInsets.only(left: 70, top: 12, bottom: 12),
+      padding: const EdgeInsets.only(left: 60, top: 10, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -131,7 +131,7 @@ class DayButtonRowDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: weekDays.asMap().entries.map((entry) {
@@ -140,77 +140,88 @@ class DayButtonRowDesktop extends StatelessWidget {
           final date = weekDates[index];
           final hasEvents = getFilteredEvents(day).isNotEmpty;
           final isSelected = selectedDay == day;
-    
-          return GestureDetector(
-            onTap: () => onDaySelected(day),
-            child: Container(
-              width: 80,
-              height: 100,
-              margin: const EdgeInsets.symmetric(horizontal: 8), // Más espacio entre botones
-              decoration: BoxDecoration(
-                color: selectedDay == day
-                    ? (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900)
-                    : null,
-                gradient: selectedDay != day
-                    ? (isDarkMode
+          final selectedColor = isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900;
+          final unselectedColor = isDarkMode ? Colors.grey.shade900 : Colors.white;
+
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: FocusableActionDetector(
+              mouseCursor: SystemMouseCursors.click,
+              onShowHoverHighlight: (value) {},
+              child: GestureDetector(
+                onTap: () => onDaySelected(day),
+                child: Container(
+                  width: 80,
+                  height: 100,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected ? selectedColor : null,
+                    gradient: !isSelected
                         ? LinearGradient(
-                            colors: [Colors.black, Colors.black],
+                            colors: [unselectedColor, unselectedColor],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           )
-                        : LinearGradient(
-                            colors: [Colors.white, Colors.white],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ))
-                    : null,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: !isDarkMode
-                        ? Colors.black.withAlpha(115)
-                        : Colors.grey.withAlpha(115),
-                    blurRadius: 8.0,
-                    offset: const Offset(0, 0),
+                        : null,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: !isDarkMode
+                            ? Colors.black.withAlpha(115)
+                            : Colors.grey.withAlpha(115),
+                        blurRadius: 8.0,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    day,
-                    style: TextStyle(
-                      color: isSelected
-                          ? (isDarkMode ? Colors.black : Colors.white)
-                          : Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    date,
-                    style: TextStyle(
-                      color: isSelected
-                          ? (isDarkMode ? Colors.black : Colors.white)
-                          : (isDarkMode ? Colors.white : Colors.black),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  if (hasEvents)
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? (isDarkMode ? Colors.black : Colors.white)
-                            : (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900),
-                        shape: BoxShape.circle,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      hoverColor: isSelected 
+                          ? selectedColor.withValues(alpha: 0.8)
+                          : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200),
+                      onTap: () => onDaySelected(day),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            day,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? (isDarkMode ? Colors.black : Colors.white)
+                                  : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            date,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? (isDarkMode ? Colors.black : Colors.white)
+                                  : (isDarkMode ? Colors.white : Colors.black),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
+                          ),
+                          if (hasEvents)
+                            Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? (isDarkMode ? Colors.black : Colors.white)
+                                    : (isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                ],
+                  ),
+                ),
               ),
             ),
           );

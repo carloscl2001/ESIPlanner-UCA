@@ -195,14 +195,12 @@ class WeekRowMobile extends StatelessWidget {
               ? Border.all(color: accentColor, width: 2)
               : null,
           boxShadow: [
-          BoxShadow(
-            color: isDarkMode 
-                ? Colors.white.withValues(alpha: 0.25) 
-                : Colors.black.withValues(alpha: 0.35),
-            blurRadius: isDarkMode ? 3.0 : 6.0,
-            offset: const Offset(0, 0),
-          ),
-        ],
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 6.0,
+              offset: const Offset(0, 0),
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
