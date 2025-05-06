@@ -151,11 +151,15 @@ class UpdatePasswordButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          padding: EdgeInsets.symmetric(
+            vertical: isDesktop ? 22.0 : 12.0, // Ajusta el padding vertical
+            horizontal: 24.0, // Ajusta el padding horizontal
+          ),
         ),
         child: Text(
           'Actualizar contraseña',
           style: TextStyle(
-            fontSize: isDesktop ? 18.0 : 14.0,
+            fontSize: isDesktop ? 20.0 : 14.0,
             fontWeight: FontWeight.bold,
           ),
         ),
