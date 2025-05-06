@@ -182,36 +182,53 @@ class WeekRowDesktop extends StatelessWidget {
     final accentColor = isDarkMode ? Colors.yellow.shade700 : Colors.indigo;
     final bgColor = isDarkMode ? Colors.grey[850]! : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
+    final hoverColor = isCurrentWeek
+        ? accentColor.withOpacity(0.8)
+        : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200);
     
-    return GestureDetector(
-      onTap: () => _navigateToWeekScreen(context),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-          border: isCurrentWeek
-              ? Border.all(color: accentColor, width: 2)
-              : null,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: FocusableActionDetector(
+        mouseCursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => _navigateToWeekScreen(context),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(20),
+              border: isCurrentWeek
+                  ? Border.all(color: accentColor, width: 2)
+                  : null,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            children: List.generate(5, (index) {
-              final day = weekDays[index];
-              final hasClass = timetableLogic.dayHasClass(day);
-              
-              return Expanded(
-                child: _buildDayCell(day, hasClass, textColor, accentColor),
-              );
-            }),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                hoverColor: hoverColor,
+                onTap: () => _navigateToWeekScreen(context),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: List.generate(5, (index) {
+                      final day = weekDays[index];
+                      final hasClass = timetableLogic.dayHasClass(day);
+                      
+                      return Expanded(
+                        child: _buildDayCell(day, hasClass, textColor, accentColor),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
