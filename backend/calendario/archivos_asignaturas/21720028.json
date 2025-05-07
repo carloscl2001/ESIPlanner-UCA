@@ -1,0 +1,437 @@
+{
+    "code": "21720028",
+    "name": "Elasticidad y Resistencia de Materiales II",
+    "classes": [
+        {
+            "type": "B1",
+            "events": [
+                {
+                    "date": "2024-10-08",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-10-15",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-10-22",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-10-29",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-11-05",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-11-12",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-11-19",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-11-26",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-12-03",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-12-17",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-01-07",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-01-14",
+                    "start_hour": "18:00",
+                    "end_hour": "19:00",
+                    "location": "Aula C04"
+                }
+            ]
+        },
+        {
+            "type": "B2",
+            "events": [
+                {
+                    "date": "2024-10-08",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-15",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-22",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-29",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-05",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-12",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-19",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-26",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-03",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-17",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2025-01-07",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2025-01-14",
+                    "start_hour": "17:00",
+                    "end_hour": "18:00",
+                    "location": "Aula E02"
+                }
+            ]
+        },
+        {
+            "type": "C1",
+            "events": [
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "09:00",
+                    "end_hour": "10:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "09:00",
+                    "end_hour": "10:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "09:00",
+                    "end_hour": "10:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "09:00",
+                    "end_hour": "10:30",
+                    "location": "Aula D19"
+                }
+            ]
+        },
+        {
+            "type": "C2",
+            "events": [
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula D19"
+                }
+            ]
+        },
+        {
+            "type": "C3",
+            "events": [
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "11:00",
+                    "end_hour": "12:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "11:00",
+                    "end_hour": "12:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "11:00",
+                    "end_hour": "12:30",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "11:00",
+                    "end_hour": "12:30",
+                    "location": "Aula D19"
+                }
+            ]
+        },
+        {
+            "type": "C4",
+            "events": [
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "16:30",
+                    "end_hour": "18:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "16:30",
+                    "end_hour": "18:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "16:30",
+                    "end_hour": "18:00",
+                    "location": "Aula D19"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "16:30",
+                    "end_hour": "18:00",
+                    "location": "Aula D19"
+                }
+            ]
+        },
+        {
+            "type": "X1",
+            "events": [
+                {
+                    "date": "2024-10-07",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-14",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-21",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-11",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-18",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-25",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-02",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-10",
+                    "start_hour": "19:30",
+                    "end_hour": "21:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-16",
+                    "start_hour": "16:30",
+                    "end_hour": "19:30",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2025-01-13",
+                    "start_hour": "16:30",
+                    "end_hour": "19:30",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-09-24",
+                    "start_hour": "17:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-01",
+                    "start_hour": "17:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-15",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-22",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-29",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-05",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-12",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-19",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-26",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-12-03",
+                    "start_hour": "19:00",
+                    "end_hour": "20:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2025-01-07",
+                    "start_hour": "15:00",
+                    "end_hour": "17:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2025-01-14",
+                    "start_hour": "15:00",
+                    "end_hour": "17:00",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "15:00",
+                    "end_hour": "16:30",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "15:00",
+                    "end_hour": "16:30",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "15:00",
+                    "end_hour": "16:30",
+                    "location": "Aula E02"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "15:00",
+                    "end_hour": "16:30",
+                    "location": "Aula E02"
+                }
+            ]
+        }
+    ]
+}

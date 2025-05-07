@@ -1,0 +1,406 @@
+{
+    "code": "21720026",
+    "name": "Cálculo, Construcción y Ensayo de Máquinas",
+    "classes": [
+        {
+            "type": "B1",
+            "events": [
+                {
+                    "date": "2025-03-04",
+                    "start_hour": "15:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-18",
+                    "start_hour": "15:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-01",
+                    "start_hour": "15:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-22",
+                    "start_hour": "15:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-06",
+                    "start_hour": "15:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C05"
+                }
+            ]
+        },
+        {
+            "type": "B2",
+            "events": [
+                {
+                    "date": "2025-03-04",
+                    "start_hour": "17:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-18",
+                    "start_hour": "17:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-01",
+                    "start_hour": "17:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-22",
+                    "start_hour": "17:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-06",
+                    "start_hour": "17:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C05"
+                }
+            ]
+        },
+        {
+            "type": "D1",
+            "events": [
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "17:30",
+                    "end_hour": "18:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "17:30",
+                    "end_hour": "18:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "17:30",
+                    "end_hour": "18:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "17:30",
+                    "end_hour": "18:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "17:30",
+                    "end_hour": "18:30",
+                    "location": "Aula C12"
+                }
+            ]
+        },
+        {
+            "type": "D2",
+            "events": [
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "15:30",
+                    "end_hour": "16:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "15:30",
+                    "end_hour": "16:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "15:30",
+                    "end_hour": "16:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "15:30",
+                    "end_hour": "16:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "15:30",
+                    "end_hour": "16:30",
+                    "location": "Aula C12"
+                }
+            ]
+        },
+        {
+            "type": "D3",
+            "events": [
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "18:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "18:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "18:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "18:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "18:30",
+                    "end_hour": "19:30",
+                    "location": "Aula C12"
+                }
+            ]
+        },
+        {
+            "type": "D4",
+            "events": [
+                {
+                    "date": "2025-03-11",
+                    "start_hour": "16:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-03-25",
+                    "start_hour": "16:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-08",
+                    "start_hour": "16:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-04-29",
+                    "start_hour": "16:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C12"
+                },
+                {
+                    "date": "2025-05-13",
+                    "start_hour": "16:30",
+                    "end_hour": "17:30",
+                    "location": "Aula C12"
+                }
+            ]
+        },
+        {
+            "type": "E1",
+            "events": [
+                {
+                    "date": "2025-03-20",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula None"
+                },
+                {
+                    "date": "2025-04-03",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula None"
+                }
+            ]
+        },
+        {
+            "type": "X1",
+            "events": [
+                {
+                    "date": "2025-02-14",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-02-21",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-07",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-14",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-24",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-03-28",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-04",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-11",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-04-25",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-02",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-09",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-16",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-23",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-05-28",
+                    "start_hour": "12:30",
+                    "end_hour": "14:00",
+                    "location": "Aula C05"
+                },
+                {
+                    "date": "2025-02-10",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-02-17",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-02-24",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-03-03",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-03-10",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-03-17",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-03-31",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-04-07",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-04-21",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-04-28",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-05-05",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-05-12",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-05-19",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2025-05-26",
+                    "start_hour": "10:00",
+                    "end_hour": "11:30",
+                    "location": "Aula C04"
+                }
+            ]
+        }
+    ]
+}

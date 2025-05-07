@@ -1,0 +1,178 @@
+{
+    "code": "21719034",
+    "name": "Diseño y Desarrollo de Prototipos Electrónicos",
+    "classes": [
+        {
+            "type": "A1",
+            "events": [
+                {
+                    "date": "2024-10-28",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C04"
+                },
+                {
+                    "date": "2024-09-26",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-10-03",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-10-10",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-10-24",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-11-07",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-11-21",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-12-05",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-12-12",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2024-12-19",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                },
+                {
+                    "date": "2025-01-09",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula B06"
+                }
+            ]
+        },
+        {
+            "type": "D1",
+            "events": [
+                {
+                    "date": "2024-10-10",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-10-17",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-10-24",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-10-31",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-11-07",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-11-14",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-11-21",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-11-28",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-12-05",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-12-12",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2024-12-19",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                },
+                {
+                    "date": "2025-01-09",
+                    "start_hour": "10:30",
+                    "end_hour": "13:00",
+                    "location": "Aula E11"
+                }
+            ]
+        }
+    ]
+}

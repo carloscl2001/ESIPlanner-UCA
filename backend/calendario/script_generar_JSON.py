@@ -14,7 +14,8 @@ from typing import List, Dict  # Para el tipado
 
 def process_departments_tsv():
     """
-    Procesa el archivo TSV de departamentos y crea un JSON por cada departamento.
+    Procesa el archivo TSV de departamentos y crea un JSON por cada departamento
+    en la misma carpeta 'archivos_departamentos'.
     """
     tsv_path = os.path.join("archivos_departamentos", "departamentosInfo.tsv")
     
@@ -25,43 +26,50 @@ def process_departments_tsv():
     
     print(f"\nProcesando archivo TSV: departamentosInfo.tsv")
     
-    # Crear la carpeta para los archivos JSON si no existe
-    os.makedirs("archivos_departamentos_json", exist_ok=True)
-    
     departments = []
     
     with open(tsv_path, 'r', encoding='utf-8') as f:
-        # Leer cabecera
-        header = f.readline().strip().split('\t')
+        # Leer cabecera y limpiar los nombres de las columnas
+        header_line = f.readline().strip()
+        header = [col.strip() for col in header_line.split('\t')]
+        
+        # Mostrar las columnas detectadas para debugging
+        print(f"Columnas detectadas: {header}")
         
         try:
-            id_idx = header.index('idDepartamento')
-            nombre_idx = header.index('nombreDepartamento')
-        except ValueError as e:
-            print(f"Error: Columnas no encontradas: {e}")
+            # Buscar los índices de las columnas (insensible a mayúsculas/espacios)
+            id_idx = next(i for i, col in enumerate(header) if col.lower().replace(" ", "") == "iddepartamento")
+            nombre_idx = next(i for i, col in enumerate(header) if col.lower().replace(" ", "") == "nombredepartamento")
+        except StopIteration as e:
+            print(f"Error: Columnas no encontradas. Las columnas disponibles son: {header}")
             return []
         
         # Procesar cada línea
         lines = f.readlines()
         for line in tqdm(lines, desc="Procesando departamentos"):
-            parts = line.strip().split('\t')
+            # Limpiar y dividir la línea
+            parts = [part.strip() for part in line.strip().split('\t')]
+            
+            # Verificar que tenemos suficientes columnas
             if len(parts) > max(id_idx, nombre_idx):
                 code = parts[id_idx]
                 name = parts[nombre_idx]
                 
-                department_data = {
-                    "code": code,
-                    "name": name
-                }
-                
-                departments.append(department_data)
-                
-                # Guardar el JSON individual
-                json_filename = os.path.join("archivos_departamentos_json", f"{code}.json")
-                with open(json_filename, "w", encoding="utf-8") as json_file:
-                    json.dump(department_data, json_file, indent=4, ensure_ascii=False)
+                # Solo procesar si ambos campos tienen contenido
+                if code and name:
+                    department_data = {
+                        "code": code,
+                        "name": name
+                    }
+                    
+                    departments.append(department_data)
+                    
+                    # Guardar el JSON individual en la misma carpeta
+                    json_filename = os.path.join("archivos_departamentos", f"{code}.json")
+                    with open(json_filename, "w", encoding="utf-8") as json_file:
+                        json.dump(department_data, json_file, indent=4, ensure_ascii=False)
     
-    print("\n✓ Se han creado los archivos JSON para los departamentos")
+    print("\n✓ Se han creado los archivos JSON para los departamentos en 'archivos_departamentos'")
     return departments
 
 

@@ -1,0 +1,201 @@
+{
+    "code": "21720039",
+    "name": "Estructuras Metálicas, de Hormigón y Cimentaciones",
+    "classes": [
+        {
+            "type": "C1",
+            "events": [
+                {
+                    "date": "2025-02-24",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-03",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-10",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-17",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-31",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-04-07",
+                    "start_hour": "10:30",
+                    "end_hour": "12:30",
+                    "location": "Aula C13"
+                }
+            ]
+        },
+        {
+            "type": "E1",
+            "events": [
+                {
+                    "date": "2025-04-30",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula None"
+                },
+                {
+                    "date": "2025-05-07",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula None"
+                }
+            ]
+        },
+        {
+            "type": "X1",
+            "events": [
+                {
+                    "date": "2025-02-13",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-02-20",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-02-27",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-03-06",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-03-13",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-03-20",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-03-27",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-04-03",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-04-10",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-04-24",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-05-08",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-05-15",
+                    "start_hour": "12:00",
+                    "end_hour": "14:00",
+                    "location": "Aula C07"
+                },
+                {
+                    "date": "2025-02-10",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-02-17",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-02-24",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-03",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-10",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-17",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-03-31",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-04-07",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-04-21",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                },
+                {
+                    "date": "2025-04-28",
+                    "start_hour": "08:30",
+                    "end_hour": "10:30",
+                    "location": "Aula C13"
+                }
+            ]
+        }
+    ]
+}

@@ -16,14 +16,16 @@ from fastAPI.db.client import db_client
 loaded_files = {
     'subjects': set(),
     'degrees': set(),
-    'mapping': set()
+    'mapping': set(),
+    'departments': set()  # Nueva colección para departamentos
 }
 
 # Configuración de carpetas y colecciones
 FOLDER_CONFIG = {
     'archivos_asignaturas': 'subjects',
     'archivos_grados': 'degrees',
-    'archivos_mapeo': 'mapping'
+    'archivos_mapeo': 'mapping',
+    'archivos_departamentos': 'departments'  # Nueva configuración
 }
 
 class ConsoleOutput:
@@ -232,16 +234,20 @@ def additional_load_menu():
                 'action': lambda: process_custom_files('archivos_mapeo', 'mapping')
             },
             '4': {
+                'label': 'Añadir/actualizar departamentos',
+                'action': lambda: process_custom_files('archivos_departamentos', 'departments')
+            },
+            '5': {
                 'label': 'Volver al menú principal',
                 'action': lambda: None
             }
         }
         
         ConsoleOutput.print_menu("CARGA ADICIONAL DE ARCHIVOS ESPECIFICOS", submenu_options)
-        choice = input("Seleccione una opción (1-4): ")
+        choice = input("Seleccione una opción (1-5): ")
         
         if choice in submenu_options:
-            if choice == '4':
+            if choice == '5':
                 return
             submenu_options[choice]['action']()
         else:
@@ -345,8 +351,11 @@ def process_custom_files(folder_path: str, collection_name: str):
                     if isinstance(data, list):
                         for doc in data:
                             try:
+                                # Para departamentos, usamos 'code' como clave única
+                                filter_criteria = {'code': doc.get('code')} if collection_name == 'departments' else {'_id': doc.get('_id')}
+                                
                                 result = db_client[collection_name].update_one(
-                                    {'_id': doc.get('_id')},
+                                    filter_criteria,
                                     {'$set': doc},
                                     upsert=True
                                 )
@@ -369,7 +378,7 @@ def process_custom_files(folder_path: str, collection_name: str):
                                         operation="update",
                                         filename=filename,
                                         changes={
-                                            "document_id": str(doc.get('_id')),
+                                            "document_id": str(doc.get('code', doc.get('_id'))),
                                             "operation": "upsert_update",
                                             "details": f"Documento actualizado desde {filename}"
                                         }
@@ -378,8 +387,11 @@ def process_custom_files(folder_path: str, collection_name: str):
                                 ConsoleOutput.print_warning(f"Error en documento: {str(e)}")
                     else:
                         try:
+                            # Para departamentos, usamos 'code' como clave única
+                            filter_criteria = {'code': data.get('code')} if collection_name == 'departments' else {'_id': data.get('_id')}
+                            
                             result = db_client[collection_name].update_one(
-                                {'_id': data.get('_id')},
+                                filter_criteria,
                                 {'$set': data},
                                 upsert=True
                             )
@@ -402,7 +414,7 @@ def process_custom_files(folder_path: str, collection_name: str):
                                     operation="update",
                                     filename=filename,
                                     changes={
-                                        "document_id": str(data.get('_id')),
+                                        "document_id": str(data.get('code', data.get('_id'))),
                                         "operation": "upsert_update",
                                         "details": f"Documento actualizado desde {filename}"
                                     }
@@ -431,6 +443,7 @@ def show_detailed_stats():
         'subjects': 'Asignaturas',
         'degrees': 'Grados',
         'mapping': 'Mapeos',
+        'departments': 'Departamentos',  # Nueva colección
         'logs': 'Registros de Cambios'
     }
     
@@ -453,6 +466,12 @@ def show_detailed_stats():
                 if mapping_data:
                     print(f"  Mapeo actualizado: {mapping_data.get('last_update', 'Desconocido')}")
                     print(f"  Entradas en el mapeo: {len(mapping_data.get('mapping', []))}")
+            
+            # Mostrar info adicional para departamentos
+            if col == 'departments':
+                last_update = db_client[col].find_one(sort=[("_id", -1)])
+                if last_update:
+                    print(f"  Último departamento actualizado: {last_update.get('name', 'Desconocido')}")
                 
         except Exception as e:
             ConsoleOutput.print_warning(f"No se pudo acceder a la colección {col}: {str(e)}")
@@ -497,6 +516,9 @@ if __name__ == "__main__":
         db_client['logs'].create_index([("collection", 1)])
         db_client['logs'].create_index([("operation", 1)])
         db_client['logs'].create_index([("source_file", 1)])
+        
+        # Crear índice para departamentos (por código)
+        db_client['departments'].create_index([("code", 1)], unique=True)
         
         show_menu()
     except KeyboardInterrupt:
