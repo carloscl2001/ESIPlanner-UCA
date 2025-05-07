@@ -1,7 +1,7 @@
 ## API PARA GESTIONAR LOS GRADOS##
 from fastapi import APIRouter, HTTPException, status, Response
-from db.models.degree import Department
-from db.schemas.degree import department_schema, departments_schema
+from db.models.department import Department
+from db.schemas.department import department_schema, departments_schema
 from db.client import db_client
 from bson import ObjectId
 from typing import List

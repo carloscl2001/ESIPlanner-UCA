@@ -4,5 +4,5 @@ def department_schema(department) -> dict:
         "name": department["name"],
     }
 
-def subjects_schema(departments) -> list:
+def departments_schema(departments) -> list:
     return [department_schema(department) for department in departments]
