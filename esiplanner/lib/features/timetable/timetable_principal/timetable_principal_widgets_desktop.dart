@@ -183,7 +183,7 @@ class WeekRowDesktop extends StatelessWidget {
     final bgColor = isDarkMode ? Colors.grey[850]! : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final hoverColor = isCurrentWeek
-        ? accentColor.withOpacity(0.8)
+        ? accentColor.withValues(alpha: 0.2)
         : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200);
     
     return MouseRegion(

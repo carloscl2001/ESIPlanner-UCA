@@ -141,7 +141,7 @@ class DayButtonRowDesktop extends StatelessWidget {
           final hasEvents = getFilteredEvents(day).isNotEmpty;
           final isSelected = selectedDay == day;
           final selectedColor = isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900;
-          final unselectedColor = isDarkMode ? Colors.grey.shade900 : Colors.white;
+          final unselectedColor = isDarkMode ? Colors.black : Colors.white;
 
           return MouseRegion(
             cursor: SystemMouseCursors.click,
@@ -180,7 +180,7 @@ class DayButtonRowDesktop extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       hoverColor: isSelected 
                           ? selectedColor.withValues(alpha: 0.8)
-                          : (isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200),
+                          : (isDarkMode ? Colors.grey.shade900 : Colors.grey.shade200),
                       onTap: () => onDaySelected(day),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
