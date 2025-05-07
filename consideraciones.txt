@@ -1,0 +1,2 @@
+Para el logo, en ios en Andorid se encarga la dependencia, pero para la web, tenemos que:
+copaia el logo a -> web/icons/
