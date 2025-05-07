@@ -81,7 +81,6 @@ flutter:
 
   assets:
     - assets/logo.png
-    - assets/splash_alta_calidad.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -114,9 +113,9 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 
-flutter_native_splash:
-  color: "#ffffff"          # Fondo blanco (puedes cambiarlo)
-  image: assets/splash_baja_calidad.png   # Ruta de tu logo
+flutter_native_splash:         # Fondo blanco (puedes cambiarlo)
+  image: assets/splash_transparente.png   # Ruta de tu logo
+  color: "#ffffff" # Color de fondo (puedes cambiarlo)
   android: true
   ios: true
   web: true
