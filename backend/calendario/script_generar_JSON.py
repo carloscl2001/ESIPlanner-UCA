@@ -5,6 +5,64 @@ import re
 from datetime import datetime
 from icalendar import Calendar, vDatetime
 from tqdm import tqdm  # Importamos tqdm para las barras de progreso
+from typing import List, Dict  # Para el tipado
+
+
+# ================================
+# Funciones para procesar departamentos
+# ================================
+
+def process_departments_tsv():
+    """
+    Procesa el archivo TSV de departamentos y crea un JSON por cada departamento.
+    """
+    tsv_path = os.path.join("archivos_departamentos", "departamentosInfo.tsv")
+    
+    # Verificar si el archivo existe
+    if not os.path.exists(tsv_path):
+        print(f"Error: No se encontró el archivo '{tsv_path}'.")
+        return []
+    
+    print(f"\nProcesando archivo TSV: departamentosInfo.tsv")
+    
+    # Crear la carpeta para los archivos JSON si no existe
+    os.makedirs("archivos_departamentos_json", exist_ok=True)
+    
+    departments = []
+    
+    with open(tsv_path, 'r', encoding='utf-8') as f:
+        # Leer cabecera
+        header = f.readline().strip().split('\t')
+        
+        try:
+            id_idx = header.index('idDepartamento')
+            nombre_idx = header.index('nombreDepartamento')
+        except ValueError as e:
+            print(f"Error: Columnas no encontradas: {e}")
+            return []
+        
+        # Procesar cada línea
+        lines = f.readlines()
+        for line in tqdm(lines, desc="Procesando departamentos"):
+            parts = line.strip().split('\t')
+            if len(parts) > max(id_idx, nombre_idx):
+                code = parts[id_idx]
+                name = parts[nombre_idx]
+                
+                department_data = {
+                    "code": code,
+                    "name": name
+                }
+                
+                departments.append(department_data)
+                
+                # Guardar el JSON individual
+                json_filename = os.path.join("archivos_departamentos_json", f"{code}.json")
+                with open(json_filename, "w", encoding="utf-8") as json_file:
+                    json.dump(department_data, json_file, indent=4, ensure_ascii=False)
+    
+    print("\n✓ Se han creado los archivos JSON para los departamentos")
+    return departments
 
 
 # ================================
@@ -355,12 +413,17 @@ def create_id_to_horarioID_mapping():
     
     print(f"\n✓ Mapeo estructurado guardado en: {output_path}")
     return result
+
+
 # ================================
 # Función principal
 # ================================
 
 def main():
     print("Iniciando procesamiento de archivos...")
+    
+    # Procesar departamentos primero
+    process_departments_tsv()
     
     # Extraer y guardar los datos de los PDFs
     extract_data_from_pdfs()
