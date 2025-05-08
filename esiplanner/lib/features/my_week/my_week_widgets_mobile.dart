@@ -556,11 +556,11 @@ class EventListViewMobileGoogle extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Transform.translate(
-                          offset: const Offset(-5, 35),
+                          offset: const Offset(-5, 31),
                           child: Text(
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
-                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade900,
                               fontSize: 12,
                             ),
                           ),
@@ -569,13 +569,6 @@ class EventListViewMobileGoogle extends StatelessWidget {
                     );
                   }),
                 ),
-                const SizedBox(width: 8),
-                // Línea vertical de timeline
-                Container(
-                  width: 5,
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.green,
-                ),
-                const SizedBox(width: 8),
                 // Área de eventos
                 Expanded(
                   child: LayoutBuilder(
@@ -607,15 +600,23 @@ class EventListViewMobileGoogle extends StatelessWidget {
                             final startOffset = event['start'].difference(startTime).inMinutes;
                             final duration = event['end'].difference(event['start']).inMinutes;
 
-                            final laneWidth = availableWidth / maxLanes;
-                            final leftPosition = laneStart * laneWidth;
-                            final eventWidth = (laneEnd - laneStart) * laneWidth;
+                            // Determinar si el evento está solapado
+                            final isOverlapping = lanes.any((lane) => 
+                                lane.any((e) => 
+                                    e != event && 
+                                    event['start'].isBefore(e['end']) && 
+                                    event['end'].isAfter(e['start']))
+                            );
+
+                            final laneWidth = availableWidth / (isOverlapping ? maxLanes : 1);
+                            final leftPosition = isOverlapping ? laneStart * laneWidth : 0;
+                            final eventWidth = isOverlapping ? (laneEnd - laneStart) * laneWidth : availableWidth;
 
                             return Positioned(
                               top: (startOffset / 30) * sizeTramo + 2,
                               left: leftPosition + 2,
                               width: eventWidth - 4,
-                              height: (duration / 30) * sizeTramo - 4,
+                              height: (duration / 30) * sizeTramo - 6,
                               child: EventCard(
                                 eventData: event['data'],
                                 getGroupLabel: getGroupLabel,
