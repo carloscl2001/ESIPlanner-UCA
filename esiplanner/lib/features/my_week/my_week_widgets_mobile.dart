@@ -397,7 +397,17 @@ class EventListViewMobileGoogle extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
+        // borderRadius: BorderRadius.only(
+        //   topLeft: Radius.circular(40.0),
+        //   topRight: Radius.circular(25.0),
+        // ),
+        border: Border(
+        top: BorderSide(  // Solo borde superior
+          color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
+          width: 3.0,
+        ),
+      ),
+        
       ),
       child: ClipRRect(
         child: ScrollConfiguration(
@@ -568,52 +578,55 @@ class EventListViewMobileGoogle extends StatelessWidget {
                 const SizedBox(width: 8),
                 // Área de eventos
                 Expanded(
-                  child: Stack(
-                    children: [
-                      // Líneas horizontales de la grid
-                      Column(
-                        children: List.generate(totalHalfHours + 1, (index) {
-                          return Container(
-                            height: sizeTramo,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 0.5,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final availableWidth = constraints.maxWidth;
+                      return Stack(
+                        children: [
+                          // Líneas horizontales de la grid
+                          Column(
+                            children: List.generate(totalHalfHours + 1, (index) {
+                              return Container(
+                                height: sizeTramo,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                      width: 0.5,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                      // Eventos posicionados
-                      ...processedEvents.map((event) {
-                        final placement = eventLanesPlacement[event]!;
-                        final laneStart = placement['start'];
-                        final laneEnd = placement['end'];
-                        final startOffset = event['start'].difference(startTime).inMinutes;
-                        final duration = event['end'].difference(event['start']).inMinutes;
-
-                        final eventWidthFactor = maxLanes > 0 ? (1 / maxLanes) : 1;
-                        final eventLeftFactor = maxLanes > 0 ? (laneStart !/ maxLanes) : 0;
-
-                        final leftPosition = eventLeftFactor * 100;
-                        final eventWidth = (laneEnd !- laneStart!) * eventWidthFactor * 100;
-
-                        return Positioned(
-                          top: (startOffset / 30) * sizeTramo + 2,
-                          left: leftPosition + 2,
-                          width: eventWidth - 4,
-                          height: (duration / 30) * sizeTramo - 4,
-                          child: EventCard(
-                            eventData: event['data'],
-                            getGroupLabel: getGroupLabel,
-                            subjectColor: subjectColors.getSubjectColor(event['subject']),
-                            isDarkMode: isDarkMode,
+                              );
+                            }),
                           ),
-                        );
-                      }),
-                    ],
+                          // Eventos posicionados
+                          ...processedEvents.map((event) {
+                            final placement = eventLanesPlacement[event]!;
+                            final laneStart = placement['start']!;
+                            final laneEnd = placement['end']!;
+                            final startOffset = event['start'].difference(startTime).inMinutes;
+                            final duration = event['end'].difference(event['start']).inMinutes;
+
+                            final laneWidth = availableWidth / maxLanes;
+                            final leftPosition = laneStart * laneWidth;
+                            final eventWidth = (laneEnd - laneStart) * laneWidth;
+
+                            return Positioned(
+                              top: (startOffset / 30) * sizeTramo + 2,
+                              left: leftPosition + 2,
+                              width: eventWidth - 4,
+                              height: (duration / 30) * sizeTramo - 4,
+                              child: EventCard(
+                                eventData: event['data'],
+                                getGroupLabel: getGroupLabel,
+                                subjectColor: subjectColors.getSubjectColor(event['subject']),
+                                isDarkMode: isDarkMode,
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ],
