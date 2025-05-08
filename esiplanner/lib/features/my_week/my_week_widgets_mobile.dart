@@ -714,9 +714,9 @@ class ViewToggleFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: onPressed,
-      tooltip: showGoogleView ? 'Ver vista normal' : 'Ver vista Google',
+      tooltip: showGoogleView ? 'Ver formato calendario' : 'Ver forma lista',
       child: Icon(
-        showGoogleView ? Icons.list : Icons.calendar_view_day,
+        showGoogleView ?  Icons.calendar_view_day_rounded: Icons.list,
         color: isDarkMode ? Colors.white : Colors.black,
       ),
     );

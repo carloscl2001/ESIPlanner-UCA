@@ -168,24 +168,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
                 Expanded(
                   child: _showGoogleView
-                      ? EventListViewMobileGoogle(
-                          pageController: _pageController,
-                          weekDays: _logic.weekDays,
-                          getFilteredEvents: _logic.getFilteredEvents,
-                          subjects: _logic.subjects,
-                          groupEventsByDay: _logic.groupEventsByDay,
-                          getGroupLabel: _logic.getGroupLabel,
-                          onPageChanged: _onPageChanged,
-                        )
-                      : EventListViewMobile(
-                          pageController: _pageController,
-                          weekDays: _logic.weekDays,
-                          getFilteredEvents: _logic.getFilteredEvents,
-                          subjects: _logic.subjects,
-                          groupEventsByDay: _logic.groupEventsByDay,
-                          getGroupLabel: _logic.getGroupLabel,
-                          onPageChanged: _onPageChanged,
-                        ),
+                    ? EventListViewMobile(
+                      pageController: _pageController,
+                      weekDays: _logic.weekDays,
+                      getFilteredEvents: _logic.getFilteredEvents,
+                      subjects: _logic.subjects,
+                      groupEventsByDay: _logic.groupEventsByDay,
+                      getGroupLabel: _logic.getGroupLabel,
+                      onPageChanged: _onPageChanged,
+                    )
+                    : EventListViewMobileGoogle(
+                      pageController: _pageController,
+                      weekDays: _logic.weekDays,
+                      getFilteredEvents: _logic.getFilteredEvents,
+                      subjects: _logic.subjects,
+                      groupEventsByDay: _logic.groupEventsByDay,
+                      getGroupLabel: _logic.getGroupLabel,
+                      onPageChanged: _onPageChanged,
+                    ),
+                      
                 ),
               ],
             ],
