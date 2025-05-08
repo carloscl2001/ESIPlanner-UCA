@@ -541,7 +541,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 30),
         child: Column(
           children: [
             Row(
@@ -556,7 +556,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Transform.translate(
-                          offset: const Offset(-5, -35),
+                          offset: const Offset(-5, 35),
                           child: Text(
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
@@ -572,8 +572,8 @@ class EventListViewMobileGoogle extends StatelessWidget {
                 const SizedBox(width: 8),
                 // Línea vertical de timeline
                 Container(
-                  width: 1,
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                  width: 5,
+                  color: isDarkMode ? Colors.grey.shade800 : Colors.green,
                 ),
                 const SizedBox(width: 8),
                 // Área de eventos
@@ -591,8 +591,8 @@ class EventListViewMobileGoogle extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                      width: 0.5,
+                                      color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+                                      width: 2,
                                     ),
                                   ),
                                 ),
