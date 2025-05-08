@@ -140,7 +140,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -151,7 +151,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         backgroundColor: isDarkMode ? Colors.black : Colors.white, // Igual que el Container
         surfaceTintColor: Colors.transparent, // Elimina el efecto translúcido
         indicatorColor: isDarkMode 
-            ? Colors.yellow.withOpacity(0.2) 
+            ? Colors.yellow.withValues(alpha:0.2) 
             : Colors.blue.shade100, // Color del indicador
         onDestinationSelected: (int index) {
           setState(() => currentPageIndex = index);
