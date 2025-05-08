@@ -114,7 +114,7 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 flutter_native_splash:         # Fondo blanco (puedes cambiarlo)
-  image: assets/splash_transparente.png   # Ruta de tu logo
+  image: assets/splash_baja_calidad.png   # Ruta de tu logo
   color: "#ffffff" # Color de fondo (puedes cambiarlo)
   android: true
   ios: true

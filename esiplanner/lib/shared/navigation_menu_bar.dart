@@ -88,70 +88,81 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
 
   @override
   Widget build(BuildContext context) {
-    final username = Provider.of<AuthProvider>(context).username ?? 'Usuario';
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.themeMode == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Hola, $username',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+        title: ClipRRect(
+          borderRadius: BorderRadius.circular(15), // Ajusta este valor para más/menos redondeo
+          child: Image.asset(
+            'assets/logo.png',
+            height: 40,
+            fit: BoxFit.contain,
           ),
         ),
         elevation: 10,
-        flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: isDarkMode 
-              ? null
-              : LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.indigo.shade900,
-                    Colors.blue.shade900,
-                    Colors.blueAccent.shade400,
-                  ],
-                ),
-          color: isDarkMode ? Colors.black : null,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(15), // Ajusta este valor para cambiar el radio de curvatura
+          ),
         ),
-      ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: isDarkMode 
+                ? null
+                : LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.indigo.shade900,
+                      Colors.blue.shade900,
+                      Colors.blueAccent.shade400,
+                    ],
+                  ),
+            color: isDarkMode ? Colors.black : null,
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(15), // Debe coincidir con el radio de shape
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => showSettingsMenu(context), // Abre el menú
+            onPressed: () => showSettingsMenu(context),
             color: isDarkMode ? Colors.yellow.shade700 : Colors.white,
             tooltip: 'Configuración',
           ),
         ],
       ),
       bottomNavigationBar: Container(
-        height: 75,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          selectedIndex: currentPageIndex,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      height: 70,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+        color: isDarkMode ? Colors.black : Colors.white, // Fondo sólido
+      ),
+      child: NavigationBar(
+        backgroundColor: isDarkMode ? Colors.black : Colors.white, // Igual que el Container
+        surfaceTintColor: Colors.transparent, // Elimina el efecto translúcido
+        indicatorColor: isDarkMode 
+            ? Colors.yellow.withOpacity(0.2) 
+            : Colors.blue.shade100, // Color del indicador
+        onDestinationSelected: (int index) {
+          setState(() => currentPageIndex = index);
+        },
+        selectedIndex: currentPageIndex,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: <Widget>[
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.view_week,
-                color: isDarkMode ? Colors.black : Colors.blue.shade900,
+                color: isDarkMode ? Colors.yellow.shade700  : Colors.blue.shade900,
               ),
               icon: const Icon(Icons.view_week_outlined, color: Colors.grey),
               label: 'Mi semana',
@@ -159,7 +170,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.calendar_month_rounded,
-                color: isDarkMode ? Colors.black : Colors.blue.shade900,
+                color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
               ),
               icon: const Icon(
                 Icons.calendar_month_outlined,
@@ -181,7 +192,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
             NavigationDestination(
               selectedIcon: Icon(
                 Icons.person,
-                color: isDarkMode ? Colors.black : Colors.blue.shade900,
+                color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
               ),
               icon: const Icon(Icons.person_outline, color: Colors.grey),
               label: 'Perfil',
@@ -190,7 +201,7 @@ class _NavigationMenuBarState extends State<NavigationMenuBar> {
         ),
       ),
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300), // Duración de la animación
+        duration: const Duration(milliseconds: 1), // Duración de la animación
         transitionBuilder: (Widget child, Animation<double> animation) {
           // Puedes personalizar la animación aquí
           return FadeTransition(

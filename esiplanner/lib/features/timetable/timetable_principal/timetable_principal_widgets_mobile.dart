@@ -112,7 +112,7 @@ class WeekSelectorMobile extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(DateTime startDate, bool isDarkMode) {
-    final bgColor = isDarkMode ? Colors.grey[900]! : Colors.grey;
+    final bgColor = isDarkMode ? Colors.grey.shade800 : Colors.grey;
     
     return Padding(
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -131,7 +131,7 @@ class WeekSelectorMobile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.black : Colors.white,
+                  color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -150,7 +150,7 @@ class WeekSelectorMobile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.black : Colors.white,
+                  color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),

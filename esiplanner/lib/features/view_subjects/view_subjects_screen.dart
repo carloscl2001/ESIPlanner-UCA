@@ -13,25 +13,41 @@ class ViewSubjectsScreen extends StatefulWidget {
 
 class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
   late ViewSubjectsProfileLogic logic;
+  bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
+    _isMounted = true;
     logic = ViewSubjectsProfileLogic(
-      refreshUI: () => setState(() {}),
+      refreshUI: () {
+        if (_isMounted) {
+          setState(() {});
+        }
+      },
       showError: (message) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        if (_isMounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
       },
     );
     // Pasamos el context aquí
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      logic.loadUserSubjects(context);
+      if (_isMounted) {
+        logic.loadUserSubjects(context);
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    super.dispose();
   }
 
   @override
@@ -71,7 +87,6 @@ class _ViewSubjectsScreenState extends State<ViewSubjectsScreen> {
     }
 
     if(logic.userSubjects.isEmpty){
-      
       return BuildEmptyCard();
     }
 
