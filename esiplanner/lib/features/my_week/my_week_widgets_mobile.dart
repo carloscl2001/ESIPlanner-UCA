@@ -541,7 +541,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 50, bottom: 30),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 30),
         child: Column(
           children: [
             Row(
@@ -549,14 +549,14 @@ class EventListViewMobileGoogle extends StatelessWidget {
               children: [
                 // Timeline izquierda
                 Column(
-                  children: List.generate(totalHalfHours, (index) {
+                  children: List.generate(totalHalfHours + 1, (index) {
                     final currentTime = startTime.add(Duration(minutes: 30 * index));
                     return SizedBox(
                       height: sizeTramo,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Transform.translate(
-                          offset: const Offset(-5, -31),
+                          offset: const Offset(-5, 31),
                           child: Text(
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
@@ -613,7 +613,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
                             final eventWidth = isOverlapping ? (laneEnd - laneStart) * laneWidth : availableWidth;
 
                             return Positioned(
-                              top: (startOffset / 30) * sizeTramo + 2,
+                              top: ((startOffset / 30) + 1) * sizeTramo + 2, // <- Añadimos +1 para mover un tramo hacia abajo
                               left: leftPosition + 2,
                               width: eventWidth - 4,
                               height: (duration / 30) * sizeTramo - 6,

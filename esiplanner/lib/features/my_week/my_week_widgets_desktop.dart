@@ -231,7 +231,7 @@ class DayButtonRowDesktop extends StatelessWidget {
   }
 }
 
-class EventListViewDesktop extends StatelessWidget {
+class EventListViewDesktopGoogle extends StatelessWidget {
   final PageController pageController;
   final List<String> weekDays;
   final List<Map<String, dynamic>> Function(String?) getFilteredEvents;
@@ -241,7 +241,7 @@ class EventListViewDesktop extends StatelessWidget {
   final Function(int) onPageChanged;
   final double sizeTramo = 65;
 
-  const EventListViewDesktop({
+  const EventListViewDesktopGoogle({
     super.key,
     required this.pageController,
     required this.weekDays,
@@ -257,15 +257,18 @@ class EventListViewDesktop extends StatelessWidget {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
     final subjectColors = SubjectColors(isDarkMode);
 
-    return Expanded(
+    return Padding(
+      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 20),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 2),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.grey.shade100, // 0.6 opacity equivalent
+          color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
+            width: 3.0,
+          ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
           child: ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(
               dragDevices: {
@@ -281,12 +284,12 @@ class EventListViewDesktop extends StatelessWidget {
               itemBuilder: (context, index) {
                 final day = weekDays[index];
                 final dayEvents = getFilteredEvents(day);
-
+      
                 if (dayEvents.isEmpty) {
                   return _buildEmptyState(isDarkMode);
                 }
-
-                return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
+      
+                return _buildDayViewGoogleStyle(dayEvents, isDarkMode, subjectColors);
               },
             ),
           ),
@@ -314,148 +317,177 @@ class EventListViewDesktop extends StatelessWidget {
               color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Disfruta de tu tiempo libre!',
-            style: TextStyle(
-              fontSize: 16,
-              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildDayViewVertical(
-    List<Map<String, dynamic>> events, 
+  Widget _buildDayViewGoogleStyle(
+    List<Map<String, dynamic>> events,
     bool isDarkMode,
     SubjectColors subjectColors,
   ) {
-    events.sort((a, b) {
-      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-      return timeA.compareTo(timeB);
-    });
+    // Procesamiento inicial de eventos
+    final processedEvents = events.map((e) {
+      final start = DateTime.parse('${e['event']['date']} ${e['event']['start_hour']}');
+      final end = DateTime.parse('${e['event']['date']} ${e['event']['end_hour']}');
+      return {
+        'data': e,
+        'start': start,
+        'end': end,
+        'subject': e['subjectName'],
+      };
+    }).toList();
 
-    DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
-    DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
+    // Ordenar eventos por hora de inicio
+    processedEvents.sort((a, b) => a['start'].compareTo(b['start']));
+
+    if (processedEvents.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final firstEventStart = processedEvents.first['start'];
+    final lastEventEnd = processedEvents.last['end'];
 
     DateTime startTime = DateTime(
-      firstEventStart.year, 
-      firstEventStart.month, 
-      firstEventStart.day, 
+      firstEventStart.year,
+      firstEventStart.month,
+      firstEventStart.day,
       firstEventStart.hour,
-      (firstEventStart.minute ~/ 30) * 30
+      (firstEventStart.minute ~/ 30) * 30,
     ).subtract(const Duration(minutes: 30));
 
     DateTime endTime = DateTime(
-      lastEventEnd.year, 
-      lastEventEnd.month, 
-      lastEventEnd.day, 
+      lastEventEnd.year,
+      lastEventEnd.month,
+      lastEventEnd.day,
       lastEventEnd.hour,
-      ((lastEventEnd.minute + 29) ~/ 30) * 30
+      ((lastEventEnd.minute + 29) ~/ 30) * 30,
     ).add(const Duration(minutes: 30));
 
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
-    final List<List<Map<String, dynamic>>> eventGroups = [];
-    List<Map<String, dynamic>> currentGroup = [];
 
-    for (int i = 0; i < events.length; i++) {
-      if (currentGroup.isEmpty) {
-        currentGroup.add(events[i]);
-      } else {
-        final lastEventEnd = DateTime.parse('${currentGroup.last['event']['date']} ${currentGroup.last['event']['end_hour']}');
-        final currentEventStart = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['start_hour']}');
+    // Algoritmo de distribución de eventos mejorado
+    final List<List<Map<String, dynamic>>> lanes = [];
+    final Map<Map<String, dynamic>, Map<String, int>> eventLanesPlacement = {};
 
-        if (currentEventStart.isBefore(lastEventEnd)) {
-          currentGroup.add(events[i]);
-        } else {
-          eventGroups.add(List.from(currentGroup));
-          currentGroup.clear();
-          currentGroup.add(events[i]);
+    for (final event in processedEvents) {
+      int bestLane = -1;
+      for (int i = 0; i < lanes.length; i++) {
+        bool canPlace = true;
+        for (final existingEvent in lanes[i]) {
+          if (event['start'].isBefore(existingEvent['end']) && event['end'].isAfter(existingEvent['start'])) {
+            canPlace = false;
+            break;
+          }
         }
+        if (canPlace) {
+          bestLane = i;
+          break;
+        }
+      }
+
+      if (bestLane != -1) {
+        lanes[bestLane].add(event);
+        eventLanesPlacement[event] = {'start': bestLane, 'end': bestLane + 1};
+      } else {
+        lanes.add([event]);
+        eventLanesPlacement[event] = {'start': lanes.length - 1, 'end': lanes.length};
       }
     }
 
-    if (currentGroup.isNotEmpty) {
-      eventGroups.add(List.from(currentGroup));
-    }
+    // Calcular el número máximo de carriles ocupados en cualquier momento
+    int maxLanes = lanes.length;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 10, top: 50, bottom: 0),
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 30),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 80,
-                  child: Column(
-                    children: List.generate(totalHalfHours + 1, (index) {
-                      final currentTime = startTime.add(Duration(minutes: 30 * index));
-                      return SizedBox(
-                        height: sizeTramo,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Transform.translate(
-                            offset: const Offset(-30, -33),
-                            child: Text(
-                              DateFormat('HH:mm').format(currentTime),
-                              style: TextStyle(
-                                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                // Timeline izquierda
+                Column(
+                  children: List.generate(totalHalfHours + 1, (index) {
+                    final currentTime = startTime.add(Duration(minutes: 30 * index));
+                    return SizedBox(
+                      height: sizeTramo,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Transform.translate(
+                          offset: const Offset(-5, 31),
+                          child: Text(
+                            DateFormat('HH:mm').format(currentTime),
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade900,
+                              fontSize: 12,
                             ),
                           ),
                         ),
-                      );
-                    }),
-                  ),
+                      ),
+                    );
+                  }),
                 ),
-                Container(
-                  width: 1,
-                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                ),
+                // Área de eventos
                 Expanded(
-                  child: Stack(
-                    children: [
-                      Column(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final availableWidth = constraints.maxWidth;
+                      return Stack(
                         children: [
-                          Container(
-                            height: sizeTramo,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 2.5,
-                                ),
-                                bottom: BorderSide(
-                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 2.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ...List.generate(totalHalfHours - 1, (index) {
-                            return Container(
-                              height: sizeTramo,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                    width: 2.5,
+                          // Líneas horizontales de la grid
+                          Column(
+                            children: List.generate(totalHalfHours + 1, (index) {
+                              return Container(
+                                height: sizeTramo,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
+                              );
+                            }),
+                          ),
+                          // Eventos posicionados
+                          ...processedEvents.map((event) {
+                            final placement = eventLanesPlacement[event]!;
+                            final laneStart = placement['start']!;
+                            final laneEnd = placement['end']!;
+                            final startOffset = event['start'].difference(startTime).inMinutes;
+                            final duration = event['end'].difference(event['start']).inMinutes;
+
+                            // Determinar si el evento está solapado
+                            final isOverlapping = lanes.any((lane) => 
+                                lane.any((e) => 
+                                    e != event && 
+                                    event['start'].isBefore(e['end']) && 
+                                    event['end'].isAfter(e['start']))
+                            );
+
+                            final laneWidth = availableWidth / (isOverlapping ? maxLanes : 1);
+                            final leftPosition = isOverlapping ? laneStart * laneWidth : 0;
+                            final eventWidth = isOverlapping ? (laneEnd - laneStart) * laneWidth : availableWidth;
+
+                            return Positioned(
+                              top: ((startOffset / 30) + 1) * sizeTramo + 2, // <- Añadimos +1 para mover un tramo hacia abajo
+                              left: leftPosition + 2,
+                              width: eventWidth - 4,
+                              height: (duration / 30) * sizeTramo - 6,
+                              child: EventCard(
+                                eventData: event['data'],
+                                getGroupLabel: getGroupLabel,
+                                subjectColor: subjectColors.getSubjectColor(event['subject']),
+                                isDarkMode: isDarkMode,
                               ),
                             );
                           }),
                         ],
-                      ),
-                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode, subjectColors),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -464,49 +496,6 @@ class EventListViewDesktop extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  List<Widget> _buildEventWidgetsVertical(
-    List<List<Map<String, dynamic>>> eventGroups,
-    DateTime startTime,
-    bool isDarkMode,
-    SubjectColors subjectColors,
-  ) {
-    return eventGroups.map((group) {
-      final firstEvent = group.first;
-      final lastEvent = group.last;
-      
-      final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
-      final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
-      
-      final startOffset = groupStart.difference(startTime).inMinutes;
-      final duration = groupEnd.difference(groupStart).inMinutes;
-      
-      final topPosition = (startOffset / 30) * sizeTramo + 2;
-      final height = (duration / 30) * sizeTramo - 6;
-      
-      return Positioned(
-        top: topPosition,
-        height: height,
-        left: 0,
-        right: 10,
-        child: Row(
-          children: group.map((eventData) {
-            final subjectName = eventData['subjectName'];
-            final subjectColor = subjectColors.getSubjectColor(subjectName);
-            
-            return Expanded(
-              child: EventCard(
-                eventData: eventData,
-                getGroupLabel: getGroupLabel,
-                subjectColor: subjectColor,
-                isDarkMode: isDarkMode,
-              ),
-            );
-          }).toList(),
-        ),
-      );
-    }).toList();
   }
 }
 

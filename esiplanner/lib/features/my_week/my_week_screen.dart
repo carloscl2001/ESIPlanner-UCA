@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 Expanded(
-                  child: EventListViewDesktop(
+                  child: EventListViewDesktopGoogle(
                     pageController: _pageController,
                     weekDays: _logic.weekDays,
                     getFilteredEvents: _logic.getFilteredEvents,
