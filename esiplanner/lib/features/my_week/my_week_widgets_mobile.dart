@@ -472,10 +472,10 @@ class EventListViewMobileGoogle extends StatelessWidget {
     // Ordenar eventos por hora de inicio
     processedEvents.sort((a, b) => a['start'].compareTo(b['start']));
 
-    // Calcular el rango de tiempo total a mostrar
     if (processedEvents.isEmpty) {
-      return const SizedBox.shrink(); // Evitar errores si no hay eventos
+      return const SizedBox.shrink();
     }
+
     final firstEventStart = processedEvents.first['start'];
     final lastEventEnd = processedEvents.last['end'];
 
@@ -497,15 +497,15 @@ class EventListViewMobileGoogle extends StatelessWidget {
 
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
 
-    // Algoritmo de distribución de eventos (Simulando Google Calendar Solapamiento)
-    final List<List<Map<String, dynamic>>> eventLanes = [];
-    final Map<Map<String, dynamic>, int> eventLaneAssignment = {};
+    // Algoritmo de distribución de eventos mejorado
+    final List<List<Map<String, dynamic>>> lanes = [];
+    final Map<Map<String, dynamic>, Map<String, int>> eventLanesPlacement = {};
 
     for (final event in processedEvents) {
       int bestLane = -1;
-      for (int i = 0; i < eventLanes.length; i++) {
+      for (int i = 0; i < lanes.length; i++) {
         bool canPlace = true;
-        for (final existingEvent in eventLanes[i]) {
+        for (final existingEvent in lanes[i]) {
           if (event['start'].isBefore(existingEvent['end']) && event['end'].isAfter(existingEvent['start'])) {
             canPlace = false;
             break;
@@ -518,13 +518,16 @@ class EventListViewMobileGoogle extends StatelessWidget {
       }
 
       if (bestLane != -1) {
-        eventLanes[bestLane].add(event);
-        eventLaneAssignment[event] = bestLane;
+        lanes[bestLane].add(event);
+        eventLanesPlacement[event] = {'start': bestLane, 'end': bestLane + 1};
       } else {
-        eventLanes.add([event]);
-        eventLaneAssignment[event] = eventLanes.length - 1;
+        lanes.add([event]);
+        eventLanesPlacement[event] = {'start': lanes.length - 1, 'end': lanes.length};
       }
     }
+
+    // Calcular el número máximo de carriles ocupados en cualquier momento
+    int maxLanes = lanes.length;
 
     return SingleChildScrollView(
       child: Padding(
@@ -585,19 +588,22 @@ class EventListViewMobileGoogle extends StatelessWidget {
                       ),
                       // Eventos posicionados
                       ...processedEvents.map((event) {
-                        final laneIndex = eventLaneAssignment[event]!;
-                        final totalLanes = eventLanes.length;
+                        final placement = eventLanesPlacement[event]!;
+                        final laneStart = placement['start'];
+                        final laneEnd = placement['end'];
                         final startOffset = event['start'].difference(startTime).inMinutes;
                         final duration = event['end'].difference(event['start']).inMinutes;
 
-                        // Calcular la posición izquierda y el ancho basado en el carril
-                        final left = totalLanes > 0 ? (laneIndex / totalLanes) * 100 : 0;
-                        final right = totalLanes > 0 ? ((totalLanes - laneIndex - 1) / totalLanes) * 100 : 0;
+                        final eventWidthFactor = maxLanes > 0 ? (1 / maxLanes) : 1;
+                        final eventLeftFactor = maxLanes > 0 ? (laneStart !/ maxLanes) : 0;
+
+                        final leftPosition = eventLeftFactor * 100;
+                        final eventWidth = (laneEnd !- laneStart!) * eventWidthFactor * 100;
 
                         return Positioned(
                           top: (startOffset / 30) * sizeTramo + 2,
-                          left: left + 2,
-                          right: right + 2,
+                          left: leftPosition + 2,
+                          width: eventWidth - 4,
                           height: (duration / 30) * sizeTramo - 4,
                           child: EventCard(
                             eventData: event['data'],
@@ -618,6 +624,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
     );
   }
 }
+
 class BuildEmptyCardMobile extends StatelessWidget {
   const BuildEmptyCardMobile({super.key});
 
