@@ -397,7 +397,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white, // 0.6 opacity equivalent
+        color: isDarkMode ? Colors.grey.shade900.withAlpha(153) : Colors.white,
       ),
       child: ClipRRect(
         child: ScrollConfiguration(
@@ -415,12 +415,12 @@ class EventListViewMobileGoogle extends StatelessWidget {
             itemBuilder: (context, index) {
               final day = weekDays[index];
               final dayEvents = getFilteredEvents(day);
-    
+
               if (dayEvents.isEmpty) {
                 return _buildEmptyState(isDarkMode);
               }
-    
-              return _buildDayViewVertical(dayEvents, isDarkMode, subjectColors);
+
+              return _buildDayViewGoogleStyle(dayEvents, isDarkMode, subjectColors);
             },
           ),
         ),
@@ -447,72 +447,83 @@ class EventListViewMobileGoogle extends StatelessWidget {
               color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Disfruta de tu tiempo libre!',
-            style: TextStyle(
-              fontSize: 16,
-              color: isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildDayViewVertical(
-    List<Map<String, dynamic>> events, 
+  Widget _buildDayViewGoogleStyle(
+    List<Map<String, dynamic>> events,
     bool isDarkMode,
     SubjectColors subjectColors,
   ) {
-    events.sort((a, b) {
-      final timeA = DateTime.parse('${a['event']['date']} ${a['event']['start_hour']}');
-      final timeB = DateTime.parse('${b['event']['date']} ${b['event']['start_hour']}');
-      return timeA.compareTo(timeB);
-    });
+    // Procesamiento inicial de eventos
+    final processedEvents = events.map((e) {
+      final start = DateTime.parse('${e['event']['date']} ${e['event']['start_hour']}');
+      final end = DateTime.parse('${e['event']['date']} ${e['event']['end_hour']}');
+      return {
+        'data': e,
+        'start': start,
+        'end': end,
+        'subject': e['subjectName'],
+      };
+    }).toList();
 
-    DateTime firstEventStart = DateTime.parse('${events.first['event']['date']} ${events.first['event']['start_hour']}');
-    DateTime lastEventEnd = DateTime.parse('${events.last['event']['date']} ${events.last['event']['end_hour']}');
+    // Ordenar eventos por hora de inicio
+    processedEvents.sort((a, b) => a['start'].compareTo(b['start']));
+
+    // Calcular el rango de tiempo total a mostrar
+    if (processedEvents.isEmpty) {
+      return const SizedBox.shrink(); // Evitar errores si no hay eventos
+    }
+    final firstEventStart = processedEvents.first['start'];
+    final lastEventEnd = processedEvents.last['end'];
 
     DateTime startTime = DateTime(
-      firstEventStart.year, 
-      firstEventStart.month, 
-      firstEventStart.day, 
+      firstEventStart.year,
+      firstEventStart.month,
+      firstEventStart.day,
       firstEventStart.hour,
-      (firstEventStart.minute ~/ 30) * 30
+      (firstEventStart.minute ~/ 30) * 30,
     ).subtract(const Duration(minutes: 30));
 
     DateTime endTime = DateTime(
-      lastEventEnd.year, 
-      lastEventEnd.month, 
-      lastEventEnd.day, 
+      lastEventEnd.year,
+      lastEventEnd.month,
+      lastEventEnd.day,
       lastEventEnd.hour,
-      ((lastEventEnd.minute + 29) ~/ 30) * 30
+      ((lastEventEnd.minute + 29) ~/ 30) * 30,
     ).add(const Duration(minutes: 30));
 
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
-    final List<List<Map<String, dynamic>>> eventGroups = [];
-    List<Map<String, dynamic>> currentGroup = [];
 
-    for (int i = 0; i < events.length; i++) {
-      if (currentGroup.isEmpty) {
-        currentGroup.add(events[i]);
-      } else {
-        final lastEventEnd = DateTime.parse('${currentGroup.last['event']['date']} ${currentGroup.last['event']['end_hour']}');
-        final currentEventStart = DateTime.parse('${events[i]['event']['date']} ${events[i]['event']['start_hour']}');
+    // Algoritmo de distribución de eventos (Simulando Google Calendar Solapamiento)
+    final List<List<Map<String, dynamic>>> eventLanes = [];
+    final Map<Map<String, dynamic>, int> eventLaneAssignment = {};
 
-        if (currentEventStart.isBefore(lastEventEnd)) {
-          currentGroup.add(events[i]);
-        } else {
-          eventGroups.add(List.from(currentGroup));
-          currentGroup.clear();
-          currentGroup.add(events[i]);
+    for (final event in processedEvents) {
+      int bestLane = -1;
+      for (int i = 0; i < eventLanes.length; i++) {
+        bool canPlace = true;
+        for (final existingEvent in eventLanes[i]) {
+          if (event['start'].isBefore(existingEvent['end']) && event['end'].isAfter(existingEvent['start'])) {
+            canPlace = false;
+            break;
+          }
+        }
+        if (canPlace) {
+          bestLane = i;
+          break;
         }
       }
-    }
 
-    if (currentGroup.isNotEmpty) {
-      eventGroups.add(List.from(currentGroup));
+      if (bestLane != -1) {
+        eventLanes[bestLane].add(event);
+        eventLaneAssignment[event] = bestLane;
+      } else {
+        eventLanes.add([event]);
+        eventLaneAssignment[event] = eventLanes.length - 1;
+      }
     }
 
     return SingleChildScrollView(
@@ -523,6 +534,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Timeline izquierda
                 Column(
                   children: List.generate(totalHalfHours + 1, (index) {
                     final currentTime = startTime.add(Duration(minutes: 30 * index));
@@ -536,8 +548,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
                               color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           ),
                         ),
@@ -545,46 +556,57 @@ class EventListViewMobileGoogle extends StatelessWidget {
                     );
                   }),
                 ),
+                const SizedBox(width: 8),
+                // Línea vertical de timeline
                 Container(
                   width: 1,
                   color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                 ),
+                const SizedBox(width: 8),
+                // Área de eventos
                 Expanded(
                   child: Stack(
                     children: [
+                      // Líneas horizontales de la grid
                       Column(
-                        children: [
-                          Container(
+                        children: List.generate(totalHalfHours + 1, (index) {
+                          return Container(
                             height: sizeTramo,
                             decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(
-                                  color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 2.5,
-                                ),
                                 bottom: BorderSide(
                                   color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                  width: 2.5,
+                                  width: 0.5,
                                 ),
                               ),
                             ),
-                          ),
-                          ...List.generate(totalHalfHours - 1, (index) {
-                            return Container(
-                              height: sizeTramo,
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
-                                    width: 2.5,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
+                          );
+                        }),
                       ),
-                      ..._buildEventWidgetsVertical(eventGroups, startTime, isDarkMode, subjectColors),
+                      // Eventos posicionados
+                      ...processedEvents.map((event) {
+                        final laneIndex = eventLaneAssignment[event]!;
+                        final totalLanes = eventLanes.length;
+                        final startOffset = event['start'].difference(startTime).inMinutes;
+                        final duration = event['end'].difference(event['start']).inMinutes;
+
+                        // Calcular la posición izquierda y el ancho basado en el carril
+                        final left = totalLanes > 0 ? (laneIndex / totalLanes) * 100 : 0;
+                        final right = totalLanes > 0 ? ((totalLanes - laneIndex - 1) / totalLanes) * 100 : 0;
+
+                        return Positioned(
+                          top: (startOffset / 30) * sizeTramo + 2,
+                          left: left + 2,
+                          right: right + 2,
+                          height: (duration / 30) * sizeTramo - 4,
+                          child: EventCard(
+                            eventData: event['data'],
+                            getGroupLabel: getGroupLabel,
+                            subjectColor: subjectColors.getSubjectColor(event['subject']),
+                            isDarkMode: isDarkMode,
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -595,51 +617,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
       ),
     );
   }
-
-  List<Widget> _buildEventWidgetsVertical(
-    List<List<Map<String, dynamic>>> eventGroups,
-    DateTime startTime,
-    bool isDarkMode,
-    SubjectColors subjectColors,
-  ) {
-    return eventGroups.map((group) {
-      final firstEvent = group.first;
-      final lastEvent = group.last;
-      
-      final groupStart = DateTime.parse('${firstEvent['event']['date']} ${firstEvent['event']['start_hour']}');
-      final groupEnd = DateTime.parse('${lastEvent['event']['date']} ${lastEvent['event']['end_hour']}');
-      
-      final startOffset = groupStart.difference(startTime).inMinutes;
-      final duration = groupEnd.difference(groupStart).inMinutes;
-      
-      final topPosition = (startOffset / 30) * sizeTramo + 2;
-      final height = (duration / 30) * sizeTramo - 6;
-      
-      return Positioned(
-        top: topPosition,
-        height: height,
-        left: 0,
-        right: 4,
-        child: Row(
-          children: group.map((eventData) {
-            final subjectName = eventData['subjectName'];
-            final subjectColor = subjectColors.getSubjectColor(subjectName);
-            
-            return Expanded(
-              child: EventCard(
-                eventData: eventData,
-                getGroupLabel: getGroupLabel,
-                subjectColor: subjectColor,
-                isDarkMode: isDarkMode,
-              ),
-            );
-          }).toList(),
-        ),
-      );
-    }).toList();
-  }
 }
-
 class BuildEmptyCardMobile extends StatelessWidget {
   const BuildEmptyCardMobile({super.key});
 
