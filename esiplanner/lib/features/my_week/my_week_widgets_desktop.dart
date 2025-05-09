@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:esiplanner/providers/theme_provider.dart';
 import 'package:esiplanner/shared/widgets/event_card.dart';
 import 'package:esiplanner/utils.dart/subject_colors.dart';
@@ -55,7 +54,7 @@ class SelectedDayRowDesktop extends StatelessWidget {
                   color: isDarkMode ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 72,
-                  height: 0.9,
+                  height: 1,
                 ),
               ),
               const SizedBox(width: 24),
@@ -192,7 +191,7 @@ class DayButtonRowDesktop extends StatelessWidget {
                                   ? (isDarkMode ? Colors.black : Colors.white)
                                   : Colors.grey,
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 22,
                             ),
                           ),
                           Text(
@@ -202,12 +201,11 @@ class DayButtonRowDesktop extends StatelessWidget {
                                   ? (isDarkMode ? Colors.black : Colors.white)
                                   : (isDarkMode ? Colors.white : Colors.black),
                               fontWeight: FontWeight.bold,
-                              fontSize: 24,
+                              fontSize: 28,
                             ),
                           ),
                           if (hasEvents)
                             Container(
-                              margin: const EdgeInsets.only(top: 8),
                               width: 6,
                               height: 6,
                               decoration: BoxDecoration(
@@ -230,6 +228,7 @@ class DayButtonRowDesktop extends StatelessWidget {
     );
   }
 }
+
 
 class EventListViewDesktopGoogle extends StatelessWidget {
   final PageController pageController;
@@ -256,43 +255,100 @@ class EventListViewDesktopGoogle extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
     final subjectColors = SubjectColors(isDarkMode);
+    final currentPage = pageController.hasClients ? pageController.page?.round() ?? 0 : 0;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 20),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDarkMode ? Colors.black : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
-            width: 3.0,
-          ),
-        ),
-        child: ClipRRect(
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-              },
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7, // Altura fija para evitar el error
+      child: Stack(
+        children: [
+          // Contenedor principal del calendario
+          Positioned.fill(
+            left: 56,  // Espacio para la flecha izquierda
+            right: 56, // Espacio para la flecha derecha
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.black : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
+                  width: 3.0,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: PageView.builder(
+                  controller: pageController,
+                  onPageChanged: onPageChanged,
+                  physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
+                  itemCount: weekDays.length,
+                  itemBuilder: (context, index) {
+                    final day = weekDays[index];
+                    final dayEvents = getFilteredEvents(day);
+                    
+                    if (dayEvents.isEmpty) {
+                      return _buildEmptyState(isDarkMode);
+                    }
+                    
+                    return _buildDayViewGoogleStyle(dayEvents, isDarkMode, subjectColors);
+                  },
+                ),
+              ),
             ),
-            child: PageView.builder(
-              controller: pageController,
-              onPageChanged: onPageChanged,
-              physics: const PageScrollPhysics().applyTo(const BouncingScrollPhysics()),
-              itemCount: weekDays.length,
-              itemBuilder: (context, index) {
-                final day = weekDays[index];
-                final dayEvents = getFilteredEvents(day);
-      
-                if (dayEvents.isEmpty) {
-                  return _buildEmptyState(isDarkMode);
-                }
-      
-                return _buildDayViewGoogleStyle(dayEvents, isDarkMode, subjectColors);
-              },
-            ),
           ),
+
+          // Flecha izquierda - Solo visible si no es la primera página
+          if (currentPage > 0)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _buildNavigationArrow(
+                  context,
+                  Icons.chevron_left,
+                  () => pageController.previousPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+              ),
+            ),
+
+          // Flecha derecha - Solo visible si no es la última página
+          if (currentPage < weekDays.length - 1)
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _buildNavigationArrow(
+                  context,
+                  Icons.chevron_right,
+                  () => pageController.nextPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationArrow(BuildContext context, IconData icon, VoidCallback onPressed) {
+    final isDarkMode = Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark;
+    
+    return Material(
+      shape: const CircleBorder(),
+      color: Colors.transparent,
+      child: IconButton(
+        icon: Icon(icon, size: 30),
+        color: isDarkMode ? Colors.white : Colors.black,
+        onPressed: onPressed,
+        style: IconButton.styleFrom(
+          backgroundColor: isDarkMode ? Colors.black54 : Colors.white54,
+          padding: const EdgeInsets.all(12),
         ),
       ),
     );
@@ -327,7 +383,6 @@ class EventListViewDesktopGoogle extends StatelessWidget {
     bool isDarkMode,
     SubjectColors subjectColors,
   ) {
-    // Procesamiento inicial de eventos
     final processedEvents = events.map((e) {
       final start = DateTime.parse('${e['event']['date']} ${e['event']['start_hour']}');
       final end = DateTime.parse('${e['event']['date']} ${e['event']['end_hour']}');
@@ -339,7 +394,6 @@ class EventListViewDesktopGoogle extends StatelessWidget {
       };
     }).toList();
 
-    // Ordenar eventos por hora de inicio
     processedEvents.sort((a, b) => a['start'].compareTo(b['start']));
 
     if (processedEvents.isEmpty) {
@@ -367,7 +421,6 @@ class EventListViewDesktopGoogle extends StatelessWidget {
 
     final totalHalfHours = endTime.difference(startTime).inMinutes ~/ 30;
 
-    // Algoritmo de distribución de eventos mejorado
     final List<List<Map<String, dynamic>>> lanes = [];
     final Map<Map<String, dynamic>, Map<String, int>> eventLanesPlacement = {};
 
@@ -396,18 +449,16 @@ class EventListViewDesktopGoogle extends StatelessWidget {
       }
     }
 
-    // Calcular el número máximo de carriles ocupados en cualquier momento
     int maxLanes = lanes.length;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 30),
+        padding: const EdgeInsets.only(left: 30, right: 15, top: 0, bottom: 30),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Timeline izquierda
                 Column(
                   children: List.generate(totalHalfHours + 1, (index) {
                     final currentTime = startTime.add(Duration(minutes: 30 * index));
@@ -416,7 +467,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Transform.translate(
-                          offset: const Offset(-5, 31),
+                          offset: const Offset(-15, 31),
                           child: Text(
                             DateFormat('HH:mm').format(currentTime),
                             style: TextStyle(
@@ -429,14 +480,12 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                     );
                   }),
                 ),
-                // Área de eventos
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final availableWidth = constraints.maxWidth;
                       return Stack(
                         children: [
-                          // Líneas horizontales de la grid
                           Column(
                             children: List.generate(totalHalfHours + 1, (index) {
                               return Container(
@@ -444,7 +493,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color:  isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+                                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                                       width: 2,
                                     ),
                                   ),
@@ -452,7 +501,6 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                               );
                             }),
                           ),
-                          // Eventos posicionados
                           ...processedEvents.map((event) {
                             final placement = eventLanesPlacement[event]!;
                             final laneStart = placement['start']!;
@@ -460,7 +508,6 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                             final startOffset = event['start'].difference(startTime).inMinutes;
                             final duration = event['end'].difference(event['start']).inMinutes;
 
-                            // Determinar si el evento está solapado
                             final isOverlapping = lanes.any((lane) => 
                                 lane.any((e) => 
                                     e != event && 
@@ -473,7 +520,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                             final eventWidth = isOverlapping ? (laneEnd - laneStart) * laneWidth : availableWidth;
 
                             return Positioned(
-                              top: ((startOffset / 30) + 1) * sizeTramo + 2, // <- Añadimos +1 para mover un tramo hacia abajo
+                              top: ((startOffset / 30) + 1) * sizeTramo + 2,
                               left: leftPosition + 2,
                               width: eventWidth - 4,
                               height: (duration / 30) * sizeTramo - 6,
@@ -554,6 +601,55 @@ class BuildEmptyCardDesktop extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NavigationArrows extends StatelessWidget {
+  final bool isDarkMode;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
+  final bool showPrevious;
+  final bool showNext;
+  final double iconSize;
+  final EdgeInsets padding;
+
+  const NavigationArrows({
+    super.key,
+    required this.isDarkMode,
+    required this.onPrevious,
+    required this.onNext,
+    required this.showPrevious,
+    required this.showNext,
+    this.iconSize = 40,
+    this.padding = const EdgeInsets.all(8),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final arrowColor = isDarkMode ? Colors.white : Colors.blue.shade900;
+    
+    return Padding(
+      padding: padding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (showPrevious)
+            IconButton(
+              icon: Icon(Icons.chevron_left, size: iconSize, color: arrowColor),
+              onPressed: onPrevious,
+            )
+          else
+            SizedBox(width: iconSize),
+          if (showNext)
+            IconButton(
+              icon: Icon(Icons.chevron_right, size: iconSize, color: arrowColor),
+              onPressed: onNext,
+            )
+          else
+            SizedBox(width: iconSize),
+        ],
       ),
     );
   }
