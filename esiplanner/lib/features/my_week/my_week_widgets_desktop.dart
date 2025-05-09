@@ -261,7 +261,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
       padding: const EdgeInsets.only(left: 50, right: 50, bottom: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+          color: isDarkMode ? Colors.black : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDarkMode ? Colors.yellow.shade700 : Colors.blue.shade900,
@@ -444,7 +444,7 @@ class EventListViewDesktopGoogle extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+                                      color:  isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                                       width: 2,
                                     ),
                                   ),

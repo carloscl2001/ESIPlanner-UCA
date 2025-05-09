@@ -120,11 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       getFilteredEvents: _logic.getFilteredEvents,
                       subjects: _logic.subjects,
                       onDaySelected: (day) {
-                        final index = _logic.weekDays.indexOf(day);
+                        final currentIndex = _logic.weekDays.indexOf(_logic.selectedDay!);
+                        final newIndex = _logic.weekDays.indexOf(day);
+                        final isAdjacent = (currentIndex - newIndex).abs() == 1;
+                        
                         _pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
+                          newIndex,
+                          duration: Duration(milliseconds: isAdjacent ? 400 : 10),
+                          curve: isAdjacent ? Curves.easeInOut : Curves.linear,
                         );
                       },
                     ),

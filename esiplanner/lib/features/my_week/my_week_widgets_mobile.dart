@@ -584,7 +584,7 @@ class EventListViewMobileGoogle extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     bottom: BorderSide(
-                                      color: isDarkMode ? Colors.grey.shade900 : Colors.grey.shade300,
+                                      color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
                                       width: 2,
                                     ),
                                   ),
